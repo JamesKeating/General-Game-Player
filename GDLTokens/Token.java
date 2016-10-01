@@ -1,0 +1,5 @@
+package GDLTokens;
+
+interface Token {
+	   
+}
