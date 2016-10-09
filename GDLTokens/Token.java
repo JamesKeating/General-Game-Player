@@ -1,5 +1,5 @@
 package GDLTokens;
 
 interface Token {
-	   
+
 }

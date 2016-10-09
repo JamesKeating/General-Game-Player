@@ -5,41 +5,60 @@ public class DFA {
 		if(Character.isWhitespace(c))
 			return 0;
 			
-		else if(Character.toString(c).matches("[(|)|;|?]"))
+		else if(c == '(')
 			return 1;
-		
-		else if(Character.isLetter(c))
+
+		else if(c == ')')
 			return 2;
+
+		else if(c == ';')
+			return 3;
+
+		else if(Character.isLetter(c))
+			return 5;
 		
 		else if(Character.isDigit(c))
-			return 3;
+			return 6;
 		
 		else if(c == '<')
-			return 4;
-		
+			return 7;
+
+		else if(c == '?')
+			return 8;
+
 		else
 			return -1;
 	}
-	
-	public int state2(char c){
+
+	public int state5(char c){
 		if(Character.isLetter(c) || Character.isDigit(c))
-			return 2;
+			return 5;
 		else
 			return -1;
 	} 
 	
-	public int state3(char c){
+	public int state6(char c){
 		if(Character.isDigit(c))
-			return 3;
+			return 6;
+		if(Character.isLetter(c))
+			return 5;
 		else
 			return -1;
 	} 
 	
-	public int state4(char c){
-		if (c == '?')
-			return 1;
+	public int state7(char c){
+		if (c == '=')
+			return 4;
 		else
 			return -1;
 		
-	} 
+	}
+
+	public int state8(char c){
+		if(Character.isLetter(c) || Character.isDigit(c))
+			return 5;
+		else
+			return -1;
+
+	}
 }

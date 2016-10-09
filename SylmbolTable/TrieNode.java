@@ -5,16 +5,19 @@ import java.util.ArrayList;
 public class TrieNode {
 	
 	private int nodeID;
-	private boolean isIdentifier, isKey;
+	private boolean isIdentifier = false, isKey = false;
 	private ArrayList<TrieNode> children = new ArrayList<TrieNode>();
 	private char nodeValue;
-		
+	private TrieNode parent;
 
-	//TODO: give default values
-	public TrieNode(){
-		
+
+	public TrieNode(char nodeValue, TrieNode parent){
+		this.parent = parent;
+		this.nodeValue = nodeValue;
+		parent.addChild(this);
+
 	}
-	
+
 	public TrieNode(char nodeValue){
 		this.nodeValue = nodeValue;
 	}
@@ -43,13 +46,13 @@ public class TrieNode {
 		this.children.add(child);
 	}
 	
-	public boolean hasChild(char childValue) {
+	public TrieNode hasChild(char childValue) {
 		for (TrieNode child : this.children){
 			if(child.getNodeValue() == childValue){
-				return true;
+				return child;
 			}
 		}
-		return false;
+		return null;
 	}
 
 	public char getNodeValue() {
@@ -67,5 +70,12 @@ public class TrieNode {
 	public void setKey(boolean isKey) {
 		this.isKey = isKey;
 	}
-	
+
+	public TrieNode getParent() {
+		return parent;
+	}
+
+	public void setParent(TrieNode parent) {
+		this.parent = parent;
+	}
 }

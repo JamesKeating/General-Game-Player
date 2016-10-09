@@ -1,15 +1,18 @@
 package GDLParser;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
+import GDLTokens.*;
 import SylmbolTable.Trie;
-import GDLParser.DFA;
+import SylmbolTable.TrieNode;
+
 public class LexicalAnalyser {
 	
 	private int currState = 0;
-	private String[] keyWords = {"init", "terminal"};
+	private String[] keyWords = {"role", "init", "terminal"};
 	private Trie symbolTable = new Trie(keyWords);
+	private ArrayList<Object> tokenStream = new ArrayList<>();
 	
 	public void analyseFile(){
 		
@@ -17,45 +20,86 @@ public class LexicalAnalyser {
 		int lastState = 0;
 		
 		try{
-		FileInputStream fileInput = new FileInputStream("Data\\lexerTest.txt");
+		FileInputStream fileInput = new FileInputStream("D:\\GGP\\General-Game-Player\\Data\\lexerTest");
 		int fileChar = fileInput.read();
-		char c = (char) fileChar;	
+		char c = 0;
 		
 		while (fileChar != -1) {
 		   c = (char) fileChar;	
-		   System.out.print(c);  
+		   //System.out.print(c);
 		   lastState = currState;
 		   switch(currState){
+
 		   case 0:	currState = myDFA.state0(c);
 		   		break;
-		   case 2:	currState = myDFA.state2(c);
+		   case 5:	currState = myDFA.state5(c);
 		   		break;
-		   case 3:	currState = myDFA.state3(c);
+		   case 6:	currState = myDFA.state6(c);
 		   		break;
+		   case 7:  currState = myDFA.state7(c);
+			   break;
+		   case 8:  currState = myDFA.state8(c);
+			   break;
 		   }
-		   
-		   if(currState ==1){
-			   createToken(1);
+
+		   if(currState == -1) {
+
+				createToken(lastState);
+				currState = 0;
+		   }
+
+		   else if(currState > 0 && currState < 5){
+			   createToken(currState);
 			   currState = 0;
-		   }
-		   
-		   if(currState != -1)
 			   fileChar = fileInput.read();
-		   
+		   }
+
 		   else{
-			   createToken(lastState);
-			   currState = 0;
+			   symbolTable.processChar(c, true);
+			   fileChar = fileInput.read();
 		   }
 		}
-		if(currState == 1|| currState == 2 || currState == 3)
-   			createToken(currState);
-		
+		if(currState != -1|| currState != 7 || currState != 8) {
+			createToken(currState);
+		}
+
 		fileInput.close();
 		}catch(Exception e){ e.printStackTrace();}
 	}
 	
 	public void createToken(int state){
-		System.out.print(state);
+
+		String value = symbolTable.getString();
+		TrieNode node = symbolTable.getNode(true);
+		switch (state) {
+			case 1:
+				this.tokenStream.add(new LparToken());
+				break;
+			case 2:
+				this.tokenStream.add(new RparToken());
+				break;
+			case 3:
+				this.tokenStream.add(new SemiCoToken());
+				break;
+			case 4:
+				this.tokenStream.add(new ImplicationToken());
+				break;
+			case 5:
+				if (value.startsWith("?"))
+					this.tokenStream.add(new VarToken(value));
+				else if (node.isKey())
+					this.tokenStream.add(new KeyWordToken(value));
+				else
+					this.tokenStream.add(new IdToken(value));
+				break;
+			case 6:
+				this.tokenStream.add(new IntToken(value));
+				break;
+		}
+	}
+
+	public ArrayList<Object> getTokenStream() {
+		return tokenStream;
 	}
 	
 }
