@@ -27,7 +27,7 @@ public class Trie {
 	}
 	
 	public void processChar(char character, boolean flag){
-		if(!Character.isLetterOrDigit(character))
+		if(!Character.isLetterOrDigit(character) && character != '?')
 			return;
 
 		TrieNode node = this.currNode.hasChild(character);
