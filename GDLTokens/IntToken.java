@@ -13,4 +13,8 @@ public class IntToken implements Token {
     public String toString() {
         return "<Int>";
     }
+
+    public int getValue() {
+        return -3; //atom
+    }
 }

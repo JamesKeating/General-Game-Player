@@ -12,4 +12,8 @@ public class VarToken implements Token {
         return "<Var>";
     }
 
+    public int getValue() {
+        return -3; //atom
+    }
+
 }

@@ -6,4 +6,8 @@ public class LparToken implements Token {
         return "<Lpar>";
     }
 
+    public int getValue() {
+        return -1; //atom
+    }
+
 }

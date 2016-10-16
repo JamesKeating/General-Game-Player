@@ -11,4 +11,9 @@ public class IdToken implements Token {
     public String toString() {
         return "<ID>";
     }
+
+
+    public int getValue() {
+        return -3; //atom
+    }
 }

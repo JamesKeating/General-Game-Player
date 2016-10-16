@@ -1,5 +1,5 @@
 package GDLTokens;
 
-interface Token {
-
+public interface Token {
+    public int getValue();
 }

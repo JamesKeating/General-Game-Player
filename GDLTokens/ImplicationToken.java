@@ -6,5 +6,8 @@ public class ImplicationToken implements Token{
         return "<Implication>";
     }
 
+    public int getValue() {
+        return -3; //atom
+    }
 
 }

@@ -12,4 +12,8 @@ public class KeyWordToken implements Token {
         return "<" + value + ">";
     }
 
+    public int getValue() {
+        return -3; //atom
+    }
+
 }

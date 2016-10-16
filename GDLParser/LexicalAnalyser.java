@@ -13,7 +13,7 @@ public class LexicalAnalyser {
 	private String[] keyWords = {"role", "init", "terminal", "legal", "next", "true", "does", "goal",
 									"or", "distinct", "not"};
 	private Trie symbolTable = new Trie(keyWords);
-	private ArrayList<Object> tokenStream = new ArrayList<>();
+	private ArrayList<Token> tokenStream = new ArrayList<>();
 	
 	public void analyseFile(){
 		
@@ -65,6 +65,7 @@ public class LexicalAnalyser {
 		}
 
 		fileInput.close();
+		tokenStream.add(new EofToken());
 		}catch(Exception e){ e.printStackTrace();}
 	}
 	
@@ -99,7 +100,7 @@ public class LexicalAnalyser {
 		}
 	}
 
-	public ArrayList<Object> getTokenStream() {
+	public ArrayList<Token> getTokenStream() {
 		return tokenStream;
 	}
 	

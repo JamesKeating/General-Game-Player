@@ -6,4 +6,7 @@ public class SemiCoToken implements Token {
         return "<Semi>";
     }
 
+    public int getValue() {
+        return -3; //atom
+    }
 }
