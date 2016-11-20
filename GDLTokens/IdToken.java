@@ -21,4 +21,5 @@ public class IdToken implements Token {
     public String getID() {
         return id;
     }
+
 }

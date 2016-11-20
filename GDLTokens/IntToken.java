@@ -2,11 +2,16 @@ package GDLTokens;
 
 public class IntToken implements Token {
 
-    private int value;
+    public int getIntValue() {
+        return intValue;
+    }
+
+    private int intValue;
     private String strValue;
 
     public IntToken(String id){
-        this.value = 1;
+        this.intValue = 1;
+        Integer.valueOf(id);
         strValue = id;
     }
 
