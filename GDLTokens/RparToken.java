@@ -10,4 +10,9 @@ public class RparToken implements Token {
         return -2; //atom
     }
 
+
+    public String getID() {
+        return ")";
+    }
+
 }

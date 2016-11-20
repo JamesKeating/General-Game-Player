@@ -10,4 +10,8 @@ public class LparToken implements Token {
         return -1; //atom
     }
 
+    public String getID() {
+        return "(";
+    }
+
 }

@@ -21,7 +21,6 @@ public class DescriptionTable {
         if (rdp.parse(tokenStream)) {
             tokenStream.remove(tokenStream.size() - 1);
             for (Token tok : tokenStream){
-
                 if (tok.getValue()== -1)
                     parCount +=1;
                 else if (tok.getValue()== -2)

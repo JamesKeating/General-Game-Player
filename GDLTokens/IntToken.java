@@ -17,4 +17,9 @@ public class IntToken implements Token {
     public int getValue() {
         return -3; //atom
     }
+
+
+    public String getID() {
+        return strValue;
+    }
 }

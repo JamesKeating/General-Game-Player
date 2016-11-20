@@ -10,4 +10,9 @@ public class ImplicationToken implements Token{
         return -3; //atom
     }
 
+
+    public String getID() {
+        return "<=";
+    }
+
 }

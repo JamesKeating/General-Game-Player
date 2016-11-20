@@ -8,6 +8,11 @@ public class EofToken implements Token {
         return -99; //atom
     }
 
+
+    public String getID() {
+        return "Error";
+    }
+
     public String toString() {
         return "<EOF>";
     }

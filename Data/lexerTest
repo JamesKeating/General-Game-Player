@@ -12,7 +12,7 @@
                 (init (cell 3 1 b))
                 (init (cell 3 2 b))
                 (init (cell 3 3 b))
-                (init (control xplayer))
+                (init (control oplayer))
 
 
                 (<= (next (cell ?m ?n x))

@@ -16,4 +16,9 @@ public class KeyWordToken implements Token {
         return -3; //atom
     }
 
+
+    public String getID() {
+        return value;
+    }
+
 }

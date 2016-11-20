@@ -1,19 +1,33 @@
 package Test;
 
+import DescriptionProcessing.Prover;
 import GDLParser.LexicalAnalyser;
 import GDLParser.RDP;
+import SylmbolTable.Description;
 import SylmbolTable.DescriptionTable;
+import SylmbolTable.Fact;
+import SylmbolTable.FactTable;
 
 public class Main {
 
 	public static void main(String[] args) {
 		LexicalAnalyser l = new LexicalAnalyser();
 		l.analyseFile();
-		//System.out.println(l.getTokenStream());
 
 		DescriptionTable dt = new DescriptionTable(l.getTokenStream());
-		System.out.println(dt.getTable().get("<role>").get(1) + "\n");
-		System.out.println(dt.getTable().get("<init>").get(1));
+		FactTable factTable = new FactTable();
+
+		for(Description d : dt.getTable().get("<init>").get(1)){
+			for(Fact f : d.getFacts()){
+				factTable.addFact(f);
+			}
+		}
+		Prover p = new Prover();
+		p.setDt(dt);
+		p.setFt(factTable);
+
+		System.out.println(factTable.size());
+		System.out.println(p.getNewFacts().size());
 
 	}
 
