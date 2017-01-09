@@ -18,6 +18,10 @@ public class FactTable {
         return facts.size();
     }
 
+    public ArrayList<Fact> getFacts() {
+        return facts;
+    }
+
     private ArrayList<Fact> facts = new ArrayList<>();
 
     public void addFact(Fact fact){

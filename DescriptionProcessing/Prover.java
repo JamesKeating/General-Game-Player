@@ -196,10 +196,11 @@ public class Prover {
 
         }
 
+       //System.out.println(varMap);
         try{
             int i = 0;
         while (true){
-            ArrayList<String> nonNull = null;
+            HashMap<String, ArrayList<String>> nonNull = new HashMap<>();
             //System.out.println(varMap + "99999999");
             for (int j = 0, cap = 1; j < cap; j++ ) {
                 Fact newFact = new Fact(null);
@@ -207,17 +208,18 @@ public class Prover {
 
                 for (String var : varMap.keySet()) {
                     String value = varMap.get(var).get(i);
-                    if (value == null && nonNull == null) {
-                        nonNull = new ArrayList<>(varMap.get(var));
+                    if (value == null && nonNull.get(var) == null) {
+                        nonNull.put(var, new ArrayList<>(varMap.get(var)));
                         //System.out.println(nonNull+ "33333333");
-                        nonNull.removeAll(Collections.singleton(null));
+                        nonNull.get(var).removeAll(Collections.singleton(null));
                         //System.out.println(nonNull + "aaaaa");
                         cap = nonNull.size();
                     }
 
                     if (value == null)
-                        value = nonNull.get(j);
+                        value = nonNull.get(var).get(j);
 
+                    //System.out.println(newFact + "-------------");
                     newFact.setVarValue(var, value);
 
 
@@ -228,7 +230,7 @@ public class Prover {
 //
 //                        distinct = false;
 //                    }
-
+                    //System.out.println(newFact + "=============");
                     this.ft.addFact(newFact);
                 }
             }

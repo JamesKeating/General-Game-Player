@@ -15,14 +15,15 @@ public class LexicalAnalyser {
 	private Trie symbolTable = new Trie(keyWords);
 	private ArrayList<Token> tokenStream = new ArrayList<>();
 	
-	public void analyseFile(){
+	public void analyseFile(String filename){
 		
 		DFA myDFA =new DFA(); 
 		int lastState = 0;
 		
 		try{
-		FileInputStream fileInput = new FileInputStream("D:\\GGP\\General-Game-Player\\Data\\lexerTest");
+		FileInputStream fileInput = new FileInputStream("D:\\GGP\\General-Game-Player\\Data\\" + filename);
 		int fileChar = fileInput.read();
+
 		char c = 0;
 		
 		while (fileChar != -1) {

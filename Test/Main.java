@@ -16,7 +16,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		LexicalAnalyser l = new LexicalAnalyser();
-		l.analyseFile();
+		l.analyseFile("modifiedKnightTour");
 
 		DescriptionTable dt = new DescriptionTable(l.getTokenStream());
 		FactTable factTable = new FactTable();
@@ -30,7 +30,7 @@ public class Main {
 		p.setDt(dt);
 		p.setFt(factTable);
 
-		System.out.println(factTable.size());
+		//System.out.println(factTable.size());
 
 
 		//(does xplayer (mark ?m ?n))
@@ -49,9 +49,21 @@ public class Main {
 //		Fact move = new Fact(test);
 //		factTable.addFact(move);
 
-		System.out.println(factTable + "\n Generating all posible Facts from initial Fact Table:\n\n");
-		System.out.println(p.getNewFacts().size());
-		System.out.println(factTable);
+		//System.out.println(factTable + "\n Generating all posible Facts from initial Fact Table:\n\n");
+		//System.out.println(p.getNewFacts().size());
+
+		p.getNewFacts();
+		//System.out.println(factTable);
+		String string = "";
+		for (Fact fact : factTable.getFacts())
+			for (Token token : fact.getFact()){
+				if (token.getID().equals("legal")){
+					string += fact.toString() + "\n";
+					break;
+				}
+			}
+		System.out.println(string);
+
 
 	}
 
