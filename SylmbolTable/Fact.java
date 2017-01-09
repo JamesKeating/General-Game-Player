@@ -18,20 +18,20 @@ public class Fact {
         return fact;
     }
 
-    public void setVarValue(String varID, String value){
-        ArrayList<Token> newValues = new ArrayList<>();
-        for (Token t : this.fact){
-
-            if (t.getID().equals(varID)){
-                if (isNumeric(value))
-                    t = new IntToken(value);
-                else
-                    t = new IdToken(value);
-            }
-            newValues.add(t);
-        }
-        this.setFact(newValues);
-    }
+//    public void setVarValue(String varID, String value){
+//        ArrayList<Token> newValues = new ArrayList<>();
+//        for (Token t : this.fact){
+//
+//            if (t.getID().equals(varID)){
+//                if (isNumeric(value))
+//                    t = new IntToken(value);
+//                else
+//                    t = new IdToken(value);
+//            }
+//            newValues.add(t);
+//        }
+//        this.setFact(newValues);
+//    }
 
     public void setFact(ArrayList<Token> fact) {
         this.fact = fact;
@@ -52,16 +52,15 @@ public class Fact {
         return str;
     }
 
-    private boolean isNumeric(String str)
-    {
-        try
-        {
+    private boolean isNumeric(String str) {
+
+        try {
             double d = Double.parseDouble(str);
         }
-        catch(NumberFormatException nfe)
-        {
+        catch(NumberFormatException nfe) {
             return false;
         }
+
         return true;
     }
 

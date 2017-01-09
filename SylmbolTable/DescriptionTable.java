@@ -1,11 +1,12 @@
 package SylmbolTable;
 
+import DescriptionProcessing.Player;
 import GDLParser.RDP;
 import GDLTokens.Token;
 
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * Created by siavj on 16/10/2016.
@@ -15,6 +16,7 @@ public class DescriptionTable {
     private RDP rdp = new RDP();
     private HashMap<String, HashMap<Integer, ArrayList<Description>>> table = new HashMap<>();
     private Description tempDescription;
+    private Set<Player> gamePlayers;
 
     public DescriptionTable(ArrayList<Token> tokenStream){
         int parCount = 0, start = 0, end = 1;
@@ -40,6 +42,14 @@ public class DescriptionTable {
         }
 
     }
+
+
+    public Set<Player> getPlayers(){
+        //TODO: extract roles
+        gamePlayers = null;
+        return gamePlayers;
+    }
+
 
     public HashMap<String, HashMap<Integer, ArrayList<Description>>> getTable() {
         return table;

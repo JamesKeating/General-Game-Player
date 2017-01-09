@@ -1,7 +1,6 @@
 package GDLParser;
 
 import GDLTokens.Token;
-import SylmbolTable.DescriptionTable;
 
 import java.util.ArrayList;
 
