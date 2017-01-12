@@ -32,10 +32,10 @@ public class PropNet
 
     //TODO: i called prop = latch , sentence = fact, rule = desc
     /** References to every LegalProposition in the PropNet, indexed by role. */
-    private HashMap<Player, HashSet<Latch>> legalLatches;
+    private HashMap<String, HashSet<Latch>> legalLatches;
 
     /** References to every GoalProposition in the PropNet, indexed by role. */
-    private HashMap<Player, HashSet<Latch>> goalLatches;
+    private HashMap<String, HashSet<Latch>> goalLatches;
 
     /** A reference to the single, unique, InitProposition. */
     private Latch initLatches;
@@ -69,40 +69,42 @@ public class PropNet
         this.goalLatches = findGoalLatches();
         this.initLatches = findInitLatches();
         this.terminalLatches = findTerminalLatches();
-        this.legalInputMap = makeLegalInputMap();
+
+//        this.legalInputMap = makeLegalInputMap();
+//        System.out.println(legalInputMap);
     }
 
     public ArrayList<Player> getRoles() {
         return roles;
     }
 
-    public HashMap<Latch, Latch> getLegalInputMap() {
-        return legalInputMap;
-    }
-
-    private HashMap<Latch, Latch> makeLegalInputMap() {
-        HashMap<Latch, Latch> legalInputMap = new HashMap<>();
-        // Create a mapping from Body->Input.
-        //TODO: Changed GDLTerm To TOKEN? and check var names prop => lat
-        HashMap<ArrayList<Token>, Latch> inputLatsByBody = new HashMap<>();
-        for(Latch inputLat : inputLatches.values()) {
-            ArrayList<Token> inputLatBody = (inputLat.getLabel()).getFact();
-            inputLatsByBody.put(inputLatBody, inputLat);
-        }
-        // Use that mapping to map Input->Legal and Legal->Input
-        // based on having the same Body Latch.
-        for(HashSet<Latch> legalLats : legalLatches.values()) {
-            for(Latch legalLat : legalLats) {
-                ArrayList<Token> legalLatBody = (legalLat.getLabel()).getFact();
-                if (inputLatsByBody.containsKey(legalLatBody)) {
-                    Latch inputLat = inputLatsByBody.get(legalLatBody);
-                    legalInputMap.put(inputLat, legalLat);
-                    legalInputMap.put(legalLat, inputLat);
-                }
-            }
-        }
-        return legalInputMap;
-    }
+//    public HashMap<Latch, Latch> getLegalInputMap() {
+//        return legalInputMap;
+//    }
+//
+//    private HashMap<Latch, Latch> makeLegalInputMap() {
+//        HashMap<Latch, Latch> legalInputMap = new HashMap<>();
+//        // Create a mapping from Body->Input.
+//        //TODO: Changed GDLTerm To TOKEN? and check var names prop => lat
+//        HashMap<String, Latch> inputLatsByBody = new HashMap<>();
+//        for(Latch inputLat : inputLatches.values()) {
+//            inputLatsByBody.put(inputLat.toString(), inputLat);
+//
+//        }
+//        // Use that mapping to map Input->Legal and Legal->Input
+//        // based on having the same Body Latch.
+//        for(HashSet<Latch> legalLats : legalLatches.values()) {
+//            for(Latch legalLat : legalLats) {
+//                ArrayList<Token> legalLatBody = (legalLat.getLabel()).getFact();
+//                if (inputLatsByBody.containsKey(legalLatBody)) {
+//                    Latch inputLat = inputLatsByBody.get(legalLatBody);
+//                    legalInputMap.put(inputLat, legalLat);
+//                    legalInputMap.put(legalLat, inputLat);
+//                }
+//            }
+//        }
+//        return legalInputMap;
+//    }
 
     /**
      * Getter method.
@@ -129,7 +131,7 @@ public class PropNet
      * @return References to every GoalProposition in the PropNet, indexed by
      *         player name.
      */
-    public HashMap<Player, HashSet<Latch>> getGoalLatches() {
+    public HashMap<String, HashSet<Latch>> getGoalLatches() {
         return goalLatches;
     }
 
@@ -158,7 +160,7 @@ public class PropNet
      * @return References to every LegalProposition in the PropNet, indexed by
      *         player name.
      */
-    public HashMap<Player, HashSet<Latch>> getLegalLatches() {
+    public HashMap<String, HashSet<Latch>> getLegalLatches() {
         return legalLatches;
     }
 
@@ -222,8 +224,11 @@ public class PropNet
      */
     private HashMap<Fact, Latch> findBaseLatches()
     {
+//        System.out.println("000000000000");
         HashMap<Fact, Latch> baseLatches = new HashMap<Fact, Latch>();
         for (Latch latch : latches) {
+
+//            System.out.println(latch.getLabel());
             // Skip all propositions without exactly one input.
             if (latch.getNodeInputs().size() != 1)
                 continue;
@@ -248,24 +253,27 @@ public class PropNet
      *
      * @return An index over the GoalPropositions in the PropNet.
      */
-    private HashMap<Player, HashSet<Latch>> findGoalLatches() {
-        HashMap<Player, HashSet<Latch>> goalPropositions = new HashMap<>();
+    private HashMap<String, HashSet<Latch>> findGoalLatches() {
+        HashMap<String, HashSet<Latch>> goalLatches = new HashMap<>();
         for (Latch latch : latches) {
+
+            if (latch.getLabel().getFact().size() <= 1)
+                continue;
 
             Fact fact = latch.getLabel();
             //TODO: correct possition for goal confirmaton
-            if (!fact.getFact().get(1).getID().equals("goal"))//4?
+            if (!fact.getLeadAtom().getID().equals("goal"))//4?
                 continue;
 
             //TODO: correct possition for role confirmaton && convert to player
             Player thePlayer = new Player(fact.getFact().get(2));
-            if (!goalLatches.containsKey(thePlayer)) {
-                goalLatches.put(thePlayer, new HashSet<>());
+            if (!goalLatches.containsKey(thePlayer.toString())) {
+                goalLatches.put(thePlayer.toString(), new HashSet<>());
             }
-            goalPropositions.get(thePlayer).add(latch);
+            goalLatches.get(thePlayer.toString()).add(latch);
         }
 
-        return goalPropositions;
+        return goalLatches;
     }
 
     /**
@@ -275,8 +283,14 @@ public class PropNet
      */
     private Latch findInitLatches() {
         for (Latch latch : latches) {
+
+
+            if (latch.getLabel().getFact().size() > 1)
+                continue;
+
+            //System.out.println(latch.getLabel());
             //TODO: check 1 for correct init pos also for netx 2 at least
-            if (latch.getLabel().getFact().get(1).getID().equals("init")) {
+            if (latch.getLabel().getFact().get(0).getID().equals("init")) {
                 return latch;
             }
         }
@@ -293,11 +307,17 @@ public class PropNet
         HashMap<Fact, Latch> inputLatches = new HashMap<>();
         for (Latch latch : latches) {
 
-            if (latch.getLabel().getFact().get(1).getID().equals("does"))
+
+            if (latch.getLabel().getFact().size() <= 1)
+                continue;
+
+
+            if (latch.getLabel().getLeadAtom().getID().equals("does")) {
                 inputLatches.put(latch.getLabel(), latch);
+            }
 
         }
-
+//        System.out.println(inputLatches);
         return inputLatches;
     }
 
@@ -306,19 +326,22 @@ public class PropNet
      *
      * @return An index over the LegalPropositions in the PropNet.
      */
-    private HashMap<Player, HashSet<Latch>> findLegalLatches()
+    private HashMap<String, HashSet<Latch>> findLegalLatches()
     {
-        HashMap<Player, HashSet<Latch>> legalLatches = new HashMap<>();
+        HashMap<String, HashSet<Latch>> legalLatches = new HashMap<>();
         for (Latch latch : latches) {
 
-            if (latch.getLabel().getFact().get(1).getID().equals("legal")) {
+            if(latch.getLabel().getFact().size() <= 1)
+                continue;
+
+            if (latch.getLabel().getLeadAtom().getID().equals("legal")) {
 
                 Player player = new Player(latch.getLabel().getFact().get(2));
 
-                if (!legalLatches.containsKey(player)) {
-                    legalLatches.put(player, new HashSet<>());
+                if (!legalLatches.containsKey(player.toString())) {
+                    legalLatches.put(player.toString(), new HashSet<>());
                 }
-                legalLatches.get(player).add(latch);
+                legalLatches.get(player.toString()).add(latch);
             }
         }
 
@@ -346,12 +369,15 @@ public class PropNet
      *
      * @return A reference to the single, unqiue, TerminalProposition.
      */
-    private Latch findTerminalLatches()
-    {
+    private Latch findTerminalLatches() {
+
         for ( Latch latch : latches ) {
-                if ( latch.getLabel().getFact().get(1).equals("terminal") ) {
+//            System.out.println(latch);
+            if (latch.getLabel().getFact().size() == 1) {
+                if (latch.getLabel().getFact().get(0).getID().equals("terminal")) {
                     return latch;
                 }
+            }
         }
 
         return null;

@@ -27,9 +27,8 @@ public class Flattener
     private ArrayList<Description> descriptionList;
     private DescriptionTable descriptionTable;
 
-    public Flattener(DescriptionTable description) {
-        this.descriptionTable = description;
-        this.descriptionList = description.listTable();
+    public Flattener(ArrayList<Description> description) {
+        this.descriptionList = description;
     }
 
     /**
@@ -53,8 +52,12 @@ public class Flattener
 
         ArrayList<Description> flatDescription = new ArrayList<>();
 
+
+        flatDescription.addAll(getInstantiations("init"));
+
         for ( String key : templates.keySet() ) {
-            flatDescription.addAll(getInstantiations(key));
+            if (!key.equals("init"))
+                flatDescription.addAll(getInstantiations(key));
         }
 
 //        System.out.println("\nIF ANYTHING IS HERE YOU WIN: " + flatDescription);

@@ -4,6 +4,7 @@ package Test;
 import DescriptionProcessing.PropNet;
 import DescriptionProcessing.PropNetBuilder;
 import GDLParser.LexicalAnalyser;
+import Player.PropnetPlayer;
 import SylmbolTable.DescriptionTable;
 
 public class Main {
@@ -12,9 +13,13 @@ public class Main {
 		LexicalAnalyser l = new LexicalAnalyser();
 		l.analyseFile("lexerTest");
 		DescriptionTable dt = new DescriptionTable(l.getTokenStream());
+//		PropNetBuilder builder = new PropNetBuilder();
+//		PropNet propNet = builder.create(dt.listTable());
+//		propNet.renderToFile("TRYING");
 
-		PropNetBuilder builder = new PropNetBuilder();
-		PropNet propNet = builder.create(dt);
+
+		PropnetPlayer player = new PropnetPlayer();
+		player.initialize(dt.listTable());
 
 	}
 }

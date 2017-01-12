@@ -62,11 +62,23 @@ public abstract class PropNetNode
         return sb.toString();
     }
 
+    public PropNetNode getSingleOutput() {
+        assert outputs.size() == 1;
+        return outputs.iterator().next();
+    }
+
+    public PropNetNode getSingleInput() {
+        System.out.println(inputs.size());
+        assert inputs.size() == 1;
+        return inputs.iterator().next();
+    }
+
     public void addInput(PropNetNode input) {
         inputs.add(input);
     }
 
     public void addOutput(PropNetNode output) {
+//        System.out.println(this + "========output" + output);
         outputs.add(output);
     }
 

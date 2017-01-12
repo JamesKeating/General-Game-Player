@@ -66,7 +66,8 @@ public class Fact {
         for(Token t  :this.fact) {
             str += t.getID()+ " ";
         }
-        return str;
+
+        return str.trim();
     }
 
     private boolean isNumeric(String str) {
