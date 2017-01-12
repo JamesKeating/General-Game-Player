@@ -1,5 +1,6 @@
 package DescriptionProcessing;
 
+import GDLTokens.ImplicationToken;
 import GDLTokens.KeyWordToken;
 import GDLTokens.Token;
 import SylmbolTable.Description;
@@ -13,11 +14,10 @@ import java.util.HashSet;
 public class Flattener
 {
     /** An archive of Rule instantiations, indexed by head name. */
-    private HashMap<String, ArrayList<Fact>> instantiations;
+    private HashMap<String, ArrayList<Description>> instantiations;
     /** An archive of the rules in a game description, indexed by head name. */
     private HashMap<String, ArrayList<Description>> templates;
 
-    private HashMap<String, ArrayList<Description>> test = new HashMap<>();
 
     /**
      * Construct a BasicPropNetFlattener for a given game.
@@ -45,22 +45,32 @@ public class Flattener
      * @return An equivalent description to the one passed into the constructor,
      * without variables.
      */
-    public ArrayList<Fact> flatten() {
+    public ArrayList<Description> flatten() {
 
         //descriptionList = RemoveOr.remove(descriptionList);
         templates = findTemplates(descriptionList);
         instantiations = initializeInstantiations(descriptionList);
 
+        ArrayList<Description> flatDescription = new ArrayList<>();
 
-        ArrayList<Fact> flatDescription = new ArrayList<>();
+        for ( String key : templates.keySet() ) {
+            flatDescription.addAll(getInstantiations(key));
+        }
 
-
-        //for ( String key : templates.keySet() ) {
-            flatDescription.addAll(getInstantiations("line"));
-        //}
-
-        System.out.println("\nIF ANYTHING IS HERE YOU WIN: " + test);
+//        System.out.println("\nIF ANYTHING IS HERE YOU WIN: " + flatDescription);
         return flatDescription;
+    }
+
+    private Description equivalentDoesRule(Description legalRule){
+        ArrayList<Token> body = new ArrayList<>();
+        for (Token token : legalRule.getDescription()){
+            if (token.getID().equals("legal")){
+                body.add(new KeyWordToken("does"));
+            }
+            else
+                body.add(token.copy());
+        }
+        return new Description(body);
     }
 
 
@@ -74,7 +84,7 @@ public class Flattener
      *            The name of the head of the rule to instantiate.
      * @return A list of instantiations.
      */
-    private ArrayList<Fact> getInstantiations(String constant) {
+    private ArrayList<Description> getInstantiations(String constant) {
 //        System.out.println(constant);
 //        System.out.println(instantiations);
         if ( !instantiations.containsKey(constant) ) {
@@ -82,26 +92,22 @@ public class Flattener
 
             if ( constant.equals("does") ) {
 
-                for ( Fact rule : getInstantiations("legal") ) {
-                    System.exit(0);
-                    //instantiations.get(constant).add(equivalentDoesRule(rule));
+                for ( Description rule : getInstantiations("legal") ) {
+                    instantiations.get(constant).add(equivalentDoesRule(rule));
                 }
             }
             else {
-                System.out.println(constant + "---const----");
+                //System.out.println(constant + "---const----");
                 for ( Description template : templates.get(constant) ) {
 
-                    System.out.println(template + "+++ temp +++");
+                   //System.out.println(template + "+++ temp +++");
                     HashSet<Description> results = new HashSet<>();
                     instantiate(template, 1, new Substitution(), results);
 
-                    System.out.println(results + "results ====");
+                   //System.out.println(results + "results ====");
 
-                    test.putIfAbsent(constant, new ArrayList<>());
 
-                    test.get(constant).addAll(results);
-                    for (Description d : results){
-                        instantiations.get(constant).addAll(d.getFacts());}
+                    instantiations.get(constant).addAll(results);
 
                 }
             }
@@ -119,23 +125,22 @@ public class Flattener
      *            A game description.
      * @return An archive of rule instantiations, indexed by head name.
      */
-    private HashMap<String, ArrayList<Fact>> initializeInstantiations(ArrayList<Description> descriptionList) {
+    private HashMap<String, ArrayList<Description>> initializeInstantiations(ArrayList<Description> descriptionList) {
 
-        ArrayList<Fact> trues = new ArrayList<>();
+        ArrayList<Description> trues = new ArrayList<>();
         for ( Description description : descriptionList ){
-
 
             if ( description.getLeadAtom().toString().equals("base") ) {
 
                 //System.out.println(description);
-                ArrayList<Fact> results = new ArrayList<>();
+                ArrayList<Description> results = new ArrayList<>();
                 expandTrue(description, 1, new ArrayList<>(), results);
                 trues.addAll(results);
             }
 
         }
         //System.out.println(trues);
-        HashMap<String, ArrayList<Fact>> instantiations = new HashMap<>();
+        HashMap<String, ArrayList<Description>> instantiations = new HashMap<>();
         instantiations.put("true", trues);
 
         return instantiations;
@@ -157,7 +162,7 @@ public class Flattener
      * @param results
      *            The list of results built up so far.
      */
-    private void expandTrue(Description base, int index, ArrayList<Token> workingSet, ArrayList<Fact> results) {
+    private void expandTrue(Description base, int index, ArrayList<Token> workingSet, ArrayList<Description> results) {
 
 
         if ( base.getArity() == index ) {
@@ -165,7 +170,7 @@ public class Flattener
             //System.out.println(base);
             ArrayList<Token> body = new ArrayList<>(workingSet);
 
-            results.add(new Fact(base, workingSet));
+            results.add(new Description(base, workingSet));
 
         }
         else
@@ -202,36 +207,48 @@ public class Flattener
         Unifier uni = new Unifier();
 
         if ( template.getFacts().size() == index ) {
+            Description d = sub.substitute(template, theta);
+            boolean old = false;
+            for (Description desc: results){
+                if (desc.toString().equals(d.toString()))
+                    old = true;
+            }
 
-
-            results.add(sub.substitute(template, theta));
-//            System.out.println("real result: " + results);
+            if (!old)
+                results.add(d);
+            //System.out.println("real result: " + results);
 
         }
         else {
-            Fact sentence =  sub.substitute(new Fact(template.getFacts().get(index)), theta);
-            for ( Fact instantiation : getInstantiations(sentence.getLeadAtom().getID()) ) {
+            String check = template.getFacts().get(index).getLeadAtom().getID();
 
-                //System.out.println(sentence + "--" + instantiation);
-                Substitution thetaPrime = uni.unify(sentence, instantiation);
+            if (!check.equals("distinct") && !check.equals("not")){
+                Fact sentence =  sub.substitute(new Fact(template.getFacts().get(index)), theta);
 
-//                System.exit(0);
-                if ( thetaPrime!=null ) {
-                    Substitution thetaCopy = theta.copy();
-                    thetaCopy = thetaCopy.compose(thetaPrime);
+                for ( Description instantiation : getInstantiations(sentence.getLeadAtom().getID()) ) {
 
-                    //System.out.println(template +" =" + thetaCopy + "---" + index);
-                    instantiate(template, index + 1, thetaCopy, results);
+                   // System.out.println(sentence + "--" + instantiation);
 
+
+                    Substitution thetaPrime = uni.unify(sentence, instantiation);
+
+        //                System.exit(0);
+                    if ( thetaPrime!=null ) {
+                        Substitution thetaCopy = theta.copy();
+                        thetaCopy = thetaCopy.compose(thetaPrime);
+
+                        //System.out.println(template +" =" + thetaCopy + "---" + index);
+                        instantiate(template, index + 1, thetaCopy, results);
+
+                    }
                 }
+
+
             }
 
-
-           // }
-
-//            else {
-//                instantiate(template, index + 1, theta, results);
-//            }
+            else {
+                instantiate(template, index + 1, theta, results);
+            }
         }
     }
 

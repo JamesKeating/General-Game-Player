@@ -3,8 +3,8 @@
                 (role oplayer)
 
 
-                (base control (white black) )
-                (base cell (1 2 3) (1 2 3) (?q b x o))
+                (base control (xplayer oplayer) )
+                (base cell (1 2 3) (1 2 3) (b x o))
 
 
                 (init (cell 1 1 x))
@@ -29,12 +29,17 @@
 
                 (<= (next (cell ?m ?n ?w))
                     (true (cell ?m ?n ?w))
-                    )
+                    (distinct ?w b))
 
                 (<= (next (cell ?m ?n b))
                     (does ?w (mark ?j ?k))
                     (true (cell ?m ?n b))
-                    )
+                    (distinct ?n ?k))
+
+                (<= (next (cell ?m ?n b))
+                    (does ?w (mark ?j ?k))
+                    (true (cell ?m ?n b))
+                    (distinct ?m ?j))
 
                 (<= (next (control xplayer))
                     (true (control oplayer)))
@@ -89,10 +94,7 @@
                 (<= (goal xplayer 100)
                     (line x))
 
-                (<= (goal xplayer 50)
-                    (not (line x))
-                    (not (line o))
-                    (not open))
+
 
                 (<= (goal xplayer 0)
                     (line o))
@@ -100,14 +102,9 @@
                 (<= (goal oplayer 100)
                     (line o))
 
-                (<= (goal oplayer 50)
-                    (not (line x))
-                    (not (line o))
-                    (not open))
 
                 (<= (goal oplayer 0)
                     (line x))
-
 
 
                 (<= terminal

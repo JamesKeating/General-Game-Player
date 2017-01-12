@@ -20,33 +20,7 @@ public class Fact {
         }
     }
 
-    public Fact(Description baseDescription, ArrayList<Token> variables){
-        ArrayList<Token> base = new ArrayList<>();
 
-        int parcount = -1;
-        int variableIndex = 0;
-        for (Token term : baseDescription.getDescription()){
-
-            if (term.getValue() == -1)
-                parcount++;
-
-            if (!term.getID().equals("base") && parcount < 1){
-                base.add(term);
-            }
-
-            if (term.getValue() == -2){
-                if (parcount > 0){
-                    base.add(variables.get(variableIndex));
-                    variableIndex++;
-                }
-                parcount--;
-
-            }
-        }
-
-
-        this.fact = base;
-    }
 
     public ArrayList<Token> getFact() {
         return fact;

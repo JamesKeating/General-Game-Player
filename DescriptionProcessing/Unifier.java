@@ -1,7 +1,9 @@
 package DescriptionProcessing;
 
+import GDLTokens.ImplicationToken;
 import GDLTokens.Token;
 import GDLTokens.VarToken;
+import SylmbolTable.Description;
 import SylmbolTable.Fact;
 
 import java.util.ArrayList;
@@ -12,9 +14,16 @@ import java.util.ArrayList;
 public class Unifier
 {
 
-    public Substitution unify(Fact x, Fact y) {
+    public Substitution unify(Fact x, Description y) {
         Substitution theta = new Substitution();
-        boolean isGood = unifyTerm(x.getFact(), y.getFact(), theta);
+        boolean isGood;
+
+        if(y.getDescription().get(1) instanceof ImplicationToken){
+            isGood = unifyTerm(x.getFact(), y.getFacts().get(0).getFact(), theta);
+        }
+
+        else
+            isGood = unifyTerm(x.getFact(), y.getDescription(), theta);
 
         if(isGood)
             return theta;

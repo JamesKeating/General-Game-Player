@@ -19,7 +19,7 @@ public final class PropNetBuilder
     public PropNet create(DescriptionTable gameDescription)
     {
         try {
-            List<Fact> flattenedGameDescription = new Flattener(gameDescription).flatten();
+            List<Description> flattenedGameDescription = new Flattener(gameDescription).flatten();
 
 
             return null;

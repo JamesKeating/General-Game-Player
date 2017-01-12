@@ -90,20 +90,28 @@ public class Substituter
 //        System.out.println("2");
 
         ArrayList<Fact> body = new ArrayList<>();
-        for ( Fact literal : rule.getFacts() ) {
-            body.add(substituteFact(literal, theta));
-        }
-
         ArrayList<Token> result = new ArrayList<>();
+
         result.add(new LparToken());
         result.add(new ImplicationToken());
-        for (Fact fact : body) {
-            for (Token token : fact.getFact()){
+        if (rule.getLeadAtom().getID().equals("role") || rule.getLeadAtom().getID().equals("init")) {
+            for (Token token : rule.getDescription()) {
                 result.add(token);
             }
         }
-        result.add(new RparToken());
+        else {
 
+            for (Fact literal : rule.getFacts()) {
+                body.add(substituteFact(literal, theta));
+            }
+
+            for (Fact fact : body) {
+                for (Token token : fact.getFact()) {
+                    result.add(token);
+                }
+            }
+        }
+        result.add(new RparToken());
         return new Description(result);
     }
 }
