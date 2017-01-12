@@ -16,6 +16,7 @@ public class DescriptionTable {
     private RDP rdp = new RDP();
     private HashMap<String, HashMap<Integer, ArrayList<Description>>> table = new HashMap<>();
     private Description tempDescription;
+    private ArrayList<Description>  descriptionsList = new ArrayList<>();
     private Set<Player> gamePlayers;
 
     public DescriptionTable(ArrayList<Token> tokenStream){
@@ -29,9 +30,11 @@ public class DescriptionTable {
                     parCount -=1;
 
                 if (parCount == 0){
-                    tempDescription = new Description(new ArrayList<Token>(tokenStream.subList(start, end)));
-                    table.putIfAbsent(tempDescription.getLeadAtom().toString(), new HashMap<Integer, ArrayList<Description>>());
-                    table.get(tempDescription.getLeadAtom().toString()).putIfAbsent(tempDescription.getArity(), new ArrayList<Description>());
+                    tempDescription = new Description(new ArrayList<>(tokenStream.subList(start, end)));
+                    descriptionsList.add(tempDescription);
+
+                    table.putIfAbsent(tempDescription.getLeadAtom().toString(), new HashMap<>());
+                    table.get(tempDescription.getLeadAtom().toString()).putIfAbsent(tempDescription.getArity(), new ArrayList<>());
                     table.get(tempDescription.getLeadAtom().toString()).get(tempDescription.getArity()).add(tempDescription);
                     start = end;
                 }
@@ -41,6 +44,10 @@ public class DescriptionTable {
 
         }
 
+    }
+
+    public ArrayList<Description> listTable(){
+        return descriptionsList;
     }
 
 

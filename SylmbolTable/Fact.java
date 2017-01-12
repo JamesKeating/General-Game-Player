@@ -14,6 +14,40 @@ import java.util.Scanner;
  */
 public class Fact {
 
+    public Fact(Fact original){
+        for (Token token : original.getFact()){
+            this.fact.add(token.copy());
+        }
+    }
+
+    public Fact(Description baseDescription, ArrayList<Token> variables){
+        ArrayList<Token> base = new ArrayList<>();
+
+        int parcount = -1;
+        int variableIndex = 0;
+        for (Token term : baseDescription.getDescription()){
+
+            if (term.getValue() == -1)
+                parcount++;
+
+            if (!term.getID().equals("base") && parcount < 1){
+                base.add(term);
+            }
+
+            if (term.getValue() == -2){
+                if (parcount > 0){
+                    base.add(variables.get(variableIndex));
+                    variableIndex++;
+                }
+                parcount--;
+
+            }
+        }
+
+
+        this.fact = base;
+    }
+
     public ArrayList<Token> getFact() {
         return fact;
     }
@@ -32,6 +66,15 @@ public class Fact {
 //        }
 //        this.setFact(newValues);
 //    }
+
+    public Token getLeadAtom(){
+        for(Token tok : this.fact){
+            if(tok.getValue() == -3 && !tok.getID().equals("<=")) {
+                return tok;
+            }
+        }
+        return null;
+    }
 
     public void setFact(ArrayList<Token> fact) {
         this.fact = fact;
@@ -63,5 +106,16 @@ public class Fact {
 
         return true;
     }
+
+    public boolean isGround() {
+
+        for (Token fact : this.fact) {
+            if (fact instanceof VarToken)
+                return false;
+        }
+
+        return true;
+    }
+
 
 }

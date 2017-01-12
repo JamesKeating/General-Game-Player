@@ -6,21 +6,26 @@ package DescriptionProcessing;
 
 import SylmbolTable.Description;
 import SylmbolTable.DescriptionTable;
+import SylmbolTable.Fact;
+
 import java.util.List;
 
 public final class PropNetBuilder
 {
-    private PropNetBuilder() {
+    public PropNetBuilder() {
     }
 
 
-    public static PropNet create(DescriptionTable gameDescription)
+    public PropNet create(DescriptionTable gameDescription)
     {
         try {
-            //List<Description> flattenedGameDescription = new Flattener(gameDescription).flatten();
+            List<Fact> flattenedGameDescription = new Flattener(gameDescription).flatten();
+
+
             return null;
             //TODO: return new PropNetConverter().convert(Role.computeRoles(description), flatDescription);
         } catch(Exception e) {
+            e.printStackTrace();
             return null;
         }
     }

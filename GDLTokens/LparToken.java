@@ -3,7 +3,7 @@ package GDLTokens;
 public class LparToken implements Token {
 
     public String toString() {
-        return "<Lpar>";
+        return "(";
     }
 
     public int getValue() {
@@ -13,5 +13,11 @@ public class LparToken implements Token {
     public String getID() {
         return "(";
     }
+
+    @Override
+    public Token copy() {
+        return new LparToken();
+    }
+
 
 }

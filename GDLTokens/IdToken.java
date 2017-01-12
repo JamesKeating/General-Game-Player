@@ -11,7 +11,7 @@ public class IdToken implements Token {
     }
 
     public String toString() {
-        return "<ID>";
+        return id;
     }
 
     public int getValue() {
@@ -21,5 +21,11 @@ public class IdToken implements Token {
     public String getID() {
         return id;
     }
+
+    @Override
+    public Token copy() {
+        return new IdToken(id);
+    }
+
 
 }

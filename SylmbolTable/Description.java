@@ -1,7 +1,7 @@
 package SylmbolTable;
 
-import GDLTokens.Token;
-import GDLTokens.VarToken;
+import DescriptionProcessing.Substitution;
+import GDLTokens.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +19,12 @@ public class Description {
         getArity();
     }
 
-
+    public Description(Fact fact){
+        for (Token token : fact.getFact()){
+            this.description.add(token);
+        }
+        getArity();
+    }
 
     public int getArity(){
         this.facts.clear();
@@ -49,7 +54,7 @@ public class Description {
 
     public Token getLeadAtom(){
         for(Token tok : this.description){
-            if(tok.getValue() == -3) {
+            if(tok.getValue() == -3 && !tok.getID().equals("<=")) {
                 return tok;
             }
         }
@@ -57,7 +62,7 @@ public class Description {
     }
 
     public String toString(){
-        return this.description.toString() + "\n";
+        return this.description.toString().replace(",", "").replace("[", "").replace("]", "");
     }
 
 
@@ -69,12 +74,13 @@ public class Description {
         return this.facts;
     }
 
-    public HashMap<String, ArrayList<String>> getVar(){
-        HashMap<String, ArrayList<String>> vars = new HashMap<>();
-        for(Token t : this.description) {
-            if (t.getClass() == VarToken.class)
-                vars.putIfAbsent(t.getID(),new ArrayList<String>());
-        }
-        return vars;
-    }
+//    public HashMap<String, ArrayList<String>> getVar(){
+//        HashMap<String, ArrayList<String>> vars = new HashMap<>();
+//        for(Token t : this.description) {
+//            if (t.getClass() == VarToken.class)
+//                vars.putIfAbsent(t.getID(),new ArrayList<String>());
+//        }
+//        return vars;
+//    }
+
 }

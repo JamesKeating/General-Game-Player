@@ -16,7 +16,7 @@ public class IntToken implements Token {
     }
 
     public String toString() {
-        return "<Int>";
+        return strValue;
     }
 
     public int getValue() {
@@ -27,4 +27,10 @@ public class IntToken implements Token {
     public String getID() {
         return strValue;
     }
+
+    @Override
+    public Token copy() {
+        return new IntToken(strValue);
+    }
+
 }

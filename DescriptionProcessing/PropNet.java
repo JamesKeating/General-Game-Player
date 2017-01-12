@@ -4,9 +4,7 @@ package DescriptionProcessing;
  * Created by siavj on 09/01/2017.
  */
 
-import DescriptionProcessing.PropNetComponents.Latch;
-import DescriptionProcessing.PropNetComponents.PropNetNode;
-import DescriptionProcessing.PropNetComponents.Transition;
+import DescriptionProcessing.PropNetComponents.*;
 import GDLTokens.Token;
 import SylmbolTable.Fact;
 
@@ -332,16 +330,15 @@ public class PropNet
      *
      * @return An index over Propositions in the PropNet.
      */
-    private Set<Proposition> findLatches()
+    private HashSet<Latch> findLatches()
     {
-        Set<Proposition> propositions = new HashSet<Proposition>();
-        for (PropNetNode PropNetNode : PropNetNodes)
-        {
-            if (PropNetNode instanceof Proposition) {
-                propositions.add((Proposition) PropNetNode);
+        HashSet<Latch> latches = new HashSet<>();
+        for (PropNetNode prop : propNetNodes) {
+            if (prop instanceof Latch) {
+                latches.add((Latch) prop);
             }
         }
-        return propositions;
+        return latches;
     }
 
     /**
@@ -349,31 +346,25 @@ public class PropNet
      *
      * @return A reference to the single, unqiue, TerminalProposition.
      */
-    private Proposition findTerminalLatches()
+    private Latch findTerminalLatches()
     {
-        for ( Proposition proposition : propositions )
-        {
-            if ( proposition.getName() instanceof GdlProposition )
-            {
-                GdlConstant constant = ((GdlProposition) proposition.getName()).getName();
-                if ( constant.getValue().equals("terminal") )
-                {
-                    return proposition;
+        for ( Latch latch : latches ) {
+                if ( latch.getLabel().getFact().get(1).equals("terminal") ) {
+                    return latch;
                 }
-            }
         }
 
         return null;
     }
 
     public int getSize() {
-        return PropNetNodes.size();
+        return propNetNodes.size();
     }
 
     public int getNumAnds() {
         int andCount = 0;
-        for(PropNetNode c : PropNetNodes) {
-            if(c instanceof And)
+        for(PropNetNode propNetNode : propNetNodes) {
+            if(propNetNode instanceof AndGate)
                 andCount++;
         }
         return andCount;
@@ -381,8 +372,8 @@ public class PropNet
 
     public int getNumOrs() {
         int orCount = 0;
-        for(PropNetNode c : PropNetNodes) {
-            if(c instanceof Or)
+        for(PropNetNode propNetNode : propNetNodes) {
+            if(propNetNode instanceof OrGate)
                 orCount++;
         }
         return orCount;
@@ -390,8 +381,8 @@ public class PropNet
 
     public int getNumNots() {
         int notCount = 0;
-        for(PropNetNode c : PropNetNodes) {
-            if(c instanceof Not)
+        for(PropNetNode propNetNode : propNetNodes) {
+            if(propNetNode instanceof NotGate)
                 notCount++;
         }
         return notCount;
@@ -399,8 +390,8 @@ public class PropNet
 
     public int getNumLinks() {
         int linkCount = 0;
-        for(PropNetNode c : PropNetNodes) {
-            linkCount += c.getOutputs().size();
+        for(PropNetNode propNetNode : propNetNodes) {
+            linkCount += propNetNode.getNodeOutputs().size();
         }
         return linkCount;
     }
@@ -414,53 +405,57 @@ public class PropNet
      *
      * The INIT and terminal PropNetNodes cannot be removed.
      */
-    public void removePropNetNode(PropNetNode c) {
-
+    public void removePropNetNode(PropNetNode propNetNode) {
 
         //Go through all the collections it could appear in
-        if(c instanceof Proposition) {
-            Proposition p = (Proposition) c;
-            GdlSentence name = p.getName();
-            if(basePropositions.containsKey(name)) {
-                basePropositions.remove(name);
-            } else if(inputPropositions.containsKey(name)) {
-                inputPropositions.remove(name);
+        if(propNetNode instanceof Latch) {
+
+            Latch latch = (Latch) propNetNode;
+            Fact label = latch.getLabel();
+            if(baseLatches.containsKey(label)) {
+                baseLatches.remove(label);
+            }
+
+            else if(inputLatches.containsKey(label)) {
+                inputLatches.remove(label);
                 //The map goes both ways...
-                Proposition partner = legalInputMap.get(p);
-                if(partner != null) {
+                Latch partner = legalInputMap.get(latch);
+                if (partner != null) {
                     legalInputMap.remove(partner);
-                    legalInputMap.remove(p);
+                    legalInputMap.remove(latch);
                 }
-            } else if(name == GdlPool.getProposition(GdlPool.getConstant("INIT"))) {
-                throw new RuntimeException("The INIT PropNetNode cannot be removed. Consider leaving it and ignoring it.");
-            } else if(name == GdlPool.getProposition(GdlPool.TERMINAL)) {
-                throw new RuntimeException("The terminal PropNetNode cannot be removed.");
-            } else {
-                for(Set<Proposition> propositions : legalPropositions.values()) {
-                    if(propositions.contains(p)) {
-                        propositions.remove(p);
-                        Proposition partner = legalInputMap.get(p);
+            }
+            //TODO: description table?
+//            } else if(label == GdlPool.getProposition(GdlPool.getConstant("INIT"))) {
+//                throw new RuntimeException("The INIT PropNetNode cannot be removed. Consider leaving it and ignoring it.");
+//            } else if(name == GdlPool.getProposition(GdlPool.TERMINAL)) {
+//                throw new RuntimeException("The terminal PropNetNode cannot be removed.");
+            //}
+
+            else {
+                for(HashSet<Latch> latches : legalLatches.values()) {
+                    if(latches.contains(latch)) {
+                        latches.remove(latch);
+                        Latch partner = legalInputMap.get(latch);
                         if(partner != null) {
                             legalInputMap.remove(partner);
-                            legalInputMap.remove(p);
+                            legalInputMap.remove(latch);
                         }
                     }
                 }
-                for(Set<Proposition> propositions : goalPropositions.values()) {
-                    propositions.remove(p);
+                for(HashSet<Latch> latches : goalLatches.values()) {
+                    latches.remove(latch);
                 }
             }
-            propositions.remove(p);
+            latches.remove(latch);
         }
-        PropNetNodes.remove(c);
+        propNetNodes.remove(propNetNode);
 
         //Remove all the local links to the PropNetNode
-        for(PropNetNode parent : c.getInputs())
-            parent.removeOutput(c);
-        for(PropNetNode child : c.getOutputs())
-            child.removeInput(c);
-        //These are actually unnecessary...
-        //c.removeAllInputs();
-        //c.removeAllOutputs();
+        for(PropNetNode parent : propNetNode.getNodeInputs())
+            parent.removeOutput(propNetNode);
+        for(PropNetNode child : propNetNode.getNodeOutputs())
+            child.removeInput(propNetNode);
+
     }
 }

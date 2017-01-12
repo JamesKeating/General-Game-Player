@@ -13,6 +13,11 @@ public class EofToken implements Token {
         return "Error";
     }
 
+    @Override
+    public Token copy() {
+        return null;
+    }
+
     public String toString() {
         return "<EOF>";
     }
