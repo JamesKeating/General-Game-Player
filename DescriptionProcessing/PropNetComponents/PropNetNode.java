@@ -22,6 +22,7 @@ public abstract class PropNetNode
     private HashSet<PropNetNode> inputs;
     private HashSet<PropNetNode> outputs;
 
+
     public PropNetNode() {
         this.inputs = new HashSet<>();
         this.outputs = new HashSet<>();
@@ -68,7 +69,7 @@ public abstract class PropNetNode
     }
 
     public PropNetNode getSingleInput() {
-        System.out.println(inputs.size());
+//        System.out.println(inputs.size());
         assert inputs.size() == 1;
         return inputs.iterator().next();
     }

@@ -131,9 +131,11 @@ public final class PropNetBuilder
 
         if ( fact.getLeadAtom().getID().equals("distinct") ) {
 
-
+//            System.out.println(fact);
             Latch latch = new Latch(new Fact(anon));
-            Constant constant = new Constant(!fact.getFact().get(2).equals(fact.getFact().get(3)));
+            Constant constant = new Constant(!fact.getFact().get(2).getID().equals(fact.getFact().get(3).getID()));
+//            System.out.println(constant);
+//            System.out.println();
 
             link(constant, latch);
 
@@ -146,12 +148,14 @@ public final class PropNetBuilder
         else if ( fact.getLeadAtom().getID().equals("not") ) {
             ArrayList<Token> inverse = new ArrayList<>();
 
-            for (Token token : fact.getFact()){
-                if (!token.getID().equals("not"))//possibly remove brackets as well?
-                    inverse.add(token);
+            fact.getFact().remove(1);
+            if (fact.getFact().get(1).getID().equals("(")) {
+                fact.getFact().remove(1);
+                fact.getFact().remove(fact.getFact().size()-2);
             }
 
-            Latch input = convertConjunct(new Fact(inverse));
+
+            Latch input = convertConjunct(fact);
             NotGate no = new NotGate();
             Latch output = new Latch(new Fact(anon));
 
@@ -287,7 +291,7 @@ public final class PropNetBuilder
             link(init, transition);
             link(transition, proposition);
 
-            System.out.println("init: "+ init + " trans: " + transition + " prop: " + proposition);
+//            System.out.println("init: "+ init + " trans: " + transition + " prop: " + proposition);
 //            System.out.println(transition.getNodeInputs() + "--- " + transition.getNodeOutputs() + "\n\n");
             propNetNodes.add(init);
             propNetNodes.add(transition);
