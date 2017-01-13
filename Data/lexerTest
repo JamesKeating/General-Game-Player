@@ -39,7 +39,8 @@
                 (<= (next (cell ?m ?n b))
                     (does ?w (mark ?j ?k))
                     (true (cell ?m ?n b))
-                    (distinct ?m ?j))
+                    (distinct ?m ?j)
+                    (not (distinct ?n ?k)))
 
                 (<= (next (control xplayer))
                     (true (control oplayer)))
@@ -74,7 +75,7 @@
                 (<= (line ?x) (diagonal ?x))
 
 
-                (<= open
+                (<= (open)
                     (true (cell ?m ?n b)))
 
 

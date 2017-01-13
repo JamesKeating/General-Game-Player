@@ -14,6 +14,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Scanner;
 
 
 public class PropNet
@@ -25,10 +26,10 @@ public class PropNet
     private HashSet<Latch> latches;
 
     /** References to every BaseProposition in the PropNet, indexed by name. */
-    private HashMap<Fact, Latch> baseLatches;
+    private HashMap<String, Latch> baseLatches;
 
     /** References to every InputProposition in the PropNet, indexed by name. */
-    private HashMap<Fact, Latch> inputLatches;
+    private HashMap<String, Latch> inputLatches;
 
     //TODO: i called prop = latch , sentence = fact, rule = desc
     /** References to every LegalProposition in the PropNet, indexed by role. */
@@ -112,7 +113,7 @@ public class PropNet
      * @return References to every BaseProposition in the PropNet, indexed by
      *         name.
      */
-    public HashMap<Fact, Latch> getBaseLatches() {
+    public HashMap<String, Latch> getBaseLatches() {
         return baseLatches;
     }
 
@@ -150,7 +151,7 @@ public class PropNet
      * @return References to every InputProposition in the PropNet, indexed by
      *         name.
      */
-    public HashMap<Fact, Latch> getInputLatches() {
+    public HashMap<String, Latch> getInputLatches() {
         return inputLatches;
     }
 
@@ -222,10 +223,10 @@ public class PropNet
      *
      * @return An index over the BasePropositions in the PropNet.
      */
-    private HashMap<Fact, Latch> findBaseLatches()
+    private HashMap<String, Latch> findBaseLatches()
     {
 //        System.out.println("000000000000");
-        HashMap<Fact, Latch> baseLatches = new HashMap<Fact, Latch>();
+        HashMap<String, Latch> baseLatches = new HashMap<String, Latch>();
         for (Latch latch : latches) {
 
 //            System.out.println(latch.getLabel());
@@ -236,7 +237,7 @@ public class PropNet
             PropNetNode propNetNode = latch.getNodeInputs().iterator().next();
 
             if (propNetNode instanceof Transition) {
-                baseLatches.put(latch.getLabel(), latch);
+                baseLatches.put(latch.getLabel().toString(), latch);
             }
         }
 
@@ -302,9 +303,9 @@ public class PropNet
      *
      * @return An index over the InputPropositions in the PropNet.
      */
-    private HashMap<Fact, Latch> findInputLatches()
+    private HashMap<String, Latch> findInputLatches()
     {
-        HashMap<Fact, Latch> inputLatches = new HashMap<>();
+        HashMap<String, Latch> inputLatches = new HashMap<>();
         for (Latch latch : latches) {
 
 
@@ -313,7 +314,7 @@ public class PropNet
 
 
             if (latch.getLabel().getLeadAtom().getID().equals("does")) {
-                inputLatches.put(latch.getLabel(), latch);
+                inputLatches.put(latch.getLabel().toString(), latch);
             }
 
         }
@@ -372,9 +373,10 @@ public class PropNet
     private Latch findTerminalLatches() {
 
         for ( Latch latch : latches ) {
-//            System.out.println(latch);
+
             if (latch.getLabel().getFact().size() == 1) {
                 if (latch.getLabel().getFact().get(0).getID().equals("terminal")) {
+
                     return latch;
                 }
             }
