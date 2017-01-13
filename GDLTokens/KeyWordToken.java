@@ -9,7 +9,7 @@ public class KeyWordToken implements Token {
     }
 
     public String toString() {
-        return "<" + value + ">";
+        return value ;
     }
 
     public int getValue() {
@@ -19,6 +19,11 @@ public class KeyWordToken implements Token {
 
     public String getID() {
         return value;
+    }
+
+    @Override
+    public Token copy() {
+        return new KeyWordToken(value);
     }
 
 }

@@ -1,11 +1,12 @@
 package SylmbolTable;
 
+import DescriptionProcessing.Player;
 import GDLParser.RDP;
 import GDLTokens.Token;
 
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * Created by siavj on 16/10/2016.
@@ -15,6 +16,8 @@ public class DescriptionTable {
     private RDP rdp = new RDP();
     private HashMap<String, HashMap<Integer, ArrayList<Description>>> table = new HashMap<>();
     private Description tempDescription;
+    private ArrayList<Description>  descriptionsList = new ArrayList<>();
+    private Set<Player> gamePlayers;
 
     public DescriptionTable(ArrayList<Token> tokenStream){
         int parCount = 0, start = 0, end = 1;
@@ -27,9 +30,11 @@ public class DescriptionTable {
                     parCount -=1;
 
                 if (parCount == 0){
-                    tempDescription = new Description(new ArrayList<Token>(tokenStream.subList(start, end)));
-                    table.putIfAbsent(tempDescription.getLeadAtom().toString(), new HashMap<Integer, ArrayList<Description>>());
-                    table.get(tempDescription.getLeadAtom().toString()).putIfAbsent(tempDescription.getArity(), new ArrayList<Description>());
+                    tempDescription = new Description(new ArrayList<>(tokenStream.subList(start, end)));
+                    descriptionsList.add(tempDescription);
+
+                    table.putIfAbsent(tempDescription.getLeadAtom().toString(), new HashMap<>());
+                    table.get(tempDescription.getLeadAtom().toString()).putIfAbsent(tempDescription.getArity(), new ArrayList<>());
                     table.get(tempDescription.getLeadAtom().toString()).get(tempDescription.getArity()).add(tempDescription);
                     start = end;
                 }
@@ -40,6 +45,18 @@ public class DescriptionTable {
         }
 
     }
+
+    public ArrayList<Description> listTable(){
+        return descriptionsList;
+    }
+
+
+    public Set<Player> getPlayers(){
+        //TODO: extract roles
+        gamePlayers = null;
+        return gamePlayers;
+    }
+
 
     public HashMap<String, HashMap<Integer, ArrayList<Description>>> getTable() {
         return table;

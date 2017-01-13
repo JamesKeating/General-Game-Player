@@ -9,7 +9,7 @@ public class VarToken implements Token {
     }
 
     public String toString() {
-        return "<Var>";
+        return  value ;
     }
 
     public int getValue() {
@@ -19,5 +19,11 @@ public class VarToken implements Token {
     public String getID() {
         return value;
     }
+
+    @Override
+    public Token copy() {
+        return new VarToken(value);
+    }
+
 
 }

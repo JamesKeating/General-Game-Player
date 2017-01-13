@@ -14,23 +14,40 @@ import java.util.Scanner;
  */
 public class Fact {
 
+    public Fact(Fact original){
+        for (Token token : original.getFact()){
+            this.fact.add(token.copy());
+        }
+    }
+
+
+
     public ArrayList<Token> getFact() {
         return fact;
     }
 
-    public void setVarValue(String varID, String value){
-        ArrayList<Token> newValues = new ArrayList<>();
-        for (Token t : this.fact){
+//    public void setVarValue(String varID, String value){
+//        ArrayList<Token> newValues = new ArrayList<>();
+//        for (Token t : this.fact){
+//
+//            if (t.getID().equals(varID)){
+//                if (isNumeric(value))
+//                    t = new IntToken(value);
+//                else
+//                    t = new IdToken(value);
+//            }
+//            newValues.add(t);
+//        }
+//        this.setFact(newValues);
+//    }
 
-            if (t.getID().equals(varID)){
-                if (isNumeric(value))
-                    t = new IntToken(value);
-                else
-                    t = new IdToken(value);
+    public Token getLeadAtom(){
+        for(Token tok : this.fact){
+            if(tok.getValue() == -3 && !tok.getID().equals("<=")) {
+                return tok;
             }
-            newValues.add(t);
         }
-        this.setFact(newValues);
+        return null;
     }
 
     public void setFact(ArrayList<Token> fact) {
@@ -49,20 +66,31 @@ public class Fact {
         for(Token t  :this.fact) {
             str += t.getID()+ " ";
         }
-        return str;
+
+        return str.trim();
     }
 
-    private boolean isNumeric(String str)
-    {
-        try
-        {
+    private boolean isNumeric(String str) {
+
+        try {
             double d = Double.parseDouble(str);
         }
-        catch(NumberFormatException nfe)
-        {
+        catch(NumberFormatException nfe) {
             return false;
         }
+
         return true;
     }
+
+    public boolean isGround() {
+
+        for (Token fact : this.fact) {
+            if (fact instanceof VarToken)
+                return false;
+        }
+
+        return true;
+    }
+
 
 }

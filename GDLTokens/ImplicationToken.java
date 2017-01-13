@@ -3,7 +3,7 @@ package GDLTokens;
 public class ImplicationToken implements Token{
 
     public String toString() {
-        return "<Implication>";
+        return "<=";
     }
 
     public int getValue() {
@@ -14,5 +14,11 @@ public class ImplicationToken implements Token{
     public String getID() {
         return "<=";
     }
+
+    @Override
+    public Token copy() {
+        return new ImplicationToken();
+    }
+
 
 }
