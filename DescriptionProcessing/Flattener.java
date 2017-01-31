@@ -56,8 +56,9 @@ public class Flattener
         flatDescription.addAll(getInstantiations("init"));
 
         for ( String key : templates.keySet() ) {
-            if (!key.equals("init"))
+            if (!key.equals("init")){
                 flatDescription.addAll(getInstantiations(key));
+            }
         }
 
 //        System.out.println("\nIF ANYTHING IS HERE YOU WIN: " + flatDescription);
@@ -100,19 +101,20 @@ public class Flattener
                 }
             }
             else {
-                //System.out.println(constant + "---const----");
+//                System.out.println(constant + "---const----");
+//                System.out.println(templates);
                 for ( Description template : templates.get(constant) ) {
-
-                   //System.out.println(template + "+++ temp +++");
-                    HashSet<Description> results = new HashSet<>();
+//                    System.out.println(template);
+                    ArrayList<Description> results = new ArrayList<>();
                     instantiate(template, 1, new Substitution(), results);
 
-                   //System.out.println(results + "results ====");
+//                   System.out.println(template + "results ====");
 
 
                     instantiations.get(constant).addAll(results);
 
                 }
+
             }
         }
 
@@ -205,14 +207,16 @@ public class Flattener
      *            The list of results built up so far.
      */
 
-    private void instantiate(Description template, int index, Substitution theta, HashSet<Description> results) {
+    private void instantiate(Description template, int index, Substitution theta, ArrayList<Description> results) {
         Substituter sub = new Substituter();
         Unifier uni = new Unifier();
+
 
         if ( template.getFacts().size() == index ) {
             Description d = sub.substitute(template, theta);
             boolean old = false;
             for (Description desc: results){
+//                System.out.println(desc);
                 if (desc.toString().equals(d.toString()))
                     old = true;
             }
@@ -227,7 +231,8 @@ public class Flattener
 
             if (!check.equals("distinct") && !check.equals("not")){
                 Fact sentence =  sub.substitute(new Fact(template.getFacts().get(index)), theta);
-
+//                System.out.println(template.getFacts().get(index));
+//                System.out.println(sentence);
                 for ( Description instantiation : getInstantiations(sentence.getLeadAtom().getID()) ) {
 
                    // System.out.println(sentence + "--" + instantiation);
@@ -240,7 +245,7 @@ public class Flattener
                         Substitution thetaCopy = theta.copy();
                         thetaCopy = thetaCopy.compose(thetaPrime);
 
-                        //System.out.println(template +" =" + thetaCopy + "---" + index);
+//                        System.out.println(template +" =" + thetaCopy + "---" + index);
                         instantiate(template, index + 1, thetaCopy, results);
 
                     }
@@ -266,13 +271,14 @@ public class Flattener
     private HashMap<String, ArrayList<Description>> findTemplates(ArrayList<Description> descriptionList) {
 
         HashMap<String, ArrayList<Description>> templates = new HashMap<>();
-
         for ( Description description : descriptionList ) {
 
+//            System.out.println(description);
             if ( !description.getLeadAtom().getID().equals("base") ) {
-                //System.out.println(description);
+//                System.out.println(description);
 
                 if ( !templates.containsKey(description.getLeadAtom().getID()) ){//string?
+//                    System.out.println(description.getLeadAtom());
                     templates.put(description.getLeadAtom().getID(), new ArrayList<>());
                 }
                 templates.get(description.getLeadAtom().getID()).add(description);

@@ -14,6 +14,16 @@ public class Player {
 
     private String name;
 
+    public boolean isHuman() {
+        return isHuman;
+    }
+
+    public void setHuman(boolean human) {
+        isHuman = human;
+    }
+
+    private boolean isHuman = false;
+
     public Player(Token token){
         this.name = token.getID();
     }

@@ -21,7 +21,7 @@ public class LexicalAnalyser {
 		int lastState = 0;
 		
 		try{
-		FileInputStream fileInput = new FileInputStream("D:\\GGP\\General-Game-Player\\Data\\" + filename);
+		FileInputStream fileInput = new FileInputStream("D:\\FYP\\General-Game-Player\\Data\\" + filename);
 		int fileChar = fileInput.read();
 
 		char c = 0;

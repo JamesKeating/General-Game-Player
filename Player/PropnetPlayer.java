@@ -16,7 +16,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Created by siavj on 12/01/2017.
  */
-public class PropnetPlayer {
+public class PropnetPlayer implements Gamer {
 
     /** The underlying proposition network  */
     private PropNet propNet;
@@ -24,6 +24,24 @@ public class PropnetPlayer {
     private ArrayList<Latch> ordering;
     /** The player roles */
     private ArrayList<Player> roles;
+
+    public String getMyRole() {
+        return myRole;
+    }
+
+    public void setMyRole(String myRole) {
+        this.myRole = myRole;
+    }
+
+    private String myRole;
+
+    public HashSet<String> getContents() {
+        return contents;
+    }
+
+    public void setContents(HashSet<String> contents) {
+        this.contents = contents;
+    }
 
     private HashSet<String> contents = new HashSet<>();
 
@@ -36,25 +54,12 @@ public class PropnetPlayer {
         roles = propNet.getRoles();
         ordering = getOrdering();
         contents = getInitialState();
-        System.out.println("initial: "+ contents);
+//        System.out.println("initial: "+ contents);
 
-        ArrayList<String> moves = new ArrayList<>();
-        ArrayList<String> temp;
-        while (!isTerminal(contents)){
 
-            for (Player player : getRoles()){
-                temp = getLegalMoves(contents, player);
-                moves.add(temp.get(ThreadLocalRandom.current().nextInt(0, temp.size())));
-            }
-
-            System.out.println("moves: " + moves);
-            contents = getNextState(contents, moves);
-//            System.out.println(contents);
-            moves.clear();
-        }
-
-        System.out.println("game terminated: \n" + roles.get(0) + " score = " + getGoal(contents, roles.get(0))
-        + "\n" + roles.get(1) + " score = " + getGoal(contents, roles.get(1)));
+//
+//        System.out.println("game terminated: \n" + roles.get(0) + " score = " + getGoal(contents, roles.get(0)));
+////        + "\n" + roles.get(1) + " score = " + getGoal(contents, roles.get(1)));
 
     }
 
@@ -63,6 +68,8 @@ public class PropnetPlayer {
         ArrayList<Latch> order = new ArrayList<>();
         ArrayList<PropNetNode> propNetNodes = new ArrayList<>(propNet.getPropNetNodes());
         ArrayList<Latch> latches = new ArrayList<>(propNet.getLatches());
+//        System.out.println(" ones to be removeed : " +propNet.getBaseLatches().values().size());
+//        System.out.println("total = " + propNetNodes.size() );
 
 
         propNetNodes.removeAll(propNet.getBaseLatches().values());
@@ -70,10 +77,13 @@ public class PropnetPlayer {
         propNetNodes.remove(propNet.getInitLatches());
 
         while (!propNetNodes.isEmpty()) {
+
             ArrayList<PropNetNode> propNetNodesCopy = new ArrayList<>(propNetNodes);
             for ( PropNetNode node : propNetNodes ) {
+
                 boolean inputsSatisfied = true;
                 for ( PropNetNode input : node.getNodeInputs() ) {
+
                     if ( propNetNodes.contains(input) ) {
                         inputsSatisfied = false;
                         break;
@@ -139,6 +149,7 @@ public class PropnetPlayer {
         SetBasePropositions(state);
         Propagate();
 
+
         for (Latch latch: propNet.getLegalLatches().get(role.toString())) {
             if (latch.getValue()) {
                 ArrayList<Token> move = new ArrayList<>();
@@ -193,5 +204,20 @@ public class PropnetPlayer {
             if (latch.getNodeInputs().size() == 1)
                 latch.setValue(latch.getSingleInput().getValue());
         }
+    }
+
+    public String makeMove() {
+
+        ArrayList<String> temp;
+
+        for (Player player : getRoles()){
+
+            if (player.toString().equals(myRole)){
+                temp = getLegalMoves(contents, player);
+                return temp.get(ThreadLocalRandom.current().nextInt(0, temp.size()));
+            }
+        }
+
+        return null;
     }
 }

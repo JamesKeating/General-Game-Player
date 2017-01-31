@@ -29,6 +29,7 @@ public final class PropNetBuilder
     public PropNet create(ArrayList<Description> gameDescription) {
         try {
             ArrayList<Description> flattenedGameDescription = new Flattener(gameDescription).flatten();
+//            System.out.println("flat");
             return convert(Player.listPlayers(gameDescription), flattenedGameDescription);
         } catch (Exception e) {
             e.printStackTrace();

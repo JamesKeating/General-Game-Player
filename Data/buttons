@@ -1,0 +1,43 @@
+
+  (role player)
+
+
+  (base light (1 2 3))
+  (base successor (1 2 3 4 5 6) (2 3 4 5 6 7))
+  (base turn (1 2 3 4 5 6 7))
+
+  (init (successor 1 2))
+  (init (successor 2 3))
+  (init (successor 3 4))
+  (init (successor 4 5))
+  (init (successor 5 6))
+  (init (successor 6 7))
+  (init (turn 1))
+
+  (<= (legal player buttonA))
+  (<= (legal player buttonB))
+  (<= (legal player buttonC))
+
+  (<=   (next (turn ?y))
+        (true (turn ?x))
+        (true (successor ?x ?y))
+  )
+
+  (<= (next (successor ?x ?y)) (true (successor ?x ?y)))
+
+  (<= (next (light 1)) (does player buttonA) (not (light 1)))
+  (<= (next (light 1)) (does player buttonB) (true (light 2)))
+  (<= (next (light 1)) (does player buttonC) (true(light 1)))
+
+  (<= (next (light 2)) (does player buttonA) (true(light 2)))
+  (<= (next (light 2)) (does player buttonB) (true(light 1)))
+  (<= (next (light 2)) (does player buttonC) (true(light 3)))
+
+  (<= (next (light 3)) (does player buttonA) (true(light 3)))
+  (<= (next (light 3)) (does player buttonB) (true(light 3)))
+  (<= (next (light 3)) (does player buttonC) (true(light 2)))
+
+  (<= (goal player 100) (true (light 1)) (true (light 2)) (true (light 3)))
+
+  (<= terminal (true (light 1)) (true (light 2)) (true (light 3)))
+  (<= terminal (true (turn 7)))
