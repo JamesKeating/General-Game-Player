@@ -57,9 +57,7 @@ public class GameManager{
             }
         }
 
-
         gameManager.setContents(gameManager.getNextState(gameManager.getContents(), moves));
-        System.out.println(gameManager.getContents() + " cont");
 
         for (Gamer gamer: gamers){
             gamer.setContents(gameManager.getContents());
@@ -67,6 +65,15 @@ public class GameManager{
 
         return gameManager;
 
+    }
+
+    public PropnetPlayer undo(){
+        gameManager.undo();
+
+        for (Gamer gamer: gamers){
+            gamer.setContents(gameManager.getContents());
+        }
+        return gameManager;
     }
 
     public TreeMap<Player, ArrayList<String>> getAllCurrentLegalMoves(){

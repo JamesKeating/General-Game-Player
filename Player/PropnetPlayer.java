@@ -42,9 +42,19 @@ public class PropnetPlayer implements Gamer {
 
     public void setContents(HashSet<String> contents) {
         this.contents = contents;
+        contents_list.add(contents);
+    }
+
+    public void undo(){
+        if (contents.size() > 0) {
+            contents_list.remove(contents_list.size() - 1);
+            setContents(contents_list.get(contents_list.size() - 1));
+        }
+
     }
 
     private HashSet<String> contents = new HashSet<>();
+    private ArrayList<HashSet<String>> contents_list = new ArrayList<>();
 
 
     public void initialize(ArrayList<Description> description) {
@@ -54,7 +64,7 @@ public class PropnetPlayer implements Gamer {
         propNet = builder.create(description);
         roles = propNet.getRoles();
         ordering = getOrdering();
-        contents = getInitialState();
+        setContents(getInitialState());
 //        System.out.println("initial: "+ contents);
 
 
@@ -117,7 +127,7 @@ public class PropnetPlayer implements Gamer {
 
     public ArrayList<Drawable> getDrawable(HashSet<String> state){
         ArrayList<Drawable> drawables = new ArrayList<>();
-        //getOrdering();
+        SetBasePropositions(state);
         Propagate();
 
         int x, y;
@@ -243,4 +253,6 @@ public class PropnetPlayer implements Gamer {
 
         return null;
     }
+
+
 }

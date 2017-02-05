@@ -50,6 +50,7 @@ public class Grahpics extends Application {
     }
 
     public GridPane drawGrid(GridPane gridPane, PropnetPlayer gm){
+
         gridPane.getChildren().clear();
         for (Drawable drawable : gm.getDrawable(gm.getContents())){
             gridPane.add(drawable.getImage(), drawable.gety(), drawable.getx());
@@ -66,7 +67,7 @@ public class Grahpics extends Application {
         for (int i = 0; i < p_names.size(); i++) {
 
             if (p_moves.get(i).size() == 1){
-                System.out.println(p_moves.get(i));
+
                 if (p_moves.get(i).get(0).contains("noop")){
                     if (count == i)
                         i_have_only_noop = true;
@@ -106,8 +107,8 @@ public class Grahpics extends Application {
     public Scene getPlayableScene(){
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "As a human player you must manually select a move from the list to continue");
-        //GameManager gm = new GameManager(new PropnetPlayer(), new HumanPlayer());
-        //gm.setupGame("lexerTest", new String[]{"xplayer", "oplayer"});
+//        GameManager gm = new GameManager(new PropnetPlayer(), new HumanPlayer());
+//        gm.setupGame("lexerTest", new String[]{"xplayer", "oplayer"});
 
         GameManager gm = new GameManager(new HumanPlayer());
         gm.setupGame("buttons", new String[]{"player"});
@@ -115,20 +116,25 @@ public class Grahpics extends Application {
         p_moves.addAll(gm.getAllCurrentLegalMoves().values());
         p_names.addAll(gm.getAllCurrentLegalMoves().keySet());
 
+        BorderPane root = new BorderPane();
+        GridPane board = new GridPane();
+        GridPane options = new GridPane();
+
         ListView<String> list = new ListView<String>();
         if (p_moves.size() > 0)
             list.setItems(FXCollections.observableArrayList (p_moves.get(count)));
 
-        list.getSelectionModel().selectedIndexProperty().addListener((ChangeListener<Number>) (observable, oldValue, newValue) -> {
-            System.out.println(list.getItems().get(newValue.intValue()));
-
-        });
-
-        BorderPane root = new BorderPane();
-        GridPane board = new GridPane();
-        GridPane options = new GridPane();
         drawGrid(board, gm.getGameManager());
 
+        list.getSelectionModel().selectedIndexProperty().addListener((ChangeListener<Number>) (observable, oldValue, newValue) -> {
+            if (p_names.get(count).isHuman() && newValue.intValue() >= 0){
+                gm.getGamer(p_names.get(count)).setSelectedMove(list.getItems().get(newValue.intValue()));
+                if (!noopCheck() || p_names.size() == 1){
+                    movePreview(gm, board);
+                }
+            }
+
+        });
 
 
 
@@ -146,18 +152,13 @@ public class Grahpics extends Application {
             public void handle(ActionEvent event) {
                 String buttonText = "Submit move for: ";
 
-                if (p_names.get(count).isHuman()){
+                if (p_names.get(count).isHuman() && list.getSelectionModel().getSelectedItem() == null){
 
-                    if (list.getSelectionModel().getSelectedItem() != null){
-                        gm.getGamer(p_names.get(count)).setSelectedMove(list.getSelectionModel().getSelectedItem());
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.isPresent() && result.get() == ButtonType.OK) {
+                        return;
                     }
 
-                    else{
-                        Optional<ButtonType> result = alert.showAndWait();
-                        if (result.isPresent() && result.get() == ButtonType.OK) {
-                            return;
-                        }
-                    }
                 }
 
                 while(count < p_names.size() - 1){
@@ -167,12 +168,12 @@ public class Grahpics extends Application {
                     }
                 }
 
-                System.out.println(count + "-" + p_names.size());
                 if (count == p_names.size() -1) {
                     update(gm);
                     drawGrid(board, gm.getGameManager());
                 }
 
+                list.getSelectionModel().select(-1);
                 list.setItems(FXCollections.observableArrayList (p_moves.get(count)));
                 btn.setText(buttonText + p_names.get(count));
 
@@ -199,5 +200,11 @@ public class Grahpics extends Application {
     public Scene getSelectionScene(){
 
         return null;
+    }
+
+    public void movePreview(GameManager gm, GridPane board){
+        gm.updateGame();
+        drawGrid(board, gm.getGameManager());
+        gm.undo();
     }
 }
