@@ -31,8 +31,10 @@ public class GameManager{
     }
 
     public void setupGame(String game_description_filename, String[] roles){
+
         LexicalAnalyser l = new LexicalAnalyser();
         l.analyseFile(game_description_filename);
+
 
         DescriptionTable dt = new DescriptionTable(l.getTokenStream());
 
@@ -57,7 +59,7 @@ public class GameManager{
 
 
         gameManager.setContents(gameManager.getNextState(gameManager.getContents(), moves));
-
+        System.out.println(gameManager.getContents() + " cont");
 
         for (Gamer gamer: gamers){
             gamer.setContents(gameManager.getContents());

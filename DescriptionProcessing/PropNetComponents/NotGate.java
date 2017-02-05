@@ -9,7 +9,7 @@ public final class NotGate extends PropNetNode
 {
 
     public boolean getValue() {
-        assert getNodeInputs().size() == 1; //TODO: replace asssert?
+//        assert getNodeInputs().size() == 1; //TODO: replace asssert?
         return !getNodeInputs().iterator().next().getValue();
     }
 

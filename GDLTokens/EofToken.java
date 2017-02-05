@@ -18,6 +18,7 @@ public class EofToken implements Token {
         return null;
     }
 
+
     public String toString() {
         return "<EOF>";
     }

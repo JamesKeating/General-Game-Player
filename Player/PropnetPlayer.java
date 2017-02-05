@@ -7,6 +7,7 @@ import DescriptionProcessing.PropNetComponents.Latch;
 import DescriptionProcessing.PropNetComponents.PropNetNode;
 import GDLTokens.KeyWordToken;
 import GDLTokens.Token;
+import GUI.Drawable;
 import SylmbolTable.Description;
 import SylmbolTable.Fact;
 
@@ -114,6 +115,27 @@ public class PropnetPlayer implements Gamer {
         return 0;
     }
 
+    public ArrayList<Drawable> getDrawable(HashSet<String> state){
+        ArrayList<Drawable> drawables = new ArrayList<>();
+        //getOrdering();
+        Propagate();
+
+        int x, y;
+        String file;
+        for (Latch latch :propNet.getDrawLatches()){
+
+            if (latch.getValue()){
+                x = Integer.valueOf(latch.getLabel().getFact().get(3).toString());
+                y = Integer.valueOf(latch.getLabel().getFact().get(4).toString());
+                file = latch.getLabel().getFact().get(5).toString();
+
+                drawables.add(new Drawable(x, y, file));
+            }
+
+        }
+
+        return drawables;
+    }
 
     public boolean isTerminal(HashSet<String> state) {
         SetBasePropositions(state);
@@ -165,6 +187,7 @@ public class PropnetPlayer implements Gamer {
 
         return moves;
     }
+
 
 
     public HashSet<String> getNextState(HashSet<String> state, ArrayList<String> moves) {

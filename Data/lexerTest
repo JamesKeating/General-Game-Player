@@ -40,7 +40,7 @@
                     (does ?w (mark ?j ?k))
                     (true (cell ?m ?n b))
                     (distinct ?m ?j)
-                    (not (distinct ?n ?k)))
+                )
 
                 (<= (next (control xplayer))
                     (true (control oplayer)))
@@ -127,3 +127,14 @@
                     (not open))
 
 
+                (<= (drawit (?x ?y btile))
+                    (true (cell ?x ?y b))
+                )
+
+                (<= (drawit (?x ?y xtile))
+                    (true(cell ?x ?y x))
+                )
+
+                (<= (drawit (?x ?y otile))
+                    (true(cell ?x ?y o))
+                )

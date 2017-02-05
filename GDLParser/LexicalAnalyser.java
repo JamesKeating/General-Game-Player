@@ -11,7 +11,7 @@ public class LexicalAnalyser {
 	
 	private int currState = 0;
 	private String[] keyWords = {"role", "init", "terminal", "legal", "next", "true", "does", "goal",
-									"or", "distinct", "not", "base"};
+									"or", "distinct", "not", "base", "drawit"};
 	private Trie symbolTable = new Trie(keyWords);
 	private ArrayList<Token> tokenStream = new ArrayList<>();
 	
@@ -21,52 +21,53 @@ public class LexicalAnalyser {
 		int lastState = 0;
 		
 		try{
-		FileInputStream fileInput = new FileInputStream("D:\\FYP\\General-Game-Player\\Data\\" + filename);
-		int fileChar = fileInput.read();
+			FileInputStream fileInput = new FileInputStream("D:\\FYP\\General-Game-Player\\Data\\" + filename);
+			int fileChar = fileInput.read();
 
-		char c = 0;
-		
-		while (fileChar != -1) {
-		   c = (char) fileChar;	
-		   //System.out.print(c);
-		   lastState = currState;
-		   switch(currState){
+			char c = 0;
 
-		   case 0:	currState = myDFA.state0(c);
-		   		break;
-		   case 5:	currState = myDFA.state5(c);
-		   		break;
-		   case 6:	currState = myDFA.state6(c);
-		   		break;
-		   case 7:  currState = myDFA.state7(c);
-			   break;
-		   case 8:  currState = myDFA.state8(c);
-			   break;
-		   }
+			while (fileChar != -1) {
+			   c = (char) fileChar;
 
-		   if(currState == -1) {
+			   lastState = currState;
+			   switch(currState){
 
-				createToken(lastState);
-				currState = 0;
-		   }
+			   case 0:	currState = myDFA.state0(c);
+					break;
+			   case 5:	currState = myDFA.state5(c);
+					break;
+			   case 6:	currState = myDFA.state6(c);
+					break;
+			   case 7:  currState = myDFA.state7(c);
+				   break;
+			   case 8:  currState = myDFA.state8(c);
+				   break;
+			   }
 
-		   else if(currState > 0 && currState < 5){
-			   createToken(currState);
-			   currState = 0;
-			   fileChar = fileInput.read();
-		   }
+			   if(currState == -1) {
 
-		   else{
-			   symbolTable.processChar(c, true);
-			   fileChar = fileInput.read();
-		   }
-		}
-		if(currState != -1|| currState != 7 || currState != 8) {
-			createToken(currState);
-		}
+					createToken(lastState);
+					currState = 0;
+			   }
 
-		fileInput.close();
-		tokenStream.add(new EofToken());
+			   else if(currState > 0 && currState < 5){
+				   createToken(currState);
+				   currState = 0;
+				   fileChar = fileInput.read();
+			   }
+
+			   else{
+				   symbolTable.processChar(c, true);
+				   fileChar = fileInput.read();
+			   }
+			}
+
+			if(currState != -1|| currState != 7 || currState != 8) {
+				createToken(currState);
+			}
+
+			fileInput.close();
+			tokenStream.add(new EofToken());
 		}catch(Exception e){ e.printStackTrace();}
 	}
 	

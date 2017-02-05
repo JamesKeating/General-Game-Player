@@ -26,4 +26,8 @@ public class KeyWordToken implements Token {
         return new KeyWordToken(value);
     }
 
+    public void setId(String id) {
+        value = id;
+    }
+
 }

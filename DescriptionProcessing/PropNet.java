@@ -41,6 +41,12 @@ public class PropNet
     /** A reference to the single, unique, InitProposition. */
     private Latch initLatches;
 
+    public HashSet<Latch> getDrawLatches() {
+        return drawLatches;
+    }
+
+    private HashSet<Latch> drawLatches;
+
     /** A reference to the single, unique, TerminalProposition. */
     private Latch terminalLatches;
 
@@ -61,12 +67,14 @@ public class PropNet
  
     public PropNet(ArrayList<Player> roles, HashSet<PropNetNode> propNetNodes) {
         //TODO:finish these
+
         this.roles = roles;
         this.propNetNodes = propNetNodes;
         this.latches = findLatches();
         this.baseLatches = findBaseLatches();
         this.inputLatches = findInputLatches();
         this.legalLatches = findLegalLatches();
+        this.drawLatches = findDrawLatches();
         this.goalLatches = findGoalLatches();
         this.initLatches = findInitLatches();
         this.terminalLatches = findTerminalLatches();
@@ -79,33 +87,6 @@ public class PropNet
         return roles;
     }
 
-//    public HashMap<Latch, Latch> getLegalInputMap() {
-//        return legalInputMap;
-//    }
-//
-//    private HashMap<Latch, Latch> makeLegalInputMap() {
-//        HashMap<Latch, Latch> legalInputMap = new HashMap<>();
-//        // Create a mapping from Body->Input.
-//        //TODO: Changed GDLTerm To TOKEN? and check var names prop => lat
-//        HashMap<String, Latch> inputLatsByBody = new HashMap<>();
-//        for(Latch inputLat : inputLatches.values()) {
-//            inputLatsByBody.put(inputLat.toString(), inputLat);
-//
-//        }
-//        // Use that mapping to map Input->Legal and Legal->Input
-//        // based on having the same Body Latch.
-//        for(HashSet<Latch> legalLats : legalLatches.values()) {
-//            for(Latch legalLat : legalLats) {
-//                ArrayList<Token> legalLatBody = (legalLat.getLabel()).getFact();
-//                if (inputLatsByBody.containsKey(legalLatBody)) {
-//                    Latch inputLat = inputLatsByBody.get(legalLatBody);
-//                    legalInputMap.put(inputLat, legalLat);
-//                    legalInputMap.put(legalLat, inputLat);
-//                }
-//            }
-//        }
-//        return legalInputMap;
-//    }
 
     /**
      * Getter method.
@@ -349,6 +330,23 @@ public class PropNet
         return legalLatches;
     }
 
+    private HashSet<Latch> findDrawLatches()
+    {
+        HashSet<Latch> drawLatches = new HashSet<>();
+        for (Latch latch : latches) {
+
+            if(latch.getLabel().getFact().size() <= 1)
+                continue;
+
+
+            if (latch.getLabel().getLeadAtom().getID().equals("drawit")) {
+                drawLatches.add(latch);
+            }
+        }
+
+        return drawLatches;
+    }
+
     /**
      * Builds an index over the Propositions in the PropNet.
      *
@@ -389,40 +387,6 @@ public class PropNet
         return propNetNodes.size();
     }
 
-    public int getNumAnds() {
-        int andCount = 0;
-        for(PropNetNode propNetNode : propNetNodes) {
-            if(propNetNode instanceof AndGate)
-                andCount++;
-        }
-        return andCount;
-    }
-
-    public int getNumOrs() {
-        int orCount = 0;
-        for(PropNetNode propNetNode : propNetNodes) {
-            if(propNetNode instanceof OrGate)
-                orCount++;
-        }
-        return orCount;
-    }
-
-    public int getNumNots() {
-        int notCount = 0;
-        for(PropNetNode propNetNode : propNetNodes) {
-            if(propNetNode instanceof NotGate)
-                notCount++;
-        }
-        return notCount;
-    }
-
-    public int getNumLinks() {
-        int linkCount = 0;
-        for(PropNetNode propNetNode : propNetNodes) {
-            linkCount += propNetNode.getNodeOutputs().size();
-        }
-        return linkCount;
-    }
 
     /**
      * Removes a PropNetNode from the propnet. Be very careful when using
@@ -453,13 +417,6 @@ public class PropNet
                     legalInputMap.remove(latch);
                 }
             }
-            //TODO: description table?
-//            } else if(label == GdlPool.getProposition(GdlPool.getConstant("INIT"))) {
-//                throw new RuntimeException("The INIT PropNetNode cannot be removed. Consider leaving it and ignoring it.");
-//            } else if(name == GdlPool.getProposition(GdlPool.TERMINAL)) {
-//                throw new RuntimeException("The terminal PropNetNode cannot be removed.");
-            //}
-
             else {
                 for(HashSet<Latch> latches : legalLatches.values()) {
                     if(latches.contains(latch)) {

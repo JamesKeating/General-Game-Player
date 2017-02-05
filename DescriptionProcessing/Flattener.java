@@ -90,7 +90,7 @@ public class Flattener
      */
     private ArrayList<Description> getInstantiations(String constant) {
 //        System.out.println(constant);
-//        System.out.println(instantiations);
+//        System.out.println("instan" + instantiations);
         if ( !instantiations.containsKey(constant) ) {
             instantiations.put(constant, new ArrayList<>());
 
@@ -213,7 +213,13 @@ public class Flattener
 
 
         if ( template.getFacts().size() == index ) {
+            if (template.getLeadAtom().getID().equals("drawit")){
+//                System.out.println(template + "----");
+            }
             Description d = sub.substitute(template, theta);
+
+
+
             boolean old = false;
             for (Description desc: results){
 //                System.out.println(desc);
@@ -223,7 +229,7 @@ public class Flattener
 
             if (!old)
                 results.add(d);
-            //System.out.println("real result: " + results);
+//            System.out.println("real result: " + results);
 
         }
         else {
@@ -235,7 +241,7 @@ public class Flattener
 //                System.out.println(sentence);
                 for ( Description instantiation : getInstantiations(sentence.getLeadAtom().getID()) ) {
 
-                   // System.out.println(sentence + "--" + instantiation);
+//                    System.out.println(sentence + "--" + instantiation);
 
 
                     Substitution thetaPrime = uni.unify(sentence, instantiation);
@@ -255,8 +261,41 @@ public class Flattener
             }
 
             else {
-                instantiate(template, index + 1, theta, results);
-            }
+//                String arg = "";
+                if (check.equals("not")) {
+                    KeyWordToken t = (KeyWordToken) template.getFacts().get(index).getLeadAtom();
+                    t.setId("true");
+                    Fact sentence =  sub.substitute(new Fact(template.getFacts().get(index)), theta);
+
+//                System.out.println(template.getFacts().get(index));
+//                System.out.println(sentence);
+
+
+                    for ( Description instantiation : getInstantiations(sentence.getLeadAtom().getID()) ) {
+
+                        t.setId("not");
+
+//                        System.out.println(instantiation +"tag");
+                        Substitution thetaPrime = uni.unify(sentence, instantiation);
+                        //System.out.println(thetaPrime);
+                        //                System.exit(0);
+                        if (thetaPrime != null) {
+                            Substitution thetaCopy = theta.copy();
+                            thetaCopy = thetaCopy.compose(thetaPrime);
+
+//                        System.out.println(template +" =" + thetaCopy + "---" + index);
+
+//                            System.out.println(results + "1yy");
+                            instantiate(template, index + 1, thetaCopy, results);
+
+                        }
+                    }
+                }
+
+                else
+                    instantiate(template, index + 1, theta, results);
+
+                }
         }
     }
 
@@ -268,7 +307,7 @@ public class Flattener
      *            A game description.
      * @return An archive of rules, indexed by head name.
      */
-    private HashMap<String, ArrayList<Description>> findTemplates(ArrayList<Description> descriptionList) {
+    private HashMap<String, ArrayList<Description>> findTemplates(ArrayList<Description> descriptionList){
 
         HashMap<String, ArrayList<Description>> templates = new HashMap<>();
         for ( Description description : descriptionList ) {

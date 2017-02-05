@@ -41,3 +41,26 @@
 
   (<= terminal (true (light 1)) (true (light 2)) (true (light 3)))
   (<= terminal (true (turn 7)))
+
+
+
+  (<= (drawit (1 ?x bulbon))
+      (true (light ?x))
+  )
+
+  (<= (drawit (1 ?z bulboff))
+      (not (light ?z ))
+  )
+
+  (<= (drawit (2 1 A))
+        (distinct 1 2)
+  )
+
+  (<= (drawit (2 2 B))
+        (distinct 1 2)
+  )
+
+  (<= (drawit (2 3 C))
+        (distinct 1 2)
+  )
+

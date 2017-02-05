@@ -5,9 +5,7 @@ package DescriptionProcessing;
  */
 
 import DescriptionProcessing.PropNetComponents.*;
-import GDLTokens.IdToken;
-import GDLTokens.KeyWordToken;
-import GDLTokens.Token;
+import GDLTokens.*;
 import SylmbolTable.Description;
 import SylmbolTable.DescriptionTable;
 import SylmbolTable.Fact;
@@ -20,6 +18,7 @@ public final class PropNetBuilder
     /** An archive of Propositions, indexed by name. */
     private Map<String, Latch> propositions;
     /** An archive of Components. */
+    private ArrayList<String> nots = new ArrayList<>();
     private HashSet<PropNetNode> propNetNodes;
 
     public PropNetBuilder() {
@@ -69,7 +68,6 @@ public final class PropNetBuilder
 //        System.out.println(propNetNodes);
         fixDisjunctions();
         addMissingInputs();
-
         //System.out.println(propNetNodes.size());
         return new PropNet(players, propNetNodes);
     }
@@ -80,22 +78,35 @@ public final class PropNetBuilder
      */
     private void addMissingInputs() {
 
-        ArrayList<Latch> addList = new ArrayList<>();
-        for ( Latch latch : propositions.values() ) {
+//        ArrayList<Latch> addList = new ArrayList<>();
+//        for ( Latch latch : propositions.values() ) {
+//
+////            System.out.println(latch.getLabel());
+//            if ( latch.getLabel().getFact().size() > 1 ) {
+//
+//                if ( latch.getLabel().getLeadAtom().getID().equals("legal") )
+//                {
+////                    System.out.println(latch.getLabel());
+//                    addList.add(latch);
+//                }
+//            }
+//        }
 
-//            System.out.println(latch.getLabel());
-            if ( latch.getLabel().getFact().size() > 1 ) {
+            ArrayList<Latch> addList = new ArrayList<>();
+            for ( Latch latch : propositions.values() ) {
 
-                if ( latch.getLabel().getLeadAtom().getID().equals("legal") )
-                {
-//                    System.out.println(latch.getLabel());
-                    addList.add(latch);
+                if ( latch.getLabel().getFact().size() > 1 ) {
+
+                    if ( latch.getLabel().getLeadAtom().getID().equals("not") )
+                    {
+
+                    }
                 }
             }
-        }
 
 
-        for ( Latch addItem : addList ) {
+
+            for ( Latch addItem : addList ) {
             Fact relation = addItem.getLabel();
 
             ArrayList<Token> body = new ArrayList<>();
@@ -149,14 +160,17 @@ public final class PropNetBuilder
         else if ( fact.getLeadAtom().getID().equals("not") ) {
             ArrayList<Token> inverse = new ArrayList<>();
 
-            fact.getFact().remove(1);
-            if (fact.getFact().get(1).getID().equals("(")) {
-                fact.getFact().remove(1);
-                fact.getFact().remove(fact.getFact().size()-2);
+            inverse.add(new LparToken());
+            inverse.add(new KeyWordToken("true"));
+            for (int i = 2; i < fact.getFact().size() -1; i++ ){
+                    inverse.add(fact.getFact().get(i).copy());
             }
+            inverse.add(new RparToken());
 
+            Fact inv = new Fact(inverse) ;
+            nots.add(inv.toString());
 
-            Latch input = convertConjunct(fact);
+            Latch input = convertConjunct(inv);
             NotGate no = new NotGate();
             Latch output = new Latch(new Fact(anon));
 
@@ -174,7 +188,6 @@ public final class PropNetBuilder
 
             Latch proposition = getProposition(fact);
 
-//            System.out.println(proposition.getNodeOutputs() + "---PROP");
             propNetNodes.add(proposition);
 
             return proposition;
