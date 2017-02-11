@@ -104,12 +104,12 @@ public class Flattener
 //                System.out.println(constant + "---const----");
 //                System.out.println(templates);
                 for ( Description template : templates.get(constant) ) {
+
 //                    System.out.println(template);
                     ArrayList<Description> results = new ArrayList<>();
                     instantiate(template, 1, new Substitution(), results);
 
 //                   System.out.println(template + "results ====");
-
 
                     instantiations.get(constant).addAll(results);
 
@@ -213,9 +213,7 @@ public class Flattener
 
 
         if ( template.getFacts().size() == index ) {
-            if (template.getLeadAtom().getID().equals("drawit")){
-//                System.out.println(template + "----");
-            }
+
             Description d = sub.substitute(template, theta);
 
 
@@ -229,6 +227,8 @@ public class Flattener
 
             if (!old)
                 results.add(d);
+
+
 //            System.out.println("real result: " + results);
 
         }
@@ -246,6 +246,7 @@ public class Flattener
 
                     Substitution thetaPrime = uni.unify(sentence, instantiation);
 
+
         //                System.exit(0);
                     if ( thetaPrime!=null ) {
                         Substitution thetaCopy = theta.copy();
@@ -262,7 +263,9 @@ public class Flattener
 
             else {
 //                String arg = "";
+
                 if (check.equals("not")) {
+
                     KeyWordToken t = (KeyWordToken) template.getFacts().get(index).getLeadAtom();
                     t.setId("true");
                     Fact sentence =  sub.substitute(new Fact(template.getFacts().get(index)), theta);
@@ -275,14 +278,17 @@ public class Flattener
 
                         t.setId("not");
 
+
 //                        System.out.println(instantiation +"tag");
                         Substitution thetaPrime = uni.unify(sentence, instantiation);
                         //System.out.println(thetaPrime);
                         //                System.exit(0);
+
+
                         if (thetaPrime != null) {
                             Substitution thetaCopy = theta.copy();
                             thetaCopy = thetaCopy.compose(thetaPrime);
-
+                            check = "";
 //                        System.out.println(template +" =" + thetaCopy + "---" + index);
 
 //                            System.out.println(results + "1yy");
@@ -290,6 +296,8 @@ public class Flattener
 
                         }
                     }
+                    if (check.equals("not"))
+                        instantiate(template, index + 1, theta, results);
                 }
 
                 else

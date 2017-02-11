@@ -78,8 +78,6 @@
                 (<= (open)
                     (true (cell ?m ?n b)))
 
-
-
                 (<= (legal ?w (mark ?x ?y))
                     (true (cell ?x ?y b))
                     (true (control ?w)))
@@ -95,27 +93,25 @@
                 (<= (goal xplayer 100)
                     (line x))
 
-
-
                 (<= (goal xplayer 0)
                     (line o))
 
-                (<= (goal oplayer 100)
-                    (line o))
-
-                (<= (goal xplayer 50)
-                    (not (line x))
-                    (not (line o))
-                    (not open))
 
                 (<= (goal oplayer 50)
                     (not (line x))
                     (not (line o))
-                    (not open))
+                    (not (open)))
+
+                (<= (goal xplayer 50)
+                    (not (line x))
+                    (not (line o))
+                    (not (open)))
+
+                (<= (goal oplayer 100)
+                    (line o))
 
                 (<= (goal oplayer 0)
                     (line x))
-
 
                 (<= terminal
                     (line x))
@@ -124,7 +120,7 @@
                     (line o))
 
                 (<= terminal
-                    (not open))
+                    (not(open)))
 
 
                 (<= (drawit (?x ?y btile))

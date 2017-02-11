@@ -48,7 +48,6 @@ public final class PropNetBuilder
         for ( Description rule : description ) {
             i++;
 
-//            System.out.println(rule + "first");
             if ( rule.getArity() > 1 ) {
                 //System.out.println("check 1");
                 convertRule(rule);
@@ -95,13 +94,13 @@ public final class PropNetBuilder
             ArrayList<Latch> addList = new ArrayList<>();
             for ( Latch latch : propositions.values() ) {
 
-                if ( latch.getLabel().getFact().size() > 1 ) {
-
-                    if ( latch.getLabel().getLeadAtom().getID().equals("not") )
-                    {
-
-                    }
+                if ( latch.getLabel().getLeadAtom().getID().equals("true") && latch.getNodeInputs().size() == 0 ) {
+                    latch.getLabel().getFact().remove(0);
+                    latch.getLabel().getFact().remove(0);
+                    latch.getLabel().getFact().remove(latch.getLabel().getFact().size() -1);
+                    link(getProposition(latch.getLabel()), latch);
                 }
+
             }
 
 
@@ -140,7 +139,6 @@ public final class PropNetBuilder
 //        System.out.println(fact);
         ArrayList<Token> anon = new ArrayList<>();
         anon.add(new IdToken("anon"));
-
         if ( fact.getLeadAtom().getID().equals("distinct") ) {
 
 //            System.out.println(fact);
@@ -166,9 +164,8 @@ public final class PropNetBuilder
                     inverse.add(fact.getFact().get(i).copy());
             }
             inverse.add(new RparToken());
-
             Fact inv = new Fact(inverse) ;
-            nots.add(inv.toString());
+
 
             Latch input = convertConjunct(inv);
             NotGate no = new NotGate();
@@ -184,12 +181,8 @@ public final class PropNetBuilder
             return output;
         }
         else {
-//            System.out.println(fact + "---sentence");
-
             Latch proposition = getProposition(fact);
-
             propNetNodes.add(proposition);
-
             return proposition;
         }
     }
@@ -228,6 +221,7 @@ public final class PropNetBuilder
 
             return preTransition;
         }
+
         else
         {
 

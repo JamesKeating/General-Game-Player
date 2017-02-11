@@ -15,13 +15,13 @@ public class LexicalAnalyser {
 	private Trie symbolTable = new Trie(keyWords);
 	private ArrayList<Token> tokenStream = new ArrayList<>();
 	
-	public void analyseFile(String filename){
+	public void analyseFile(String directory){
 		
 		DFA myDFA =new DFA(); 
 		int lastState = 0;
 		
 		try{
-			FileInputStream fileInput = new FileInputStream("D:\\FYP\\General-Game-Player\\Data\\" + filename);
+			FileInputStream fileInput = new FileInputStream(directory);
 			int fileChar = fileInput.read();
 
 			char c = 0;

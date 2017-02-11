@@ -46,7 +46,7 @@ public class PropnetPlayer implements Gamer {
     }
 
     public void undo(){
-        if (contents.size() > 0) {
+        if (contents_list.size() > 0) {
             contents_list.remove(contents_list.size() - 1);
             setContents(contents_list.get(contents_list.size() - 1));
         }
@@ -59,18 +59,11 @@ public class PropnetPlayer implements Gamer {
 
     public void initialize(ArrayList<Description> description) {
 
-
         PropNetBuilder builder= new PropNetBuilder();
         propNet = builder.create(description);
         roles = propNet.getRoles();
         ordering = getOrdering();
         setContents(getInitialState());
-//        System.out.println("initial: "+ contents);
-
-
-//
-//        System.out.println("game terminated: \n" + roles.get(0) + " score = " + getGoal(contents, roles.get(0)));
-////        + "\n" + roles.get(1) + " score = " + getGoal(contents, roles.get(1)));
 
     }
 
@@ -244,7 +237,6 @@ public class PropnetPlayer implements Gamer {
         ArrayList<String> temp;
 
         for (Player player : getRoles()){
-
             if (player.toString().equals(myRole)){
                 temp = getLegalMoves(contents, player);
                 return temp.get(ThreadLocalRandom.current().nextInt(0, temp.size()));
@@ -254,5 +246,13 @@ public class PropnetPlayer implements Gamer {
         return null;
     }
 
+
+    public boolean allAI(){
+        for (Player player : getRoles()){
+            if (player.isHuman())
+                return false;
+        }
+        return true;
+    }
 
 }

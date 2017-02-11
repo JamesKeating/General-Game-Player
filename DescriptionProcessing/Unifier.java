@@ -25,8 +25,9 @@ public class Unifier
         else
             isGood = unifyTerm(x.getFact(), y.getDescription(), theta);
 
-        if(isGood)
+        if(isGood){
             return theta;
+        }
         else
             return null;
     }

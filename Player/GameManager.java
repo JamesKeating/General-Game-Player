@@ -22,26 +22,19 @@ public class GameManager{
     private PropnetPlayer gameManager = new PropnetPlayer();
     private ArrayList<Gamer> gamers = new ArrayList<>();
 
-    public GameManager(Gamer...players){
+    public GameManager(ArrayList<Gamer> players){
         for (Gamer player : players){
             gamers.add(player);
         }
-
-
     }
 
-    public void setupGame(String game_description_filename, String[] roles){
 
-        LexicalAnalyser l = new LexicalAnalyser();
-        l.analyseFile(game_description_filename);
-
-
-        DescriptionTable dt = new DescriptionTable(l.getTokenStream());
+    public void setupGame(DescriptionTable dt, ArrayList<String> roles){
 
         gameManager.initialize(dt.listTable());
         for (int i = 0; i < gamers.size(); i++){
             gamers.get(i).initialize(dt.listTable());
-            gamers.get(i).setMyRole(roles[i]);
+            gamers.get(i).setMyRole(roles.get(i));
         }
 
     }
@@ -50,6 +43,7 @@ public class GameManager{
 
         ArrayList<String> moves = new ArrayList<>();
         for (Player role: gameManager.getRoles()){
+
             for(Gamer gamer : gamers){
                 if (role.toString().equals(gamer.getMyRole())){
                     moves.add(gamer.makeMove());
