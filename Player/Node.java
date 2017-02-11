@@ -15,6 +15,16 @@ public class Node {
     private int visits;
     private double score;
     private String move;
+    private boolean isMax = true;
+
+    public boolean isMax() {
+        return isMax;
+    }
+
+    public void setMax(boolean max) {
+        isMax = max;
+    }
+
 
     public Node(HashSet<String> state){
         this.contents = state;
@@ -27,6 +37,7 @@ public class Node {
         this.contents = state;
         this.move = move;
         children = new ArrayList<>();
+        isMax = !myParent.isMax;
     }
 
     public ArrayList<Node> getChildren(){

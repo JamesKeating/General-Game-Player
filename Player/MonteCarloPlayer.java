@@ -31,7 +31,10 @@ public class MonteCarloPlayer extends PropnetPlayer {
             }
         }
 
-        double timeLimit = 5000;
+        if (getLegalMoves(getContents(), myRole).size() == 1)
+            return getLegalMoves(getContents(), myRole).get(0);
+
+        double timeLimit = 2000;
         double start = System.currentTimeMillis();
         double finishBy = start + timeLimit - 1000;
 
@@ -44,7 +47,7 @@ public class MonteCarloPlayer extends PropnetPlayer {
 
             selected = selection(root);
             expand(selected);
-            estScore = monteCarlo(selected.getContents(), myRole, count);
+            estScore = monteCarlo(selected, myRole, count);
             backpropagate(selected, estScore);
 
         }
@@ -62,32 +65,34 @@ public class MonteCarloPlayer extends PropnetPlayer {
 
     }
 
-    public double monteCarlo(HashSet<String> contents, Player player, int count) {
+    public double monteCarlo(Node selected, Player player, int count) {
 
-
+        HashSet<String> contents = selected.getContents();
         int moveTotalPoints = 0;
         int moveTotalAttempts;
+
+
         for (moveTotalAttempts = 0; moveTotalAttempts < count; moveTotalAttempts++) {
-            //time limit
-            moveTotalPoints += drillDown(contents, player);
+            if (selected.isMax())
+                moveTotalPoints += drillDown(contents, player);
+
         }
-        return moveTotalPoints / moveTotalAttempts;
+
+
+        return moveTotalPoints/moveTotalAttempts;
 
     }
 
 
+    private int drillDown(HashSet<String> rndContents, Player targetPlayer){
 
-
-    private int drillDown(HashSet<String> rndContents, Player targetPlayer){//int[]theDepth
-        //int nDepth = 0;
         while(!isTerminal(rndContents)) {
-            //nDepth++;
             rndContents = randomNextState(rndContents);
         }
-//        if(theDepth != null)
-//            theDepth[0] = nDepth;
-//
+
+
         return getGoal(rndContents, targetPlayer);
+
     }
 
     private HashSet<String> randomNextState(HashSet<String> contents, String move) {
@@ -126,7 +131,7 @@ public class MonteCarloPlayer extends PropnetPlayer {
 
     private Node selection (Node node) {
 
-        if (  node.getVisits() == 0 ) {
+        if (  node.getVisits() == 0 || isTerminal(node.getContents()) ) {
             return node;
         }
 
@@ -135,9 +140,11 @@ public class MonteCarloPlayer extends PropnetPlayer {
             if (node.getChildren().get(i).getVisits() == 0) {
                 return node.getChildren().get(i);
             }
+
         }
 
-        double score = 0, newscore;
+
+        double score = Double.NEGATIVE_INFINITY, newscore;
         Node result = node;
 
         for (int i=0; i<node.getChildren().size(); i++) {
@@ -146,9 +153,10 @@ public class MonteCarloPlayer extends PropnetPlayer {
 
             if (newscore > score) {
                 score = newscore;
-                result=node.getChildren().get(i);
+                result = node.getChildren().get(i);
             }
         }
+
 
         return selection(result);
     }
@@ -160,10 +168,12 @@ public class MonteCarloPlayer extends PropnetPlayer {
     private boolean expand (Node node) {
         ArrayList<String> moves = getLegalMoves(node.getContents(), myRole);
 
-        for (int i=0; i < moves.size(); i++) {
-            HashSet<String> newstate = randomNextState(node.getContents(), moves.get(i));
-            Node newnode = new Node(newstate, node, moves.get(i));
-        }
+
+            for (int i=0; i < moves.size(); i++) {
+                HashSet<String> newstate = randomNextState(node.getContents(), moves.get(i));
+                Node newnode = new Node(newstate, node, moves.get(i));
+            }
+
 
         return true;
     }
@@ -171,6 +181,8 @@ public class MonteCarloPlayer extends PropnetPlayer {
     private boolean backpropagate (Node node, double score) {
         node.setVisits(node.getVisits()+1);
         node.setScore(node.getScore() + score);
+
+
 
         if (node.getParent() != null){
             backpropagate(node.getParent(), score);
