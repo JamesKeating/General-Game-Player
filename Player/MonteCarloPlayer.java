@@ -2,6 +2,7 @@ package Player;
 
 import DescriptionProcessing.Player;
 import DescriptionProcessing.PropNetComponents.Latch;
+import sun.reflect.generics.tree.Tree;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -13,15 +14,16 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class MonteCarloPlayer extends PropnetPlayer {
 
-    int count = 0;
-    public String makeMove() {
-        double timeLimit = 5000;
-        double start = System.currentTimeMillis();
-        double finishBy = start + timeLimit - 1000;
+    private int count;
+    private Player myRole = null;
 
+    public MonteCarloPlayer(){
+        super();
+        count = 4;
+    }
 
-        Player myRole = null;
-        ArrayList<String> moves;
+    public String makeMove(){
+
         for (Player player : getRoles()) {
             if (player.toString().equals(getMyRole())) {
                 myRole = player;
@@ -29,70 +31,63 @@ public class MonteCarloPlayer extends PropnetPlayer {
             }
         }
 
-        moves = getLegalMoves(getContents(), myRole);
-        String move = moves.get(0);
+        double timeLimit = 5000;
+        double start = System.currentTimeMillis();
+        double finishBy = start + timeLimit - 1000;
+
+        Node root = new Node(getContents());
+        Node selected;
+        double estScore;
 
 
-        if (moves.size() > 1) {
+        while(System.currentTimeMillis() < finishBy){
 
-            int[] moveTotalPoints = new int[moves.size()];
-            int[] moveTotalAttempts = new int[moves.size()];
+            selected = selection(root);
+            expand(selected);
+            estScore = monteCarlo(selected.getContents(), myRole, count);
+            backpropagate(selected, estScore);
 
-            for(int i = 0; true; i = (i+1) % moves.size()) {
-
-                if (System.currentTimeMillis() > finishBy)
-                    break;
-
-
-                int theScore = drillDown(myRole, moves.get(i));
-                moveTotalPoints[i] += theScore;
-                moveTotalAttempts[i] += 1;
-            }
-
-//            System.out.println(System.currentTimeMillis() - start+ ":" + count );
-
-            double[] moveExpectedPoints = new double[moves.size()];
-            for (int i = 0; i < moves.size(); i++) {
-                moveExpectedPoints[i] = (double)moveTotalPoints[i] / moveTotalAttempts[i];
-            }
-
-
-            int bestMove = 0;
-            double bestMoveScore = moveExpectedPoints[0];
-            for (int i = 1; i < moves.size(); i++) {
-                if (moveExpectedPoints[i] > bestMoveScore) {
-                    bestMoveScore = moveExpectedPoints[i];
-                    bestMove = i;
-                }
-            }
-            move = moves.get(bestMove);
         }
 
-        double stop = System.currentTimeMillis();
-        return move;
-    }
-
-    private int[] depth = new int[1];
-    private int drillDown(Player myRole, String myMove) {
-        HashSet<String> contents = getContents();
-        try {
-            contents = recursiveDrill(randomNextState(contents, myMove), depth);
-            return getGoal(contents, myRole);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
+        String bestMove = root.getChildren().get(0).getMove();
+        double bestMoveScore = root.getChildren().get(0).getScore();
+        for (Node n: root.getChildren()){
+            if (n.getScore() > bestMoveScore) {
+                bestMoveScore = n.getScore();
+                bestMove = n.getMove();
+            }
         }
+
+        return bestMove;
+
     }
 
-    private HashSet<String> recursiveDrill(HashSet<String> rndContents, int[]theDepth){
-        int nDepth = 0;
+    public double monteCarlo(HashSet<String> contents, Player player, int count) {
+
+
+        int moveTotalPoints = 0;
+        int moveTotalAttempts;
+        for (moveTotalAttempts = 0; moveTotalAttempts < count; moveTotalAttempts++) {
+            //time limit
+            moveTotalPoints += drillDown(contents, player);
+        }
+        return moveTotalPoints / moveTotalAttempts;
+
+    }
+
+
+
+
+    private int drillDown(HashSet<String> rndContents, Player targetPlayer){//int[]theDepth
+        //int nDepth = 0;
         while(!isTerminal(rndContents)) {
-            nDepth++;
+            //nDepth++;
             rndContents = randomNextState(rndContents);
         }
-        if(theDepth != null)
-            theDepth[0] = nDepth;
-        return rndContents;
+//        if(theDepth != null)
+//            theDepth[0] = nDepth;
+//
+        return getGoal(rndContents, targetPlayer);
     }
 
     private HashSet<String> randomNextState(HashSet<String> contents, String move) {
@@ -128,5 +123,82 @@ public class MonteCarloPlayer extends PropnetPlayer {
         return getNextState(contents, moves);
     }
 
+
+    private Node selection (Node node) {
+
+        if (  node.getVisits() == 0 ) {
+            return node;
+        }
+
+        for (int i=0; i<node.getChildren().size(); i++) {
+
+            if (node.getChildren().get(i).getVisits() == 0) {
+                return node.getChildren().get(i);
+            }
+        }
+
+        double score = 0, newscore;
+        Node result = node;
+
+        for (int i=0; i<node.getChildren().size(); i++) {
+
+            newscore = selectfn(node.getChildren().get(i));
+
+            if (newscore > score) {
+                score = newscore;
+                result=node.getChildren().get(i);
+            }
+        }
+
+        return selection(result);
+    }
+
+    private double selectfn(Node node) {
+        return node.getScore() + Math.sqrt(2*Math.log(node.getParent().getVisits())/node.getVisits());
+    }
+
+    private boolean expand (Node node) {
+        ArrayList<String> moves = getLegalMoves(node.getContents(), myRole);
+
+        for (int i=0; i < moves.size(); i++) {
+            HashSet<String> newstate = randomNextState(node.getContents(), moves.get(i));
+            Node newnode = new Node(newstate, node, moves.get(i));
+        }
+
+        return true;
+    }
+
+    private boolean backpropagate (Node node, double score) {
+        node.setVisits(node.getVisits()+1);
+        node.setScore(node.getScore() + score);
+
+        if (node.getParent() != null){
+            backpropagate(node.getParent(), score);
+        }
+
+        return true;
+    }
+
+
+
+//    private int maxscore(Player role, HashSet<String> contents) {
+//
+//        if(isTerminal(contents))
+//            return getGoal(contents, role);
+//
+//
+//        ArrayList<String> actions = getLegalMoves(contents, role);
+//        int score = 0;
+//
+//        for (int i = 0; i < actions.size(); i++) {
+//            ArrayList<String> ourAction = new ArrayList<String>();
+//            ourAction.add(actions.get(i));
+//            int result = maxscore(role, getNextState(contents, actions));
+//            if (result > score) {
+//                score = result;
+//            }
+//        }
+//        return score;
+//    }
 
 }

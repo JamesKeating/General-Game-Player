@@ -56,14 +56,16 @@ public class Grahpics extends Application {
 
         ArrayList<Gamer> x =new ArrayList<Gamer>();
         ArrayList<String> y =new ArrayList<>();
-        y.add("oplayer");
-        y.add("xplayer");
-        x.add(new HumanPlayer());
+//        y.add("oplayer");
+//        y.add("xplayer");
+        y.add("player");
+//        x.add(new HumanPlayer());
         x.add(new MonteCarloPlayer());
 
         GameManager gm = new GameManager(x);
         LexicalAnalyser l = new LexicalAnalyser();
-        l.analyseFile("D:\\FYP\\General-Game-Player\\Data\\lexerTest");
+//        l.analyseFile("D:\\FYP\\General-Game-Player\\Data\\lexerTest");
+        l.analyseFile("D:\\FYP\\General-Game-Player\\Data\\buttons");
         dt = new DescriptionTable(l.getTokenStream());
 
         gm.setupGame(dt, y);
