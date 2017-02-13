@@ -47,11 +47,16 @@ public class GameManager{
             for(Gamer gamer : gamers){
                 if (role.toString().equals(gamer.getMyRole())){
                     moves.add(gamer.makeMove());
+
                 }
             }
         }
 
+        System.out.println(moves + " 1");
+        System.out.println(gameManager.getContents()+ " 2");
         gameManager.setContents(gameManager.getNextState(gameManager.getContents(), moves));
+        System.out.println(gameManager.getContents() + " 3");
+
 
         for (Gamer gamer: gamers){
             gamer.setContents(gameManager.getContents());
@@ -94,6 +99,7 @@ public class GameManager{
     public HumanPlayer getGamer(Player player){
         for (Gamer gamer: gamers){
             if (gamer.getMyRole().equals(player.toString()))
+
                 return (HumanPlayer) gamer;
 
         }

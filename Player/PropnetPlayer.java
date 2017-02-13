@@ -64,6 +64,26 @@ public class PropnetPlayer implements Gamer {
         roles = propNet.getRoles();
         ordering = getOrdering();
         setContents(getInitialState());
+//
+//        ArrayList<String> moves = new ArrayList<>();
+//        ArrayList<String> temp;
+//        while (!isTerminal(contents)){
+//
+//            for (Player player : getRoles()){
+//                temp = getLegalMoves(contents, player);
+//                moves.add(temp.get(ThreadLocalRandom.current().nextInt(0, temp.size())));
+//            }
+//
+//            System.out.println("moves: " + moves);
+//            System.out.println(contents);
+//            contents = getNextState(contents, moves);
+//            System.out.println(contents);
+//            moves.clear();
+//        }
+//
+//        System.out.println("game terminated: \n" + roles.get(0) + " score = " + getGoal(contents, roles.get(0))
+//                + "\n" + roles.get(1) + " score = " + getGoal(contents, roles.get(1)));
+
 
     }
 
@@ -255,4 +275,20 @@ public class PropnetPlayer implements Gamer {
         return true;
     }
 
+    public Player getPlayer(HashSet<String> contents){
+
+        ArrayList<String> moves = new ArrayList<>();
+
+        for (Player p : getRoles()){
+            moves = getLegalMoves(contents, p);
+
+            if (moves.size() > 1 ||(moves.size() == 1 && !moves.get(0).contains("noop"))) {
+//                System.out.println(p + " player");
+                return p;
+            }
+
+        }
+
+        return null;
+    }
 }

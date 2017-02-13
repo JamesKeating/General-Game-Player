@@ -94,10 +94,12 @@ public final class PropNetBuilder
             ArrayList<Latch> addList = new ArrayList<>();
             for ( Latch latch : propositions.values() ) {
 
+//                System.out.println(latch);
                 if ( latch.getLabel().getLeadAtom().getID().equals("true") && latch.getNodeInputs().size() == 0 ) {
                     latch.getLabel().getFact().remove(0);
                     latch.getLabel().getFact().remove(0);
                     latch.getLabel().getFact().remove(latch.getLabel().getFact().size() -1);
+//                    System.out.println(latch);
                     link(getProposition(latch.getLabel()), latch);
                 }
 
@@ -157,15 +159,24 @@ public final class PropNetBuilder
 
         else if ( fact.getLeadAtom().getID().equals("not") ) {
             ArrayList<Token> inverse = new ArrayList<>();
+            Fact inv;
 
-            inverse.add(new LparToken());
-            inverse.add(new KeyWordToken("true"));
-            for (int i = 2; i < fact.getFact().size() -1; i++ ){
+            if(!fact.getFact().get(3).getID().equals("distinct")) {
+                inverse.add(new LparToken());
+                inverse.add(new KeyWordToken("true"));
+                for (int i = 2; i < fact.getFact().size() - 1; i++) {
                     inverse.add(fact.getFact().get(i).copy());
+                }
+                inverse.add(new RparToken());
             }
-            inverse.add(new RparToken());
-            Fact inv = new Fact(inverse) ;
+            else {
+                for (int i = 2; i < fact.getFact().size() - 1; i++) {
+                    inverse.add(fact.getFact().get(i).copy());
 
+                }
+            }
+
+            inv = new Fact(inverse) ;
 
             Latch input = convertConjunct(inv);
             NotGate no = new NotGate();

@@ -15,48 +15,65 @@ import java.util.concurrent.ThreadLocalRandom;
 public class MonteCarloPlayer extends PropnetPlayer {
 
     private int count;
-    private Player myRole = null;
+
 
     public MonteCarloPlayer(){
         super();
-        count = 4;
+        count = 5;
     }
 
     public String makeMove(){
 
-        for (Player player : getRoles()) {
-            if (player.toString().equals(getMyRole())) {
-                myRole = player;
+        Player myrole = null;
+        for (Player p : getRoles()){
+            if (p.toString().equals(getMyRole())){
+                myrole = p;
                 break;
             }
         }
 
-        if (getLegalMoves(getContents(), myRole).size() == 1)
-            return getLegalMoves(getContents(), myRole).get(0);
+        if (getLegalMoves(getContents(), myrole).size() == 1)
+            return getLegalMoves(getContents(), myrole).get(0);
 
-        double timeLimit = 2000;
+        double timeLimit = 5000;
         double start = System.currentTimeMillis();
         double finishBy = start + timeLimit - 1000;
 
-        Node root = new Node(getContents());
+
+        Node root;
         Node selected;
         double estScore;
 
 
+        root = new Node(new HashSet<>(getContents()));
         while(System.currentTimeMillis() < finishBy){
 
+//            System.out.println("root:  " + root.getMove() + "--- --- "+ root.getContents());
+
             selected = selection(root);
-            expand(selected);
-            estScore = monteCarlo(selected, myRole, count);
+//            System.out.println("selected:  " + selected.getMove() + "--- --- "+ selected.getContents());
+            if (!isTerminal(selected.getContents())){
+//                System.out.println("not terminal apparently: " + selected.getContents());
+                expand(selected);
+                estScore = monteCarlo(selected, count);
+            }
+
+            else {
+                System.out.println(selected.getMove() +" -" + getPlayer(selected.getParent().getContents()));
+                estScore = drillDown(selected.getContents(), getPlayer(selected.getParent().getContents()));
+            }
+
+//            System.out.println(estScore);
             backpropagate(selected, estScore);
 
         }
 
+//        System.out.println(start -System.currentTimeMillis());
         String bestMove = root.getChildren().get(0).getMove();
-        double bestMoveScore = root.getChildren().get(0).getScore();
+        double bestMoveScore = root.getChildren().get(0).getScore()/ root.getChildren().get(0).getVisits();
         for (Node n: root.getChildren()){
-            if (n.getScore() > bestMoveScore) {
-                bestMoveScore = n.getScore();
+            if (n.getScore()/n.getVisits() > bestMoveScore) {
+                bestMoveScore = n.getScore()/n.getVisits();
                 bestMove = n.getMove();
             }
         }
@@ -65,16 +82,20 @@ public class MonteCarloPlayer extends PropnetPlayer {
 
     }
 
-    public double monteCarlo(Node selected, Player player, int count) {
+    public double monteCarlo(Node selected, int count) {
 
-        HashSet<String> contents = selected.getContents();
+//        HashSet<String> contents = new HashSet<>(selected.getContents());
         int moveTotalPoints = 0;
         int moveTotalAttempts;
 
+        Player targetPlayer = getPlayer(selected.getContents());
 
+
+//        System.out.println(targetPlayer + " ismax = "+selected.isMax());
         for (moveTotalAttempts = 0; moveTotalAttempts < count; moveTotalAttempts++) {
-            if (selected.isMax())
-                moveTotalPoints += drillDown(contents, player);
+
+
+            moveTotalPoints += drillDown(selected.getContents(), targetPlayer);
 
         }
 
@@ -86,21 +107,27 @@ public class MonteCarloPlayer extends PropnetPlayer {
 
     private int drillDown(HashSet<String> rndContents, Player targetPlayer){
 
+
         while(!isTerminal(rndContents)) {
             rndContents = randomNextState(rndContents);
         }
 
 
-        return getGoal(rndContents, targetPlayer);
+        if (targetPlayer.toString().equals(getMyRole())){
+            return getGoal(rndContents, targetPlayer);
+
+        }
+        else
+            return -getGoal(rndContents, targetPlayer);
 
     }
 
-    private HashSet<String> randomNextState(HashSet<String> contents, String move) {
+    private HashSet<String> randomNextState(HashSet<String> contents, String move, Player moveMaker) {
 
         ArrayList<String> temp;
         ArrayList<String> moves = new ArrayList<>();
         for (Player player : getRoles()){
-            if (player.toString().equals(getMyRole())){
+            if (player == moveMaker){
                 moves.add(move);
             }
             else {
@@ -132,12 +159,14 @@ public class MonteCarloPlayer extends PropnetPlayer {
     private Node selection (Node node) {
 
         if (  node.getVisits() == 0 || isTerminal(node.getContents()) ) {
+//            System.out.println("root or terminal");
             return node;
         }
 
         for (int i=0; i<node.getChildren().size(); i++) {
 
             if (node.getChildren().get(i).getVisits() == 0) {
+//                System.out.println(node.getChildren().get(i).getMove() + " unvisted child");
                 return node.getChildren().get(i);
             }
 
@@ -157,7 +186,7 @@ public class MonteCarloPlayer extends PropnetPlayer {
             }
         }
 
-
+//        System.out.println("children of root all seen: -checking" + result.getMove() + "-------"+ result.getContents());
         return selection(result);
     }
 
@@ -166,11 +195,16 @@ public class MonteCarloPlayer extends PropnetPlayer {
     }
 
     private boolean expand (Node node) {
-        ArrayList<String> moves = getLegalMoves(node.getContents(), myRole);
 
+
+        Player moveMaker = getPlayer(node.getContents());
+        ArrayList<String> moves = getLegalMoves(node.getContents(), moveMaker);
+
+//        System.out.println("expanded state: "+ node.getContents().size() + " -- "+ node.getContents());
 
             for (int i=0; i < moves.size(); i++) {
-                HashSet<String> newstate = randomNextState(node.getContents(), moves.get(i));
+                HashSet<String> newstate = randomNextState(node.getContents(), moves.get(i), moveMaker);
+//                System.out.println("expanded state new " + newstate.size() + " : " + newstate);
                 Node newnode = new Node(newstate, node, moves.get(i));
             }
 
@@ -180,13 +214,19 @@ public class MonteCarloPlayer extends PropnetPlayer {
 
     private boolean backpropagate (Node node, double score) {
         node.setVisits(node.getVisits()+1);
-        node.setScore(node.getScore() + score);
 
+        if (isTerminal(node.getContents()))
+            System.out.println(score + "- "+ node.isMax() + "- "+node.getMove()+ "- " + node.getContents());
 
+        if (node.getVisits() > 1)
+            node.setScore(node.getScore() +node.getPropagateValue(score));
+        else
+            node.setScore(score);
 
         if (node.getParent() != null){
             backpropagate(node.getParent(), score);
         }
+
 
         return true;
     }

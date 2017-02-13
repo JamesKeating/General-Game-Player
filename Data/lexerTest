@@ -34,12 +34,14 @@
                 (<= (next (cell ?m ?n b))
                     (does ?w (mark ?j ?k))
                     (true (cell ?m ?n b))
-                    (distinct ?n ?k))
+                    (distinct ?n ?k)
+                )
 
                 (<= (next (cell ?m ?n b))
                     (does ?w (mark ?j ?k))
                     (true (cell ?m ?n b))
                     (distinct ?m ?j)
+                    (not (distinct ?n ?k))
                 )
 
                 (<= (next (control xplayer))

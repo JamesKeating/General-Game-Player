@@ -59,8 +59,8 @@ public class Grahpics extends Application {
         y.add("oplayer");
         y.add("xplayer");
 //        y.add("player");
+        x.add(new MonteCarloPlayer());
         x.add(new HumanPlayer());
-        x.add(new PureMC());
 
         GameManager gm = new GameManager(x);
         LexicalAnalyser l = new LexicalAnalyser();
