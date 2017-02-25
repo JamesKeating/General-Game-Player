@@ -11,13 +11,21 @@ import GUI.Drawable;
 import SylmbolTable.Description;
 import SylmbolTable.Fact;
 
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by siavj on 12/01/2017.
  */
-public class PropnetPlayer implements Gamer {
+public class PropnetPlayer implements Gamer, Serializable {
+
+    public PropNet getPropNet() {
+        return propNet;
+    }
 
     /** The underlying proposition network  */
     private PropNet propNet;
@@ -57,13 +65,23 @@ public class PropnetPlayer implements Gamer {
     private ArrayList<HashSet<String>> contents_list = new ArrayList<>();
 
 
+    public void initialize(PropNet propNet) {
+        this.propNet = propNet;
+        roles = propNet.getRoles();
+        ordering = getOrdering();
+        setContents(getInitialState());
+    }
+
     public void initialize(ArrayList<Description> description) {
 
         PropNetBuilder builder= new PropNetBuilder();
         propNet = builder.create(description);
+        System.out.println("1");
         roles = propNet.getRoles();
         ordering = getOrdering();
         setContents(getInitialState());
+
+
 //
 //        ArrayList<String> moves = new ArrayList<>();
 //        ArrayList<String> temp;
@@ -126,7 +144,7 @@ public class PropnetPlayer implements Gamer {
     }
 
 
-    public int getGoal(HashSet<String> state, Player role) {
+    public Integer getGoal(HashSet<String> state, Player role) {
         SetBasePropositions(state);
         Propagate();
 
@@ -196,6 +214,8 @@ public class PropnetPlayer implements Gamer {
 
 
         for (Latch latch: propNet.getLegalLatches().get(role.toString())) {
+
+
             if (latch.getValue()) {
                 ArrayList<Token> move = new ArrayList<>();
                 for (Token token : latch.getLabel().getFact()){

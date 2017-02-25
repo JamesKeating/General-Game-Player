@@ -57,7 +57,9 @@ public class Flattener
 
         for ( String key : templates.keySet() ) {
             if (!key.equals("init")){
+//                System.out.println(key + " -- " +flatDescription);
                 flatDescription.addAll(getInstantiations(key));
+
             }
         }
 
@@ -101,7 +103,7 @@ public class Flattener
                 }
             }
             else {
-//                System.out.println(constant + "---const----");
+                System.out.println(constant + "---const----");
 //                System.out.println(templates);
                 for ( Description template : templates.get(constant) ) {
 
@@ -109,7 +111,7 @@ public class Flattener
                     ArrayList<Description> results = new ArrayList<>();
                     instantiate(template, 1, new Substitution(), results);
 
-//                   System.out.println(template + "results ====");
+                   System.out.println(results + "results ====");
 
                     instantiations.get(constant).addAll(results);
 
@@ -215,7 +217,7 @@ public class Flattener
         if ( template.getFacts().size() == index ) {
 
             Description d = sub.substitute(template, theta);
-
+//            System.out.println("\ncheck1: "+d);
 
 
             boolean old = false;
@@ -235,7 +237,7 @@ public class Flattener
         else {
             String check = template.getFacts().get(index).getLeadAtom().getID();
 
-            if (!check.equals("distinct") && !check.equals("not")){
+            if (!check.equals("distinct") && !check.equals("not") && !check.equals("data")){
                 Fact sentence =  sub.substitute(new Fact(template.getFacts().get(index)), theta);
 //                System.out.println(template.getFacts().get(index));
 //                System.out.println(sentence);
@@ -323,7 +325,7 @@ public class Flattener
 //            System.out.println(description);
             if ( !description.getLeadAtom().getID().equals("base") ) {
 //                System.out.println(description);
-
+//
                 if ( !templates.containsKey(description.getLeadAtom().getID()) ){//string?
 //                    System.out.println(description.getLeadAtom());
                     templates.put(description.getLeadAtom().getID(), new ArrayList<>());
@@ -332,6 +334,7 @@ public class Flattener
             }
         }
 
+        System.out.println(templates);
         return templates;
     }
 }

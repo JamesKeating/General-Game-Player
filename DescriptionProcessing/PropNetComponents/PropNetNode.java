@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-public abstract class PropNetNode
+public abstract class PropNetNode implements Serializable
 {
 
     public abstract boolean getValue();

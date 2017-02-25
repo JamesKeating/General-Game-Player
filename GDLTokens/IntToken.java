@@ -1,6 +1,8 @@
 package GDLTokens;
 
-public class IntToken implements Token {
+import java.io.Serializable;
+
+public class IntToken implements Token , Serializable {
 
     public int getIntValue() {
         return intValue;

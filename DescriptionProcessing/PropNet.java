@@ -11,13 +11,14 @@ import SylmbolTable.Fact;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Scanner;
 
 
-public class PropNet
+public class PropNet implements Serializable
 {
     /** References to every PropNetNode in the PropNet. */
     private HashSet<PropNetNode> propNetNodes;
@@ -327,6 +328,7 @@ public class PropNet
             }
         }
 
+
         return legalLatches;
     }
 
@@ -388,59 +390,4 @@ public class PropNet
     }
 
 
-    /**
-     * Removes a PropNetNode from the propnet. Be very careful when using
-     * this method, as it is not thread-safe. It is highly recommended
-     * that this method only be used in an optimization period between
-     * the propnet's creation and its initial use, during which it
-     * should only be accessed by a single thread.
-     *
-     * The INIT and terminal PropNetNodes cannot be removed.
-     */
-    public void removePropNetNode(PropNetNode propNetNode) {
-
-        //Go through all the collections it could appear in
-        if(propNetNode instanceof Latch) {
-
-            Latch latch = (Latch) propNetNode;
-            Fact label = latch.getLabel();
-            if(baseLatches.containsKey(label)) {
-                baseLatches.remove(label);
-            }
-
-            else if(inputLatches.containsKey(label)) {
-                inputLatches.remove(label);
-                //The map goes both ways...
-                Latch partner = legalInputMap.get(latch);
-                if (partner != null) {
-                    legalInputMap.remove(partner);
-                    legalInputMap.remove(latch);
-                }
-            }
-            else {
-                for(HashSet<Latch> latches : legalLatches.values()) {
-                    if(latches.contains(latch)) {
-                        latches.remove(latch);
-                        Latch partner = legalInputMap.get(latch);
-                        if(partner != null) {
-                            legalInputMap.remove(partner);
-                            legalInputMap.remove(latch);
-                        }
-                    }
-                }
-                for(HashSet<Latch> latches : goalLatches.values()) {
-                    latches.remove(latch);
-                }
-            }
-            latches.remove(latch);
-        }
-        propNetNodes.remove(propNetNode);
-
-        //Remove all the local links to the PropNetNode
-        for(PropNetNode parent : propNetNode.getNodeInputs())
-            parent.removeOutput(propNetNode);
-        for(PropNetNode child : propNetNode.getNodeOutputs())
-            child.removeInput(propNetNode);
-
-    }
 }

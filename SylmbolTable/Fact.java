@@ -6,13 +6,14 @@ import GDLTokens.Token;
 import GDLTokens.VarToken;
 import com.sun.deploy.util.StringUtils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
  * Created by siavj on 30/10/2016.
  */
-public class Fact {
+public class Fact implements Serializable{
 
     public Fact(Fact original){
         for (Token token : original.getFact()){

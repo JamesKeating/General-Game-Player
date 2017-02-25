@@ -1,8 +1,12 @@
 package Player;
 
 import DescriptionProcessing.Player;
+import DescriptionProcessing.PropNet;
 import GDLParser.LexicalAnalyser;
 import GUI.Grahpics;
+
+import java.io.*;
+
 import SylmbolTable.DescriptionTable;
 
 import java.util.ArrayList;
@@ -29,9 +33,36 @@ public class GameManager{
     }
 
 
-    public void setupGame(DescriptionTable dt, ArrayList<String> roles){
 
+    public void setupGame(DescriptionTable dt, ArrayList<String> roles){
         gameManager.initialize(dt.listTable());
+
+
+//        try {
+//            FileOutputStream f = new FileOutputStream(new File("myObjects.txt"));
+//
+//            ObjectOutputStream o = new ObjectOutputStream(f);
+//
+//            // Write objects to file
+//            o.writeObject(gameManager.getPropNet());
+//            o.close();
+//            f.close();
+//
+//            for (int i = 0; i < gamers.size(); i++){
+//                FileInputStream fi = new FileInputStream(new File("myObjects.txt"));
+//                ObjectInputStream oi = new ObjectInputStream(fi);
+//                PropNet propNet = (PropNet) oi.readObject();
+//                gamers.get(i).initialize(propNet);
+//                gamers.get(i).setMyRole(roles.get(i));
+//                oi.close();
+//                fi.close();
+//
+//            }
+//
+//
+//        } catch (Exception e) {
+
+//        }
         for (int i = 0; i < gamers.size(); i++){
             gamers.get(i).initialize(dt.listTable());
             gamers.get(i).setMyRole(roles.get(i));
@@ -52,10 +83,10 @@ public class GameManager{
             }
         }
 
-        System.out.println(moves + " 1");
-        System.out.println(gameManager.getContents()+ " 2");
+//        System.out.println(moves + " 1");
+//        System.out.println(gameManager.getContents()+ " 2");
         gameManager.setContents(gameManager.getNextState(gameManager.getContents(), moves));
-        System.out.println(gameManager.getContents() + " 3");
+//        System.out.println(gameManager.getContents() + " 3");
 
 
         for (Gamer gamer: gamers){
@@ -89,10 +120,12 @@ public class GameManager{
                     if (HumanPlayer.class.isInstance(gamer))
                         role.setHuman(true);
 
+                    System.out.println(role);
                     moves.put(role, gamer.getLegalMoves(gamer.getContents(), role));
                 }
             }
         }
+        System.out.println(moves + "all legal");
         return moves;
     }
 

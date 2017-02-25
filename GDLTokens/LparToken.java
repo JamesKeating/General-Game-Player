@@ -1,6 +1,8 @@
 package GDLTokens;
 
-public class LparToken implements Token {
+import java.io.Serializable;
+
+public class LparToken implements Token, Serializable {
 
     public String toString() {
         return "(";

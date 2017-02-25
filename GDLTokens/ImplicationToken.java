@@ -1,6 +1,8 @@
 package GDLTokens;
 
-public class ImplicationToken implements Token{
+import java.io.Serializable;
+
+public class ImplicationToken implements Token, Serializable {
 
     public String toString() {
         return "<=";

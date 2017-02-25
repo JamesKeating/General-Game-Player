@@ -28,7 +28,8 @@ public final class PropNetBuilder
     public PropNet create(ArrayList<Description> gameDescription) {
         try {
             ArrayList<Description> flattenedGameDescription = new Flattener(gameDescription).flatten();
-//            System.out.println("flat");
+            System.out.println(flattenedGameDescription);
+//            System.exit(0);
             return convert(Player.listPlayers(gameDescription), flattenedGameDescription);
         } catch (Exception e) {
             e.printStackTrace();
@@ -49,11 +50,10 @@ public final class PropNetBuilder
             i++;
 
             if ( rule.getArity() > 1 ) {
-                //System.out.println("check 1");
+//                System.out.println("check 1");
                 convertRule(rule);
             }
             else {
-//                System.out.println(rule + "2nd");
                 convertStatic(rule.getFacts().get(0));
             }
 //            if (i == 20){
@@ -94,13 +94,15 @@ public final class PropNetBuilder
             ArrayList<Latch> addList = new ArrayList<>();
             for ( Latch latch : propositions.values() ) {
 
-//                System.out.println(latch);
                 if ( latch.getLabel().getLeadAtom().getID().equals("true") && latch.getNodeInputs().size() == 0 ) {
-                    latch.getLabel().getFact().remove(0);
-                    latch.getLabel().getFact().remove(0);
-                    latch.getLabel().getFact().remove(latch.getLabel().getFact().size() -1);
+                    if (getProposition(latch.getLabel()) == null){
+                        latch.getLabel().getFact().remove(0);
+                        latch.getLabel().getFact().remove(0);
+                        latch.getLabel().getFact().remove(latch.getLabel().getFact().size() -1);
+                        link(getProposition(latch.getLabel()), latch);
+                    }
 //                    System.out.println(latch);
-                    link(getProposition(latch.getLabel()), latch);
+
                 }
 
             }
@@ -153,6 +155,25 @@ public final class PropNetBuilder
 
             propNetNodes.add(latch);
             propNetNodes.add(constant);
+
+            return latch;
+        }
+
+        else if (fact.getLeadAtom().getID().equals("data")){
+            Latch latch = new Latch(new Fact(anon));
+            Constant constant;
+            fact.getFact().remove(0);
+            fact.getFact().remove(0);
+            fact.getFact().remove(fact.getFact().size() -1);
+            System.out.println(getProposition(fact));
+
+
+
+
+            link(getProposition(fact), latch);
+
+            propNetNodes.add(latch);
+
 
             return latch;
         }
@@ -323,8 +344,7 @@ public final class PropNetBuilder
 //        System.out.println(constant);
         //System.out.println(proposition);
         link(constant, proposition);
-
-
+        System.out.println(proposition + "first");
 
         propNetNodes.add(constant);
         propNetNodes.add(proposition);

@@ -11,7 +11,7 @@ public class LexicalAnalyser {
 	
 	private int currState = 0;
 	private String[] keyWords = {"role", "init", "terminal", "legal", "next", "true", "does", "goal",
-									"or", "distinct", "not", "base", "drawit"};
+									"or", "distinct", "not", "base", "drawit", "data"};
 	private Trie symbolTable = new Trie(keyWords);
 	private ArrayList<Token> tokenStream = new ArrayList<>();
 	

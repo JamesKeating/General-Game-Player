@@ -4,13 +4,14 @@ import GDLTokens.Token;
 import SylmbolTable.Description;
 import SylmbolTable.DescriptionTable;
 
+import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.ArrayList;
 
 /**
  * Created by siavj on 09/01/2017.
  */
-public class Player {
+public class Player implements Serializable {
 
     private String name;
 

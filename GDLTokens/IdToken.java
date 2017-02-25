@@ -1,6 +1,8 @@
 package GDLTokens;
 
-public class IdToken implements Token {
+import java.io.Serializable;
+
+public class IdToken implements Token, Serializable{
 
 
 

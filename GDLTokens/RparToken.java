@@ -1,6 +1,8 @@
 package GDLTokens;
 
-public class RparToken implements Token {
+import java.io.Serializable;
+
+public class RparToken implements Token, Serializable {
 
     public String toString() {
         return ")";

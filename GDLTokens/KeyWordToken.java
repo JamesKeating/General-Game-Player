@@ -1,6 +1,8 @@
 package GDLTokens;
 
-public class KeyWordToken implements Token {
+import java.io.Serializable;
+
+public class KeyWordToken implements Token, Serializable {
 
     private String value;
 

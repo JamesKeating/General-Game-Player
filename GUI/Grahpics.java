@@ -30,6 +30,7 @@ import Player.GameManager;
 import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
@@ -56,19 +57,24 @@ public class Grahpics extends Application {
 
         ArrayList<Gamer> x =new ArrayList<Gamer>();
         ArrayList<String> y =new ArrayList<>();
-        y.add("oplayer");
         y.add("xplayer");
+        y.add("oplayer");
 //        y.add("player");
-        x.add(new MonteCarloPlayer());
         x.add(new HumanPlayer());
+        x.add(new HumanPlayer());
+
 
         GameManager gm = new GameManager(x);
         LexicalAnalyser l = new LexicalAnalyser();
+
         l.analyseFile("D:\\FYP\\General-Game-Player\\Data\\lexerTest");
 //        l.analyseFile("D:\\FYP\\General-Game-Player\\Data\\buttons");
+
         dt = new DescriptionTable(l.getTokenStream());
 
         gm.setupGame(dt, y);
+//        System.out.println("1");
+
         primaryStage.setScene(getPlayableScene(gm));
         primaryStage.show();
 
@@ -172,8 +178,10 @@ public class Grahpics extends Application {
 
 
         while(count < p_names.size()-1 && !gm.getGameManager().allAI()){
+
             if (p_names.get(count).isHuman() && !noopCheck(count))
                 break;
+
 
             count++;
 
@@ -184,8 +192,9 @@ public class Grahpics extends Application {
                         gm.getGamer(p_names.get(j)).setSelectedMove(p_moves.get(j).get(0));
 
                 }
-                update(gm);
-                drawGrid(board, gm.getGameManager());
+                //TODO: test this line
+                //update(gm);
+                //drawGrid(board, gm.getGameManager());
             }
 
         }
@@ -232,6 +241,7 @@ public class Grahpics extends Application {
                 btn.setText(buttonText + p_names.get(count));
 
                 if (gm.getGameManager().isTerminal(gm.getGameManager().getContents())){
+                    System.out.println("aaaaa- "+gm.getGameManager().getContents());
                     root.getChildren().remove(list);
                     root.getChildren().remove(options);
                 }
@@ -406,7 +416,7 @@ public class Grahpics extends Application {
                         if (assign.get(gamerType).equals("human"))
                             gamers.add(new HumanPlayer());
                         else{
-                            gamers.add(new PropnetPlayer());
+                            gamers.add(new PureMC());
                         }
 
                     }

@@ -1,6 +1,8 @@
 package GDLTokens;
 
-public class SemiCoToken implements Token {
+import java.io.Serializable;
+
+public class SemiCoToken implements Token, Serializable {
 
     public String toString() {
         return ";";

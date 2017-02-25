@@ -17,33 +17,27 @@ public class Node {
     private int visits;
     private double score;
     private String move;
-    private boolean isMax = true;
-    private double propagateValue = Double.NEGATIVE_INFINITY;
+    private double propagateValue = Double.POSITIVE_INFINITY;
+
+    public void setMoveMaker(Player moveMaker) {
+        this.moveMaker = moveMaker;
+    }
+
     private Player moveMaker;
 
-    public boolean isMax() {
-        return isMax;
-    }
-
-    public void setMax(boolean max) {
-        isMax = max;
-    }
-
-
-    public Node(HashSet<String> state){
+    public Node(HashSet<String> state, Player moveMaker){
         this.contents = state;
         children = new ArrayList<>();
-//        this.moveMaker = moveMaker;
+        this.moveMaker = moveMaker;
     }
 
-    public Node(HashSet<String> state, Node myParent, String move){
+    public Node(HashSet<String> state, Node myParent, String move, Player moveMaker){
         myParent.getChildren().add(this);
         this.parent = myParent;
         this.contents = state;
         this.move = move;
         children = new ArrayList<>();
-        isMax = !myParent.isMax;
-//        this.moveMaker = moveMaker;
+        this.moveMaker = moveMaker;
     }
 
     public ArrayList<Node> getChildren(){
@@ -51,6 +45,9 @@ public class Node {
     }
 
     public Player getMoveMaker() {
+        if (moveMaker == null)
+            return this.getParent().getMoveMaker();
+
         return moveMaker;
     }
 
@@ -83,16 +80,5 @@ public class Node {
         return move;
     }
 
-    public double getPropagateValue(double newVal){
-        if (propagateValue == Double.NEGATIVE_INFINITY)
-            propagateValue = newVal;
 
-        else if (isMax && newVal > propagateValue)
-            propagateValue = newVal;
-
-        else if (!isMax && newVal < propagateValue)
-            propagateValue = newVal;
-
-        return propagateValue;
-    }
 }

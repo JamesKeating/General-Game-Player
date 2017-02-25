@@ -1,0 +1,114 @@
+  (role red)
+  (role green)
+
+
+  (<= (base (cell (1 2 3 4) (1 2 3 4) (1 2 3 4 b))
+  (<= (base (control red green))
+
+
+
+
+  (init (cell 1 1 b))
+  (init (cell 1 2 b))
+  (init (cell 1 3 b))
+  (init (cell 1 4 b))
+  (init (cell 2 1 b))
+  (init (cell 2 2 b))
+  (init (cell 2 3 b))
+  (init (cell 2 4 b))
+  (init (cell 3 1 b))
+  (init (cell 3 2 b))
+  (init (cell 3 3 b))
+  (init (cell 3 4 b))
+  (init (cell 4 1 b))
+  (init (cell 4 2 b))
+  (init (cell 4 3 b))
+  (init (cell 4 4 b))
+  (init (control red))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; legal
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (<= (legal ?role (mark ?i ?j ?x))
+      (true (control ?role))
+      (true (cell ?i ?j b))
+      (not (row ?i ?x))
+      (not (col ?j ?x)))
+
+  (<= (legal red noop)
+      (true (control green)))
+
+  (<= (legal green noop)
+      (true (control red)))
+
+
+  (<= (row ?i ?x) (true (cell ?i ?j ?x)))
+
+  (<= (col ?j ?x) (true (cell ?i ?j ?x)))
+
+
+  (<= (next (cell ?i ?j ?x))
+      (does ?role (mark ?i ?j ?x)))
+
+  (<= (next (cell ?i ?j ?x))
+      (true (cell ?i ?j ?x))
+      (distinct ?x b))
+
+  (<= (next (cell ?i ?j b))
+      (does ?role (mark ?k ?l ?x))
+      (true (cell ?i ?j b))
+      (distinct ?i ?k))
+
+  (<= (next (cell ?i ?j b))
+      (does ?role (mark ?k ?l ?x))
+      (true (cell ?i ?j b))
+      (distinct ?j ?l)
+      (not (distinct ?i ?k)))
+
+  (<= (next (control red)) (true (control green)))
+  (<= (next (control green)) (true (control red)))
+
+
+  (<= (goal red 100)
+      (true (control green))
+      (not playable))
+
+  (<= (goal green 100)
+      (true (control red))
+      (not playable))
+
+
+  (<= (goal red 0)
+  (true (control red))
+  (not playable))
+
+  (<= (goal green 0)
+  (true (control green))
+  (not playable))
+
+
+  (<= terminal (not playable))
+
+  (<= playable (legal ?role (mark ?i ?j ?x)))
+
+  (<= (drawit (?x ?y btile))
+      (true (cell ?x ?y blank))
+  )
+
+  (<= (drawit (?x ?y red))
+      (true(cell ?x ?y 1))
+  )
+
+  (<= (drawit (?x ?y white))
+      (true(cell ?x ?y 2))
+  )
+
+  (<= (drawit (?x ?y xtile))
+      (true(cell ?x ?y 3))
+  )
+
+  (<= (drawit (?x ?y otile))
+      (true(cell ?x ?y 4))
+  )
+
