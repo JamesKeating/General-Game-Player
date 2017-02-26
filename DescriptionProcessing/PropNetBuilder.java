@@ -11,12 +11,13 @@ import SylmbolTable.DescriptionTable;
 import SylmbolTable.Fact;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class PropNetBuilder
 {
 
     /** An archive of Propositions, indexed by name. */
-    private Map<String, Latch> propositions;
+    private ConcurrentHashMap<String, Latch> propositions;
     /** An archive of Components. */
     private ArrayList<String> nots = new ArrayList<>();
     private HashSet<PropNetNode> propNetNodes;
@@ -41,7 +42,7 @@ public final class PropNetBuilder
 
     private PropNet convert(ArrayList<Player> players, ArrayList<Description> description) {
 
-        propositions = new HashMap<>();
+        propositions = new ConcurrentHashMap<>();
         propNetNodes = new HashSet<>();
 
         //System.out.println(description.size());
@@ -77,79 +78,40 @@ public final class PropNetBuilder
      */
     private void addMissingInputs() {
 
-//        ArrayList<Latch> addList = new ArrayList<>();
-//        for ( Latch latch : propositions.values() ) {
-//
-////            System.out.println(latch.getLabel());
-//            if ( latch.getLabel().getFact().size() > 1 ) {
-//
-//                if ( latch.getLabel().getLeadAtom().getID().equals("legal") )
-//                {
-////                    System.out.println(latch.getLabel());
-//                    addList.add(latch);
-//                }
-//            }
-//        }
 
-            ArrayList<Latch> addList = new ArrayList<>();
-            for ( Latch latch : propositions.values() ) {
 
-                if ( latch.getLabel().getLeadAtom().getID().equals("true") && latch.getNodeInputs().size() == 0 ) {
-                    if (getProposition(latch.getLabel()) == null){
-                        latch.getLabel().getFact().remove(0);
-                        latch.getLabel().getFact().remove(0);
-                        latch.getLabel().getFact().remove(latch.getLabel().getFact().size() -1);
-                        link(getProposition(latch.getLabel()), latch);
-                    }
-//                    System.out.println(latch);
+        Iterator<Latch> iterator = propositions.values().iterator();
+        Latch latch = null;
+//        for (Latch latch : propositions.values()) {
+            while(iterator.hasNext()){
+              latch = iterator.next();
 
-                }
+            if (latch.getLabel().getLeadAtom().getID().equals("true") && latch.getNodeInputs().size() == 0) {
+                //TODO: error for data here?
+                //if (getProposition(latch.getLabel()) == null){
+                System.out.println("mmmmmmm- " + latch);
+                latch.getLabel().getFact().remove(0);
+                latch.getLabel().getFact().remove(0);
+                latch.getLabel().getFact().remove(latch.getLabel().getFact().size() - 1);
+                link(getProposition(latch.getLabel()), latch);
+                //}
+                    System.out.println("sssssss"+latch);
 
             }
 
-
-
-            for ( Latch addItem : addList ) {
-            Fact relation = addItem.getLabel();
-
-            ArrayList<Token> body = new ArrayList<>();
-            for (Token token : relation.getFact()){
-                if (token.getID().equals("legal")){
-                    body.add(new KeyWordToken("does"));
-                }
-                else
-                    body.add(token.copy());
-            }
-            if (body.size() > 0)
-                propNetNodes.add(getProposition(new Fact(body)));
         }
-
-
-
-
-
     }
 
-    /**
-     * Converts a literal to equivalent PropNet Components and returns a
-     * reference to the last of those components.
-     *
-     * param literal
-     *            The literal to convert to equivalent PropNet Components.
-     * @return The last of those components.
-     */
+
     private Latch convertConjunct(Fact fact) {
 
-//        System.out.println(fact);
         ArrayList<Token> anon = new ArrayList<>();
         anon.add(new IdToken("anon"));
         if ( fact.getLeadAtom().getID().equals("distinct") ) {
 
-//            System.out.println(fact);
+
             Latch latch = new Latch(new Fact(anon));
             Constant constant = new Constant(!fact.getFact().get(2).getID().equals(fact.getFact().get(3).getID()));
-//            System.out.println(constant);
-//            System.out.println();
 
             link(constant, latch);
 
@@ -197,8 +159,9 @@ public final class PropNetBuilder
                 }
             }
 
-            inv = new Fact(inverse) ;
 
+            inv = new Fact(inverse) ;
+            System.out.println("lllllll- "+inv);
             Latch input = convertConjunct(inv);
             NotGate no = new NotGate();
             Latch output = new Latch(new Fact(anon));
@@ -219,14 +182,6 @@ public final class PropNetBuilder
         }
     }
 
-    /**
-     * Converts a sentence to equivalent PropNet Components and returns the
-     * first of those components.
-     *
-     * @param sentence
-     *            The sentence to convert to equivalent PropNet Components.
-     * @return The first of those Components.
-     */
     private Latch convertHead(Fact sentence) {
         if ( sentence.getLeadAtom().getID().equals("next") ) {
             ArrayList<Token> tru = new ArrayList<>();
@@ -264,24 +219,12 @@ public final class PropNetBuilder
         }
     }
 
-    /**
-     * Converts a rule into equivalent PropNet Components by invoking the
-     * <tt>convertHead()</tt> method on the head, and the
-     * <tt>convertConjunct</tt> method on every literal in the body and
-     * joining the results by an and gate.
-     *
-     * @param rule
-     *            The rule to convert.
-     */
     private void convertRule(Description rule)
     {
         Latch head = convertHead(rule.getFacts().get(0));
         AndGate and = new AndGate();
 
         link(and, head);
-
-//        System.out.println(head);
-//        System.out.println(and);
 
 
         propNetNodes.add(head);
@@ -291,27 +234,15 @@ public final class PropNetBuilder
             Fact literal = rule.getFacts().get(i);
             Latch conjunct = convertConjunct(literal);
 
-//            System.out.println(literal + "-------literal");
-//            System.out.println(conjunct + "-------conjunct");
             link(conjunct, and);
-//            System.out.println(conjunct + "-------conjunct after");
-//            System.out.println(and + "-------and");
+
         }
     }
 
-    /**
-     * Converts a sentence to equivalent PropNet Components.
-     *
-     * @param sentence
-     *            The sentence to convert to equivalent PropNet Components.
-     */
     private void convertStatic(Fact sentence) {
 
-//        System.out.println("\n============\n");
-//        System.out.println(sentence + " static");
-        if ( sentence.getLeadAtom().getID().equals("init") )
-        {
-//            System.out.println(sentence + " init");
+        if ( sentence.getLeadAtom().getID().equals("init") ) {
+
             ArrayList<Token> initConst = new ArrayList<>();
             initConst.add(new IdToken("init"));
 
@@ -331,8 +262,6 @@ public final class PropNetBuilder
             link(init, transition);
             link(transition, proposition);
 
-//            System.out.println("init: "+ init + " trans: " + transition + " prop: " + proposition);
-//            System.out.println(transition.getNodeInputs() + "--- " + transition.getNodeOutputs() + "\n\n");
             propNetNodes.add(init);
             propNetNodes.add(transition);
             propNetNodes.add(proposition);
@@ -341,8 +270,7 @@ public final class PropNetBuilder
         Constant constant = new Constant(true);
 
         Latch proposition = getProposition(sentence);
-//        System.out.println(constant);
-        //System.out.println(proposition);
+
         link(constant, proposition);
         System.out.println(proposition + "first");
 
@@ -350,17 +278,12 @@ public final class PropNetBuilder
         propNetNodes.add(proposition);
     }
 
-    /**
-     * Creates an or gate to combine the inputs to a Proposition wherever one
-     * has more than one input.
-     */
     private void fixDisjunctions() {
 
         ArrayList<Latch> fixList = new ArrayList<>();
 
 
         for ( Latch latch : propositions.values() ) {
-//            System.out.println(latch);
             if ( latch.getNodeInputs().size() > 1 ) {
                 fixList.add(latch);
 
@@ -381,7 +304,7 @@ public final class PropNetBuilder
 
                     anon.add(new IdToken(fixItem.getLabel().toString() + "-" + i));
                     disjunct = new Latch(new Fact(anon));
-//                    System.out.println(disjunct);
+
                 }
                 else {
 
@@ -396,7 +319,7 @@ public final class PropNetBuilder
 
 
                     disjunct = new Latch(new Fact(anon));
-//                    System.out.println(disjunct);
+
                 }
 
                 input.getNodeOutputs().clear();
@@ -416,17 +339,9 @@ public final class PropNetBuilder
         }
     }
 
-    /**
-     * Returns a Proposition with name <tt>term</tt>, creating one if none
-     * already exists.
-     *
-     * @param sentence
-     *            The name of the Proposition.
-     * @return A Proposition with name <tt>term</tt>.
-     */
-    private Latch getProposition(Fact sentence)
-    {
-//        System.out.println(sentence + "--key");
+
+    private Latch getProposition(Fact sentence) {
+
         if ( !propositions.containsKey(sentence.toString()) )
         {
             propositions.put(sentence.toString(), new Latch(sentence));
@@ -436,12 +351,7 @@ public final class PropNetBuilder
         return propositions.get(sentence.toString());
     }
 
-    /**
-     * Adds inputs and outputs to <tt>source</tt> and <tt>target</tt> such
-     * that <tt>source becomes an input to <tt>target</tt>.
-     * @param source A component.
-     * @param target A second component.
-     */
+
     private void link(PropNetNode source, PropNetNode target)
     {
         source.addOutput(target);

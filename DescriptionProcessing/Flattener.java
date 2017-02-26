@@ -104,15 +104,13 @@ public class Flattener
             }
             else {
                 System.out.println(constant + "---const----");
-//                System.out.println(templates);
                 for ( Description template : templates.get(constant) ) {
 
 //                    System.out.println(template);
                     ArrayList<Description> results = new ArrayList<>();
                     instantiate(template, 1, new Substitution(), results);
 
-                   System.out.println(results + "results ====");
-
+                    System.out.println(results + "results ====");
                     instantiations.get(constant).addAll(results);
 
                 }
@@ -173,8 +171,7 @@ public class Flattener
 
 
         if ( base.getArity() == index ) {
-            //System.out.println(workingSet);
-            //System.out.println(base);
+
             ArrayList<Token> body = new ArrayList<>(workingSet);
 
             results.add(new Description(base, workingSet));
@@ -212,7 +209,6 @@ public class Flattener
     private void instantiate(Description template, int index, Substitution theta, ArrayList<Description> results) {
         Substituter sub = new Substituter();
         Unifier uni = new Unifier();
-
 
         if ( template.getFacts().size() == index ) {
 

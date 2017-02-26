@@ -78,6 +78,7 @@ public class GameManager{
             for(Gamer gamer : gamers){
                 if (role.toString().equals(gamer.getMyRole())){
                     moves.add(gamer.makeMove());
+                    System.out.println(moves);
 
                 }
             }

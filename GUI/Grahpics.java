@@ -57,17 +57,17 @@ public class Grahpics extends Application {
 
         ArrayList<Gamer> x =new ArrayList<Gamer>();
         ArrayList<String> y =new ArrayList<>();
-        y.add("xplayer");
-        y.add("oplayer");
-//        y.add("player");
-        x.add(new HumanPlayer());
-        x.add(new HumanPlayer());
+//        y.add("red");
+//        y.add("black");
+        y.add("player");
+        x.add(new MonteCarloPlayer());
+//        x.add(new HumanPlayer());
 
 
         GameManager gm = new GameManager(x);
         LexicalAnalyser l = new LexicalAnalyser();
 
-        l.analyseFile("D:\\FYP\\General-Game-Player\\Data\\lexerTest");
+        l.analyseFile("D:\\FYP\\General-Game-Player\\Data\\Slider");
 //        l.analyseFile("D:\\FYP\\General-Game-Player\\Data\\buttons");
 
         dt = new DescriptionTable(l.getTokenStream());
@@ -166,25 +166,17 @@ public class Grahpics extends Application {
                 for (int j = 0; j < p_names.size(); j++){
                     if (noopCheck(j) && j != count && p_names.get(j).isHuman())
                         gm.getGamer(p_names.get(j)).setSelectedMove(p_moves.get(j).get(0));
-
                 }
-
                 movePreview(gm, board);
-
             }
-
         });
-
-
 
         while(count < p_names.size()-1 && !gm.getGameManager().allAI()){
 
             if (p_names.get(count).isHuman() && !noopCheck(count))
                 break;
 
-
             count++;
-
 
             if (count == p_names.size() -1) {
                 for (int j = 0; j < p_names.size(); j++){
@@ -192,11 +184,7 @@ public class Grahpics extends Application {
                         gm.getGamer(p_names.get(j)).setSelectedMove(p_moves.get(j).get(0));
 
                 }
-                //TODO: test this line
-                //update(gm);
-                //drawGrid(board, gm.getGameManager());
             }
-
         }
         if (p_moves.size() > 0)
             list.setItems(FXCollections.observableArrayList (p_moves.get(count)));
@@ -209,20 +197,23 @@ public class Grahpics extends Application {
             public void handle(ActionEvent event) {
                 String buttonText = "Submit move for: ";
 
+
                 if (p_names.get(count).isHuman() && list.getSelectionModel().getSelectedItem() == null) {
 
                     Optional<ButtonType> result = alert.showAndWait();
                     if (result.isPresent() && result.get() == ButtonType.OK) {
                         return;
                     }
-
                 }
+
+
 
                 while (count < p_names.size() -1) {
                     count++;
                     if ((p_names.get(count).isHuman())) {
                         if (!noopCheck(count))
                             break;
+
                         else{
                             gm.getGamer(p_names.get(count)).setSelectedMove(p_moves.get(count).get(0));
                         }
@@ -235,17 +226,15 @@ public class Grahpics extends Application {
                     drawGrid(board, gm.getGameManager());
                 }
 
-
+                System.out.println(gm.getGameManager().getContents());
                 list.getSelectionModel().select(-1);
                 list.setItems(FXCollections.observableArrayList (p_moves.get(count)));
                 btn.setText(buttonText + p_names.get(count));
 
                 if (gm.getGameManager().isTerminal(gm.getGameManager().getContents())){
-                    System.out.println("aaaaa- "+gm.getGameManager().getContents());
                     root.getChildren().remove(list);
                     root.getChildren().remove(options);
                 }
-
             }
         });
 
@@ -258,7 +247,6 @@ public class Grahpics extends Application {
         root.setCenter(board);
         root.setBottom(options);
         return new Scene(root, 800, 800);
-
     }
 
     public Scene getSelectionScene(Stage stage){

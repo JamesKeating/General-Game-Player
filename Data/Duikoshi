@@ -1,12 +1,9 @@
   (role red)
   (role green)
 
-
-  (<= (base (cell (1 2 3 4) (1 2 3 4) (1 2 3 4 b))
-  (<= (base (control red green))
-
-
-
+  (base cell (1 2 3 4) (1 2 3 4) (1 2 3 4 b))
+  (base control (red green))
+  (base fill (1 2 3 4 b))
 
   (init (cell 1 1 b))
   (init (cell 1 2 b))
@@ -26,13 +23,10 @@
   (init (cell 4 4 b))
   (init (control red))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; legal
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
   (<= (legal ?role (mark ?i ?j ?x))
       (true (control ?role))
       (true (cell ?i ?j b))
+      (not (fill ?x))
       (not (row ?i ?x))
       (not (col ?j ?x)))
 
@@ -72,43 +66,43 @@
 
   (<= (goal red 100)
       (true (control green))
-      (not playable))
+      (not (playable)))
 
   (<= (goal green 100)
       (true (control red))
-      (not playable))
+      (not (playable)))
 
 
   (<= (goal red 0)
   (true (control red))
-  (not playable))
+  (not (playable)))
 
   (<= (goal green 0)
   (true (control green))
-  (not playable))
+  (not (playable)))
 
 
-  (<= terminal (not playable))
+  (<= terminal (not (playable)))
 
-  (<= playable (legal ?role (mark ?i ?j ?x)))
+  (<= (playable) (legal ?role (mark ?i ?j ?x)))
 
-  (<= (drawit (?x ?y btile))
-      (true (cell ?x ?y blank))
+  (<= (drawit (?x ?y blnk))
+      (true (cell ?x ?y b))
   )
 
-  (<= (drawit (?x ?y red))
+  (<= (drawit (?x ?y 1))
       (true(cell ?x ?y 1))
   )
 
-  (<= (drawit (?x ?y white))
+  (<= (drawit (?x ?y 2))
       (true(cell ?x ?y 2))
   )
 
-  (<= (drawit (?x ?y xtile))
+  (<= (drawit (?x ?y 3))
       (true(cell ?x ?y 3))
   )
 
-  (<= (drawit (?x ?y otile))
+  (<= (drawit (?x ?y 4))
       (true(cell ?x ?y 4))
   )
 

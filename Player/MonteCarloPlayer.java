@@ -70,8 +70,9 @@ public class MonteCarloPlayer extends PropnetPlayer {
         }
 
 //        System.out.println(start -System.currentTimeMillis());
-        String bestMove = root.getChildren().get(0).getMove();
-        double bestMoveScore = root.getChildren().get(0).getScore()/ root.getChildren().get(0).getVisits();
+        int first = ThreadLocalRandom.current().nextInt(root.getChildren().size());
+        String bestMove = root.getChildren().get(first).getMove();
+        double bestMoveScore = root.getChildren().get(first).getScore()/ root.getChildren().get(first).getVisits();
         for (Node n: root.getChildren()){
             if (n.getScore()/n.getVisits() > bestMoveScore) {
                 bestMoveScore = n.getScore()/n.getVisits();
@@ -105,6 +106,7 @@ public class MonteCarloPlayer extends PropnetPlayer {
 
 
         while(!isTerminal(rndContents)) {
+            System.out.println(rndContents);
             rndContents = randomNextState(rndContents);
         }
 
@@ -113,6 +115,7 @@ public class MonteCarloPlayer extends PropnetPlayer {
         for (Player p: getRoles())
             rewards.put(p, doubleValue(getGoal(rndContents, p)));
 
+        System.out.println(rewards + " tag1");
         return rewards;
     }
 

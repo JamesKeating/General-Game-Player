@@ -1,0 +1,150 @@
+  (role hsRed)
+  (role hsBlue)
+
+
+  (base cell (a b c d e) (hsRed hsBlue hsBlank) )
+  (base control (hsRed hsBlue))
+  (base step (1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20))
+
+
+  (init (cell a hsRed))
+  (init (cell b hsRed))
+  (init (cell c hsBlank))
+  (init (cell d hsBlue))
+  (init (cell e hsBlue))
+  (init (control hsRed))
+  (init (step 1))
+
+  (data (adjacent a d))
+  (data (adjacent a c))
+  (data (adjacent b c))
+  (data (adjacent b e))
+  (data (adjacent c a))
+  (data (adjacent c b))
+  (data (adjacent c d))
+  (data (adjacent c e))
+  (data (adjacent d c))
+  (data (adjacent d e))
+  (data (adjacent d a))
+  (data (adjacent e b))
+  (data (adjacent e c))
+  (data (adjacent e d))
+
+    (data(succ 1 2))
+    (data(succ 2 3))
+    (data(succ 3 4))
+    (data(succ 4 5))
+    (data(succ 5 6))
+    (data(succ 6 7))
+    (data(succ 7 8))
+    (data(succ 8 9))
+    (data(succ 9 10))
+    (data(succ 10  11))
+    (data(succ 11  12))
+    (data(succ 12  13))
+    (data(succ 13  14))
+    (data(succ 14  15))
+    (data(succ 15  16))
+    (data(succ 16  17))
+    (data(succ 17  18))
+    (data(succ 18  19))
+    (data(succ 19  20))
+
+  (<= (legal ?role (move ?x ?y))
+      (true (control ?role))
+      (true (cell ?x ?role))
+      (data(adjacent ?x ?y))
+      (true (cell ?y hsBlank)))
+
+  (<= (legal hsRed noop)
+      (true (control hsBlue)))
+
+  (<= (legal hsBlue noop)
+      (true (control hsRed)))
+
+  (<= (next (cell ?y ?role))
+      (does ?role (move ?x ?y)))
+
+  (<= (next (cell ?x hsBlank))
+      (does ?role (move ?x ?y)))
+
+  (<= (next (cell ?z ?mark))
+      (does ?role (move ?x ?y))
+      (true (cell ?z ?mark))
+      (distinct ?x ?z)
+      (distinct ?y ?z))
+
+  (<= (next (control hsRed))
+      (true (control hsBlue)))
+
+  (<= (next (control hsBlue))
+      (true (control hsRed)))
+
+  (<= (next (step ?n))
+      (true (step ?m))
+      (data(succ ?m ?n))
+  )
+
+  (<= (goal hsRed 100)
+      (true (control hsBlue))
+      (not (free hsBlue)))
+
+  (<= (goal hsBlue 100)
+      (true (control hsRed))
+      (not (free hsRed)))
+
+  (<= (goal ?role 0)
+      (true (control ?role))
+      (not (free ?role))
+  )
+
+
+  (<= terminal (true (control ?role)) (not (free ?role)))
+  (<= terminal (true (step 20)))
+
+  (<= (free ?role)
+      (true (cell ?x ?role))
+      (data(adjacent ?x ?y))
+      (true (cell ?y hsBlank)))
+
+
+
+  (<= (drawit (1 1 ?mark))
+      (true (cell a ?mark))
+  )
+
+  (<= (drawit (1 5 ?mark))
+      (true (cell b ?mark))
+  )
+
+  (<= (drawit (5 1 ?mark))
+      (true (cell d ?mark))
+  )
+
+  (<= (drawit (5 5 ?mark))
+      (true (cell e ?mark))
+  )
+
+  (<= (drawit (3 3 ?mark))
+      (true (cell c ?mark))
+  )
+
+
+
+  (<= (drawit (2 1 hsV))(distinct 1 2))
+  (<= (drawit (3 1 hsV))(distinct 1 2))
+  (<= (drawit (4 1 hsV))(distinct 1 2))
+
+  (<= (drawit (2 2 hsdiagL))(distinct 1 2))
+  (<= (drawit (4 4 hsdiagL))(distinct 1 2))
+
+  (<= (drawit (2 4 hsdiagR))(distinct 1 2))
+  (<= (drawit (4 2 hsdiagR))(distinct 1 2))
+
+  (<= (drawit (2 5 hsV))(distinct 1 2))
+  (<= (drawit (3 5 hsV))(distinct 1 2))
+  (<= (drawit (4 5 hsV))(distinct 1 2))
+
+  (<= (drawit (5 2 hsH))(distinct 1 2))
+  (<= (drawit (5 3 hsH))(distinct 1 2))
+  (<= (drawit (5 4 hsH))(distinct 1 2))
