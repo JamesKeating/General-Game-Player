@@ -30,6 +30,8 @@ public class GameManager{
         for (Gamer player : players){
             gamers.add(player);
         }
+        gameManager.setMyRole("RANDOM");
+
     }
 
 
@@ -82,7 +84,11 @@ public class GameManager{
 
                 }
             }
+            if (role.toString().equals("RANDOM")){
+                moves.add(gameManager.makeMove());
+            }
         }
+        System.out.println(moves);
 
 //        System.out.println(moves + " 1");
 //        System.out.println(gameManager.getContents()+ " 2");
@@ -116,13 +122,17 @@ public class GameManager{
         });
         for (Player role: gameManager.getRoles()){
             for(Gamer gamer : gamers){
+
                 if (role.toString().equals(gamer.getMyRole())){
 
-                    if (HumanPlayer.class.isInstance(gamer))
+                    if (HumanPlayer.class.isInstance(gamer)){
                         role.setHuman(true);
-
-                    System.out.println(role);
+                    }
+                    System.out.println(role + " - " +role.isHuman());
                     moves.put(role, gamer.getLegalMoves(gamer.getContents(), role));
+                }
+                else if (role.toString().equals("RANDOM")){
+                    moves.put(role, gamer.getLegalMoves(gameManager.getContents(), role));
                 }
             }
         }

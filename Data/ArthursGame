@@ -133,6 +133,19 @@
                 (<= terminal
                     (not(open)))
 
+                (<= terminal
+                    (true (cell ?x 1 red))
+                    (true (cell ?x 2 red))
+                    (true (cell ?x1 2 red))
+                    (true (cell ?x1 3 red))
+                    (true (cell ?x2 3 red))
+                    (true (cell ?x2 4 red))
+                    (true (cell ?x3 4 red))
+                    (true (cell ?x3 5 red))
+                    (true (cell ?x4 5 red))
+                    (true (cell ?x4 6 red))
+                )
+
 
                 (<= (drawit (?x ?y blank))
                     (true (cell ?x ?y blank))

@@ -53,29 +53,31 @@ public class Grahpics extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         primaryStage.setTitle("GGP Console");
-//        primaryStage.setScene(getSelectionScene(primaryStage));
-
-        ArrayList<Gamer> x =new ArrayList<Gamer>();
-        ArrayList<String> y =new ArrayList<>();
+        primaryStage.setScene(getSelectionScene(primaryStage));
+//
+//        ArrayList<Gamer> x =new ArrayList<Gamer>();
+//        ArrayList<String> y =new ArrayList<>();
+//        y.add("white");
 //        y.add("red");
-//        y.add("black");
-        y.add("player");
-        x.add(new MonteCarloPlayer());
+////        y.add("player");
+//
 //        x.add(new HumanPlayer());
-
-
-        GameManager gm = new GameManager(x);
-        LexicalAnalyser l = new LexicalAnalyser();
-
-        l.analyseFile("D:\\FYP\\General-Game-Player\\Data\\Slider");
-//        l.analyseFile("D:\\FYP\\General-Game-Player\\Data\\buttons");
-
-        dt = new DescriptionTable(l.getTokenStream());
-
-        gm.setupGame(dt, y);
+//        x.add(new HumanPlayer());
+////        x.add(new HumanPlayer());
+//
+//
+//        GameManager gm = new GameManager(x);
+//        LexicalAnalyser l = new LexicalAnalyser();
+//
+//        l.analyseFile("D:\\FYP\\General-Game-Player\\Data\\ArthursGame");
+////        l.analyseFile("D:\\FYP\\General-Game-Player\\Data\\buttons");
+//
+//        dt = new DescriptionTable(l.getTokenStream());
+//
+//        gm.setupGame(dt, y);
 //        System.out.println("1");
 
-        primaryStage.setScene(getPlayableScene(gm));
+//        primaryStage.setScene(getPlayableScene(gm));
         primaryStage.show();
 
     }
@@ -381,8 +383,10 @@ public class Grahpics extends Application {
                         options.addAll("Default", new Separator());
                         assign.put("Default", "human");
                         for (Player player : gm.getRoles()){
-                            options.add(player.toString());
-                            assign.put(player.toString(), "human");
+                            if (!player.toString().equals("RANDOM")){
+                                options.add(player.toString());
+                                assign.put(player.toString(), "human");
+                            }
                         }
                         cb.setItems(FXCollections.observableArrayList(options));
                         cb.getSelectionModel().selectFirst();
