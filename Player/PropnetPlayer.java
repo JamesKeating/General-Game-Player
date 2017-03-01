@@ -279,7 +279,8 @@ public class PropnetPlayer implements Gamer, Serializable {
         for (Player player : getRoles()){
             if (player.toString().equals(myRole)){
                 temp = getLegalMoves(contents, player);
-                return temp.get(ThreadLocalRandom.current().nextInt(0, temp.size()));
+                if (temp.size() > 0)
+                    return temp.get(ThreadLocalRandom.current().nextInt(0, temp.size()));
             }
         }
 

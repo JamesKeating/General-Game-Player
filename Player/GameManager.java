@@ -100,6 +100,7 @@ public class GameManager{
             gamer.setContents(gameManager.getContents());
         }
 
+        System.out.println(gameManager.getContents() + " ----here");
         return gameManager;
 
     }

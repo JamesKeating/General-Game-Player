@@ -104,6 +104,7 @@ public class Flattener
             }
             else {
                 System.out.println(constant + "---const----");
+
                 for ( Description template : templates.get(constant) ) {
 
 //                    System.out.println(template);
@@ -318,7 +319,7 @@ public class Flattener
         HashMap<String, ArrayList<Description>> templates = new HashMap<>();
         for ( Description description : descriptionList ) {
 
-//            System.out.println(description);
+
             if ( !description.getLeadAtom().getID().equals("base") ) {
 //                System.out.println(description);
 //

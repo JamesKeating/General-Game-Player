@@ -182,10 +182,14 @@ public class Grahpics extends Application {
 
             if (count == p_names.size() -1) {
                 for (int j = 0; j < p_names.size(); j++){
-                    if (noopCheck(j) && p_names.get(j).isHuman())
+                    if (noopCheck(j) && p_names.get(j).isHuman()){
                         gm.getGamer(p_names.get(j)).setSelectedMove(p_moves.get(j).get(0));
+                    }
 
                 }
+
+                update(gm);
+                drawGrid(board, gm.getGameManager());
             }
         }
         if (p_moves.size() > 0)
