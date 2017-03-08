@@ -144,6 +144,30 @@
                     (true (cell ?x3 5 red))
                     (true (cell ?x4 5 red))
                     (true (cell ?x4 6 red))
+
+                    (data(higher ?x ?x1))
+                    (true (cell ?z 2 red))
+                    (data (higher ?z ?x))
+                    (data (higher ?x1 ?z))
+
+                )
+
+                (<= terminal
+                    (true (cell ?x 1 red))
+                    (true (cell ?x 2 red))
+                    (true (cell ?x1 2 red))
+                    (true (cell ?x1 3 red))
+                    (true (cell ?x2 3 red))
+                    (true (cell ?x2 4 red))
+                    (true (cell ?x3 4 red))
+                    (true (cell ?x3 5 red))
+                    (true (cell ?x4 5 red))
+                    (true (cell ?x4 6 red))
+
+                    (data(higher ?x1 ?x))
+                    (true (cell ?z 2 red))
+                    (data (higher ?z ?x1))
+                    (data (higher ?x ?z))
                 )
 
 

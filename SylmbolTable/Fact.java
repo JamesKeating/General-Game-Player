@@ -27,20 +27,6 @@ public class Fact implements Serializable{
         return fact;
     }
 
-//    public void setVarValue(String varID, String value){
-//        ArrayList<Token> newValues = new ArrayList<>();
-//        for (Token t : this.fact){
-//
-//            if (t.getID().equals(varID)){
-//                if (isNumeric(value))
-//                    t = new IntToken(value);
-//                else
-//                    t = new IdToken(value);
-//            }
-//            newValues.add(t);
-//        }
-//        this.setFact(newValues);
-//    }
 
     public Token getLeadAtom(){
         for(Token tok : this.fact){

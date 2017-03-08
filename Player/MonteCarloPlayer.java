@@ -112,8 +112,14 @@ public class MonteCarloPlayer extends PropnetPlayer {
 
 
         HashMap<Player, Double> rewards = new HashMap<>();
-        for (Player p: getRoles())
-            rewards.put(p, doubleValue(getGoal(rndContents, p)));
+        for (Player p: getRoles()){
+            if (p.toString().equals("RANDOM"))
+                rewards.put(p, 0.0);
+            else{
+                System.out.println(rndContents);
+                rewards.put(p, doubleValue(getGoal(rndContents, p)));
+            }
+        }
 
         System.out.println(rewards + " tag1");
         return rewards;
@@ -128,6 +134,7 @@ public class MonteCarloPlayer extends PropnetPlayer {
                 moves.add(move);
             }
             else {
+                //could put null here for random
                 temp = getLegalMoves(contents, player);
                 moves.add(temp.get(ThreadLocalRandom.current().nextInt(0, temp.size())));
             }

@@ -88,7 +88,7 @@ public class GameManager{
                 moves.add(gameManager.makeMove());
             }
         }
-        System.out.println(moves);
+        System.out.println(moves + " tagh");
 
 //        System.out.println(moves + " 1");
 //        System.out.println(gameManager.getContents()+ " 2");

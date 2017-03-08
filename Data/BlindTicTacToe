@@ -4,8 +4,8 @@
                 (role RANDOM)
 
 
-                (base control (xplayer oplayer) )
-                (base cell (1 2 3) (1 2 3) (b x o))
+
+                (base cell (1 2 3) (1 2 3) (b x o r))
 
 
                 (init (cell 1 1 b))
@@ -19,41 +19,100 @@
                 (init (cell 3 3 b))
 
 
+                (<= (clash ?m ?n)
+                    (does xplayer (mark ?m ?n))
+                    (does oplayer (mark ?m ?n))
+                )
 
-                (<= (next (control xplayer))
+                (<= (next (cell ?m ?n r))
+                    (clash ?m ?n)
+                )
+
+                (<= (next (cell ?m ?n x))
+                    (true (cell ?m ?n r))
                     (does RANDOM (pick xplayer))
                 )
 
-                (<= (next (control oplayer))
+                (<= (next (cell ?m ?n o))
+                    (true (cell ?m ?n r))
                     (does RANDOM (pick oplayer))
+                )
+
+
+                (<= (next (cell ?m ?n x))
+                    (does xplayer (mark ?m ?n))
+                    (does oplayer (mark ?m1 ?n1))
+                    (distinct ?m ?m1)
+                    (true (cell ?m ?n b))
+                    (not(clash ?m ?n))
                 )
 
                 (<= (next (cell ?m ?n x))
                     (does xplayer (mark ?m ?n))
-                    (true (cell ?m ?n b)))
+                    (does oplayer (mark ?m1 ?n1))
+                    (distinct ?n ?n1)
+                    (not (distinct ?m ?m1))
+                    (true (cell ?m ?n b))
+                    (not(clash ?m ?n))
+
+                )
 
                 (<= (next (cell ?m ?n o))
                     (does oplayer (mark ?m ?n))
-                    (true (cell ?m ?n b)))
+                    (does xplayer (mark ?m1 ?n1))
+                    (distinct ?m ?m1)
+                    (true (cell ?m ?n b))
+                    (not(clash ?m ?n))
+                )
+
+                (<= (next (cell ?m ?n o))
+                    (does oplayer (mark ?m ?n))
+                    (does xplayer (mark ?m1 ?n1))
+                    (distinct ?n ?n1)
+                    (not (distinct ?m ?m1))
+                    (true (cell ?m ?n b))
+                    (not(clash ?m ?n))
+                )
 
                 (<= (next (cell ?m ?n ?w))
                     (true (cell ?m ?n ?w))
-                    (distinct ?w b))
+                    (distinct ?w b)
+                    (distinct ?w r)
+                )
 
                 (<= (next (cell ?m ?n b))
-                    (does ?w (mark ?j ?k))
+                    (X ?m ?n)
+                    (O ?m ?n)
+                )
+
+                (<= (next (cell ?m ?n b))
+                    (does RANDOM (pick ?player))
+                    (true (cell ?m ?n b))
+                )
+
+                (<= (X ?m ?n)
+                    (does xplayer (mark ?j ?k))
                     (true (cell ?m ?n b))
                     (distinct ?n ?k)
                 )
 
-                (<= (next (cell ?m ?n b))
+
+                (<= (X ?m ?n)
+                    (does xplayer (mark ?j ?k))
                     (true (cell ?m ?n b))
-                    (not (control xplayer))
-                    (not (control oplayer))
+                    (distinct ?m ?j)
+                    (not (distinct ?n ?k))
                 )
 
-                (<= (next (cell ?m ?n b))
-                    (does ?w (mark ?j ?k))
+                (<= (O ?m ?n)
+                    (does oplayer (mark ?j ?k))
+                    (true (cell ?m ?n b))
+                    (distinct ?n ?k)
+                )
+
+
+                (<= (O ?m ?n)
+                    (does oplayer (mark ?j ?k))
                     (true (cell ?m ?n b))
                     (distinct ?m ?j)
                     (not (distinct ?n ?k))
@@ -88,36 +147,40 @@
                 (<= (open)
                     (true (cell ?m ?n b)))
 
-                (<= (legal ?w (mark ?x ?y))
+                (<= (legal xplayer noop)
+                    (control r)
+                )
+
+                (<= (legal oplayer noop)
+                    (control r)
+                )
+
+                (<= (legal xplayer (mark ?x ?y))
                     (true (cell ?x ?y b))
-                    (true (control ?w)))
-
-                (<= (legal xplayer noop)
-                    (true (control oplayer)))
-
-                (<= (legal oplayer noop)
-                    (true (control xplayer)))
-
-                (<= (legal xplayer noop)
-                    (not (control xplayer))
-                    (not (control oplayer))
+                    (not (control r))
                 )
 
-                (<= (legal oplayer noop)
-                    (not (control xplayer))
-                    (not (control oplayer))
+                (<= (control r)
+                    (true (cell ?m ?n r))
                 )
 
-                (<= (legal oplayer noop)
-                    (true (control xplayer)))
+                (<= (legal oplayer (mark ?x ?y))
+                    (true (cell ?x ?y b))
+                    (not (control r))
+                )
 
                 (<= (legal RANDOM (pick xplayer))
-                    (distinct 1 2)
+                    (control r)
                 )
 
                 (<= (legal RANDOM (pick oplayer))
-                    (distinct 1 2)
+                    (control r)
                 )
+
+                (<= (legal RANDOM noop)
+                    (not (control r))
+                )
+
 
                 (<= (goal xplayer 100)
                     (line x))
@@ -154,6 +217,10 @@
 
                 (<= (drawit (?x ?y btile))
                     (true (cell ?x ?y b))
+                )
+
+                (<= (drawit (?x ?y btile))
+                    (true (cell ?x ?y r))
                 )
 
                 (<= (drawit (?x ?y xtile))

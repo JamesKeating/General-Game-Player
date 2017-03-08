@@ -1,0 +1,121 @@
+
+  (role player)
+
+  (base cell (1 2) (1 2) (slider1 slider2 slider3 sliderb))
+
+  (base step (1 2 3 4 5 6 7 8 9 10))
+
+
+  (init (cell 1 2 slider3))
+  (init (cell 2 1 slider2))
+  (init (cell 2 2 slider1))
+  (init (cell 1 1 sliderb))
+  (init (step 1))
+
+
+  (<= (legal player left)  (true (cell ?m 2 sliderb)))
+  (<= (legal player right) (true (cell ?m 1 sliderb)))
+  (<= (legal player up)    (true (cell 2 ?n sliderb)))
+  (<= (legal player down)  (true (cell 1 ?n sliderb)))
+
+  (<= (next (cell 1 ?n sliderb))
+      (does player up)
+      (true (cell 2 ?n sliderb)))
+
+  (<= (next (cell 2 ?n sliderb))
+      (does player down)
+      (true (cell 1 ?n sliderb)))
+
+  (<= (next (cell ?m 1 sliderb))
+      (does player left)
+      (true (cell ?m 2 sliderb)))
+
+  (<= (next (cell ?m 2 sliderb))
+      (does player right)
+      (true (cell ?m 1 sliderb)))
+
+
+  (<= (next (cell 2 ?n ?x))
+      (does player up)
+      (true (cell 2 ?n sliderb))
+      (true (cell 1 ?n ?x)))
+
+  (<= (next (cell 1 ?n ?x))
+      (does player down)
+      (true (cell 1 ?n sliderb))
+      (true (cell 2 ?n ?x)))
+
+  (<= (next (cell ?m 2 ?x))
+      (does player left)
+      (true (cell ?m 2 sliderb))
+      (true (cell ?m 1 ?x)))
+
+  (<= (next (cell ?m 1 ?x))
+      (does player right)
+      (true (cell ?m 1 sliderb))
+      (true (cell ?m 2 ?x)))
+
+
+  (<= (next (cell ?m ?n ?w))
+      (does player up)
+      (true (cell ?x ?y sliderb))
+      (true (cell ?m ?n ?w))
+      (distinct ?y ?n))
+
+  (<= (next (cell ?m ?n ?w))
+      (does player down)
+      (true (cell ?x ?y sliderb))
+      (true (cell ?m ?n ?w))
+      (distinct ?y ?n))
+
+  (<= (next (cell ?m ?n ?w))
+      (does player left)
+      (true (cell ?x ?y sliderb))
+      (true (cell ?m ?n ?w))
+      (distinct ?x ?m))
+
+  (<= (next (cell ?m ?n ?w))
+      (does player right)
+      (true (cell ?x ?y sliderb))
+      (true (cell ?m ?n ?w))
+      (distinct ?x ?m))
+
+
+  (<= (next (step ?x))
+      (not (step ?x))
+      (true (step ?y))
+      (data(successor ?y ?x)))
+
+
+  (<= (drawit (?x ?y ?pic))
+      (true (cell ?x ?y ?pic))
+  )
+
+
+  (<= (goal player 100)
+      (inorder)
+  )
+
+  (<= (goal player 0)
+      (not (inorder)))
+
+
+  (<= terminal (inorder))
+  (<= terminal (true (step 7)))
+
+  (<= (inorder)
+      (true (cell 1 1 slider1))
+      (true (cell 1 2 slider2))
+      (true (cell 2 1 slider3))
+      (true (cell 2 2 sliderb)))
+
+  (data(successor 0 1))
+  (data(successor 1 2))
+  (data(successor 2 3))
+  (data(successor 3 4))
+  (data(successor 4 5))
+  (data(successor 5 6))
+  (data(successor 6 7))
+  (data(successor 7 8))
+  (data(successor 8 9))
+  (data(successor 9 10))

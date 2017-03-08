@@ -96,7 +96,6 @@ public class Grahpics extends Application {
     public boolean noopCheck(int c){
         boolean op_has_only_noop = true;
         boolean i_have_only_noop = false;
-
         for (int i = 0; i < p_names.size(); i++) {
 
             if (p_moves.get(i).size() == 1){
@@ -123,9 +122,20 @@ public class Grahpics extends Application {
         p_names.addAll(gm.getAllCurrentLegalMoves().keySet());
 
         if (gm.getGameManager().allAI()){
-            while (noopCheck(count)){
-                count++;
+            while (count < p_names.size()) {
+                System.out.println(p_names.get(count));
+                if (!p_names.get(count).toString().equals("RANDOM")){
+                    if (!noopCheck(count))
+                        break;
+                }
+
+                if (count == p_names.size() - 1) {
+                    update(gm);
+
+                } else
+                    count++;
             }
+
             return;
         }
 
@@ -169,29 +179,53 @@ public class Grahpics extends Application {
                     if (noopCheck(j) && j != count && p_names.get(j).isHuman())
                         gm.getGamer(p_names.get(j)).setSelectedMove(p_moves.get(j).get(0));
                 }
-                movePreview(gm, board);
+
+                System.out.println(gm.getGameManager().getRoles() + " tagq");
+                if (!gm.getGameManager().getRoles().toString().contains("RANDOM"))//TODO: add button for for this
+                    movePreview(gm, board);
             }
         });
 
-        while(count < p_names.size()-1 && !gm.getGameManager().allAI()){
 
-            if (p_names.get(count).isHuman() && !noopCheck(count))
-                break;
+        if (!gm.getGameManager().allAI()){
+            while(count < p_names.size()){
 
-            count++;
+                if (p_names.get(count).isHuman() && !noopCheck(count))
+                    break;
 
-            if (count == p_names.size() -1) {
-                for (int j = 0; j < p_names.size(); j++){
-                    if (noopCheck(j) && p_names.get(j).isHuman()){
-                        gm.getGamer(p_names.get(j)).setSelectedMove(p_moves.get(j).get(0));
-                    }
+                if (noopCheck(count) && p_names.get(count).isHuman())
+                    gm.getGamer(p_names.get(count)).setSelectedMove(p_moves.get(count).get(0));
 
+
+                if (count == p_names.size() -1) {
+                    update(gm);
+                    drawGrid(board, gm.getGameManager());
+                    count = 0;
                 }
 
-                update(gm);
-                drawGrid(board, gm.getGameManager());
+                else
+                    count++;
+
             }
         }
+
+        else {
+            while (count < p_names.size()) {
+
+
+                if (!noopCheck(count) && !p_names.get(count).toString().equals("RANDOM"))
+                    break;
+
+                if (count == p_names.size() - 1) {
+                    update(gm);
+                    drawGrid(board, gm.getGameManager());
+                    count = 0;
+                } else
+                    count++;
+            }
+        }
+
+
         if (p_moves.size() > 0)
             list.setItems(FXCollections.observableArrayList (p_moves.get(count)));
 
@@ -207,18 +241,22 @@ public class Grahpics extends Application {
                 if (p_names.get(count).isHuman() && list.getSelectionModel().getSelectedItem() == null) {
 
                     Optional<ButtonType> result = alert.showAndWait();
-                    if (result.isPresent() && result.get() == ButtonType.OK) {
+                    if (result.isPresent()) {
                         return;
                     }
                 }
 
 
 
+                boolean last = true;
                 while (count < p_names.size() -1) {
                     count++;
                     if ((p_names.get(count).isHuman())) {
-                        if (!noopCheck(count))
+
+                        if (!noopCheck(count)){
+                            last = false;
                             break;
+                        }
 
                         else{
                             gm.getGamer(p_names.get(count)).setSelectedMove(p_moves.get(count).get(0));
@@ -227,7 +265,7 @@ public class Grahpics extends Application {
                 }
 
 
-                if (count == p_names.size() -1) {
+                if (count == p_names.size() -1 && last) {
                     update(gm);
                     drawGrid(board, gm.getGameManager());
                 }
@@ -407,12 +445,13 @@ public class Grahpics extends Application {
                 else{
                     ArrayList<Gamer> gamers = new ArrayList<>();
 
+
                     assign.remove(assign.get(0));
                     for (String gamerType : assign.keySet()){
                         if (assign.get(gamerType).equals("human"))
                             gamers.add(new HumanPlayer());
                         else{
-                            gamers.add(new PureMC());
+                            gamers.add(new MonteCarloPlayer());
                         }
 
                     }

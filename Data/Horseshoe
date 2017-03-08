@@ -82,6 +82,7 @@
 
   (<= (next (step ?n))
       (true (step ?m))
+      (not (step ?n))
       (data(succ ?m ?n))
   )
 

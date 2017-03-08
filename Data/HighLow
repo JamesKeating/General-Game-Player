@@ -1,107 +1,115 @@
 (role player)
 (role RANDOM)
 
-
 (base playerCard (cardA card2 card3 card4 card5 card6 card7 card8 card9 card10 cardJ cardK cardQ N))
 (base dealerCard (cardA card2 card3 card4 card5 card6 card7 card8 card9 card10 cardJ cardK cardQ N))
+(base guessed (higher lower))
 
 (init (playerCard N))
 (init (dealerCard N))
 
-
-
-(<= (next (tie))
-    (does player(guess higher))
-    (true (playerCard ?x))
-    (true (dealerCard ?y))
-    (not (distinct ?x ?y))
+(<= (reveal)
+    (true (guessed ?x))
 )
 
-(<= (next (tie))
-    (does player(guess lower))
-    (true (playerCard ?x))
-    (true (dealerCard ?y))
-    (not (distinct ?x ?y))
-)
 
-(<= (next (win))
-    (does player(guess higher))
+(<= (win)
+    (true (guessed higher))
     (true (playerCard ?x))
     (true (dealerCard ?y))
     (data (higherThan ?x ?y))
-
+    (not (dealerDraw))
 )
 
-(<= (next (lose))
-    (does player(guess higher))
+(<= (win)
+    (true (guessed lower))
     (true (playerCard ?x))
     (true (dealerCard ?y))
     (data (higherThan ?y ?x))
-
+    (not (dealerDraw))
 )
 
-(<= (next (win))
-    (does player(guess lower))
-    (true (playerCard ?x))
-    (true (dealerCard ?y))
-    (data (higherThan ?y ?x))
-)
-
-(<= (next (lose))
-    (does player(guess lower))
+(<= (lose)
+    (true (guessed lower))
     (true (playerCard ?x))
     (true (dealerCard ?y))
     (data (higherThan ?x ?y))
-
+    (not (dealerDraw))
 )
+
+(<= (lose)
+    (true (guessed higher))
+    (true (playerCard ?x))
+    (true (dealerCard ?y))
+    (data (higherThan ?y ?x))
+    (not (dealerDraw))
+)
+
+(<= (next (guessed ?x))
+    (true (guessed ?x))
+)
+
+
 
 (<= (next (playerCard ?x)) (does RANDOM (draw Player ?x)) (true (playerCard N)))
 (<= (next (dealerCard ?x)) (does RANDOM (draw Dealer ?x)) (true (dealerCard N)))
 
-(<= (next (playerCard N)) (does RANDOM (draw Dealer ?x)) (true (playerCard N)))
-(<= (next (dealerCard N)) (does RANDOM (draw Player ?x)) (true (dealerCard N)))
+(<= (next (dealerCard N)) (not (dealerDraw)) (true (dealerCard N)))
 
 (<= (next (playerCard ?x)) (true (playerCard ?x)) (distinct ?x N))
 (<= (next (dealerCard ?x)) (true (dealerCard ?x)) (distinct ?x N))
 
+(<= (next (guessed ?x))
+    (does player (guess ?x))
+)
+
 (<= (legal player (guess higher))
     (not (playerCard N))
-    (not (dealerCard N))
+    (not (dealerDraw))
 )
 
 (<= (legal player (guess lower))
     (not (playerCard N))
-    (not (dealerCard N))
+    (not (dealerDraw))
 )
 
-(<= (legal player (noop))
+(<= (legal player noop)
     (true (playerCard N))
 )
 
-(<= (legal player (noop))
-    (not (playerCard N))
+(<= (legal player noop)
+    (dealerDraw)
+)
+
+
+(<= (legal RANDOM (draw Player ?x))(not (playerCard ?x)) (true (playerCard N)))
+(<= (legal RANDOM (draw Dealer ?x))(not (dealerCard ?x))(not (playerCard ?x)) (dealerDraw))
+(<= (legal RANDOM noop)(true (playerCard ?x)) (distinct ?x N) (not (dealerDraw)))
+
+
+(<= (dealerDraw)
+    (true (guessed higher))
     (true (dealerCard N))
 )
 
-(<= (legal RANDOM (draw Player ?x))(not (playerCard ?x)) (true (playerCard N)))
-(<= (legal RANDOM (draw Dealer ?x))(not (dealerCard ?x)) (true (dealerCard N)))
+(<= (dealerDraw)
+    (true (guessed lower))
+    (true (dealerCard N))
+)
+
+(<= terminal (win))
+(<= terminal (lose))
 
 
+(<= (goal player 100) (win))
+(<= (goal player 0) (lose))
 
-(<= terminal (does player (guess higher)))
-(<= terminal (does player (guess lower)))
-
-(<= (goal player 100) (true (win)))
-(<= (goal player 0) (true(lose)))
-(<= (goal player 50) (true(tie)))
-
-
-
-(<= (drawit (1 1 ?x))(does player (guess higher))(true (dealerCard ?x)))
-(<= (drawit (1 1 ?x))(does player (guess lower))(true (dealerCard ?x)))
-(<= (drawit (1 1 cardDown)) (not(does player (guess higher))) (not(does player (guess lower))))
 
 (<= (drawit (2 1 ?x))(true (playerCard ?x)))
+
+(<= (drawit (1 1 ?x))(true (guessed ?y))(true (dealerCard ?x)))
+
+(<= (drawit (1 1 cardDown)) (not(reveal)))
 
 
 
@@ -117,6 +125,7 @@
 (data (higherThan cardK card2))
 (data (higherThan cardQ card2))
 (data (higherThan cardA card2))
+
 (data (higherThan card4 card3))
 (data (higherThan card5 card3))
 (data (higherThan card6 card3))
@@ -128,6 +137,7 @@
 (data (higherThan cardK card3))
 (data (higherThan cardQ card3))
 (data (higherThan cardA card3))
+
 (data (higherThan card5 card4))
 (data (higherThan card6 card4))
 (data (higherThan card7 card4))
@@ -138,6 +148,7 @@
 (data (higherThan cardK card4))
 (data (higherThan cardQ card4))
 (data (higherThan cardA card4))
+
 (data (higherThan card6 card5))
 (data (higherThan card7 card5))
 (data (higherThan card8 card5))
@@ -147,6 +158,7 @@
 (data (higherThan cardK card5))
 (data (higherThan cardQ card5))
 (data (higherThan cardA card5))
+
 (data (higherThan card7 card6))
 (data (higherThan card8 card6))
 (data (higherThan card9 card6))
@@ -155,6 +167,7 @@
 (data (higherThan cardK card6))
 (data (higherThan cardQ card6))
 (data (higherThan cardA card6))
+
 (data (higherThan card8 card7))
 (data (higherThan card9 card7))
 (data (higherThan card10 card7))
@@ -162,24 +175,30 @@
 (data (higherThan cardK card7))
 (data (higherThan cardQ card7))
 (data (higherThan cardA card7))
+
 (data (higherThan card9 card8))
 (data (higherThan card10 card8))
 (data (higherThan cardJ card8))
 (data (higherThan cardK card8))
 (data (higherThan cardQ card8))
 (data (higherThan cardA card8))
+
 (data (higherThan card10 card9))
 (data (higherThan cardJ card9))
 (data (higherThan cardK card9))
 (data (higherThan cardQ card9))
 (data (higherThan cardA card9))
+
 (data (higherThan cardJ card10))
 (data (higherThan cardK card10))
 (data (higherThan cardQ card10))
 (data (higherThan cardA card10))
+
 (data (higherThan cardK cardJ))
 (data (higherThan cardQ cardJ))
 (data (higherThan cardA cardJ))
+
 (data (higherThan cardK cardQ))
 (data (higherThan cardA cardQ))
+
 (data (higherThan cardA cardK))
