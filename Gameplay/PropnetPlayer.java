@@ -54,7 +54,11 @@ public class PropnetPlayer  implements Gamer{
             contents_list.remove(contents_list.size() - 1);
             setContents(contents_list.get(contents_list.size() - 1));
         }
+    }
 
+    public void restart(){
+
+        initialize(this.propNet);
     }
 
     private HashSet<String> contents = new HashSet<>();

@@ -69,7 +69,6 @@ public abstract class PropNetNode implements Serializable
     }
 
     public PropNetNode getSingleInput() {
-//        System.out.println(inputs.size());
         assert inputs.size() == 1;
         return inputs.iterator().next();
     }
@@ -79,24 +78,8 @@ public abstract class PropNetNode implements Serializable
     }
 
     public void addOutput(PropNetNode output) {
-//        System.out.println(this + "========output" + output);
         outputs.add(output);
     }
 
-    public void removeInput(PropNetNode input) {
-        inputs.remove(input);
-    }
-
-    public void removeOutput(PropNetNode output) {
-        outputs.remove(output);
-    }
-
-    public void clearInput() {
-        inputs.clear();
-    }
-
-    public void cleatOutput() {
-        outputs.clear();
-    }
 
 }

@@ -13,7 +13,7 @@ public class PureMC extends PropnetPlayer {
 
     int count = 0;
     public String makeMove() {
-        double timeLimit = 1000;
+        double timeLimit = 5000;
         double start = System.currentTimeMillis();
         double finishBy = start + timeLimit;
 

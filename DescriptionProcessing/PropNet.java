@@ -16,28 +16,19 @@ import java.util.HashSet;
 
 
 public class PropNet{
+
     private HashSet<PropNetNode> propNetNodes;
-
     private HashSet<Latch> latches;
-
     private HashMap<String, Latch> baseLatches;
-
     private HashMap<String, Latch> inputLatches;
-
     private HashMap<String, HashSet<Latch>> legalLatches;
-
     private HashMap<String, HashSet<Latch>> goalLatches;
-
     private Latch initLatches;
-
     public HashSet<Latch> getDrawLatches() {
         return drawLatches;
     }
-
     private HashSet<Latch> drawLatches;
-
     private Latch terminalLatches;
-
     private ArrayList<Player> roles;
 
     public PropNet(ArrayList<Player> roles, HashSet<PropNetNode> propNetNodes) {

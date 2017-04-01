@@ -12,6 +12,7 @@ import java.util.ArrayList;
 public class Player implements Serializable {
 
     private String name;
+    private boolean isHuman = false;
 
     public boolean isHuman() {
         return isHuman;
@@ -20,8 +21,6 @@ public class Player implements Serializable {
     public void setHuman(boolean human) {
         isHuman = human;
     }
-
-    private boolean isHuman = false;
 
     public Player(Token token){
         this.name = token.getID();

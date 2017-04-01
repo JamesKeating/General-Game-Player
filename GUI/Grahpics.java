@@ -45,30 +45,7 @@ public class Grahpics extends Application {
 
         primaryStage.setTitle("GGP Console");
         primaryStage.setScene(getSelectionScene(primaryStage));
-//
-//        ArrayList<Gamer> x =new ArrayList<Gamer>();
-//        ArrayList<String> y =new ArrayList<>();
-//        y.add("white");
-//        y.add("red");
-////        y.add("player");
-//
-//        x.add(new HumanPlayer());
-//        x.add(new HumanPlayer());
-////        x.add(new HumanPlayer());
-//
-//
-//        GameManager gm = new GameManager(x);
-//        LexicalAnalyser l = new LexicalAnalyser();
-//
-//        l.analyseFile("D:\\FYP\\General-Game-Gameplay\\Data\\ArthursGame");
-////        l.analyseFile("D:\\FYP\\General-Game-Gameplay\\Data\\buttons");
-//
-//        dt = new DescriptionTable(l.getTokenStream());
-//
-//        gm.setupGame(dt, y);
-//        System.out.println("1");
 
-//        primaryStage.setScene(getPlayableScene(gm));
         primaryStage.show();
 
     }
@@ -158,10 +135,10 @@ public class Grahpics extends Application {
         GridPane board = new GridPane();
         GridPane options = new GridPane();
 
-        options.setStyle("-fx-background-color: #A9A9A9");
-        //board.setStyle("-fx-background-color: #FFFFFF");
-        board.setVgap(20);
-        board.setStyle("-fx-background-color: #006400");
+//        options.setStyle("-fx-background-color: #A9A9A9");
+        board.setStyle("-fx-background-color: #FFFFFF");
+//        board.setVgap(20);
+//        board.setStyle("-fx-background-color: #006400");
 
         board.setPadding(new Insets(10,10,10,10));
         ListView<String> list = new ListView<String>();
@@ -268,6 +245,7 @@ public class Grahpics extends Application {
                 }
 
                 //System.out.println(gm.getGameManager().getContents());
+
                 list.getSelectionModel().select(-1);
                 list.setItems(FXCollections.observableArrayList (p_moves.get(count)));
                 btn.setText(buttonText + p_names.get(count));
@@ -275,7 +253,7 @@ public class Grahpics extends Application {
                 if (gm.getGameManager().isTerminal(gm.getGameManager().getContents())){
                     root.getChildren().remove(list);
                     root.getChildren().remove(options);
-                    gm.getGameManager().getPropNet().renderToFile("PropNetFile2");
+
                 }
             }
         });

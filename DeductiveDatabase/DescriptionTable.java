@@ -13,14 +13,14 @@ import java.util.Set;
  */
 public class DescriptionTable {
 
-    private RDP rdp = new RDP();
     private HashMap<String, HashMap<Integer, ArrayList<Description>>> table = new HashMap<>();
     private Description tempDescription;
     private ArrayList<Description>  descriptionsList = new ArrayList<>();
-    private Set<Player> gamePlayers;
+    //private Set<Player> gamePlayers;
 
     public DescriptionTable(ArrayList<Token> tokenStream){
         int parCount = 0, start = 0, end = 1;
+        RDP rdp = new RDP();
         if (rdp.parse(tokenStream)) {
             tokenStream.remove(tokenStream.size() - 1);
             for (Token tok : tokenStream){

@@ -16,7 +16,7 @@ public class Drawable {
     public Drawable(int x_coord, int y_coord, String filename){
         this.x_coord = x_coord;
         this.y_coord = y_coord;
-        File file = new File("D:\\FYP\\General-Game-Gameplay\\Images\\" + filename + ".png");
+        File file = new File("D:\\FYP\\General-Game-Player\\Images\\" + filename + ".png");
         Image image = new Image(file.toURI().toString());
         imageView = new ImageView(image);
     }

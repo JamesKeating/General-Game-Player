@@ -28,21 +28,21 @@ public class Main {
 		for (int i = 0; i < 100; i++) {
 			ArrayList<Gamer> x = new ArrayList<Gamer>();
 			ArrayList<String> y = new ArrayList<>();
-			y.add("hsRed");
-			y.add("hsBlue");
+			y.add("oplayer");
+			y.add("xplayer");
 			if (i % 2 > 0) {
 				x.add(new MonteCarloPlayer());
-				x.add(new PropnetPlayer());
+				x.add(new PureMC());
 
 			}
 			else{
-				x.add(new PropnetPlayer());
+				x.add(new PureMC());
 				x.add(new MonteCarloPlayer());
 			}
 
 			GameManager gm = new GameManager(x);
 			LexicalAnalyser l = new LexicalAnalyser();
-			l.analyseFile("D:\\FYP\\General-Game-Gameplay\\Data\\Duikoshi");
+			l.analyseFile("D:\\FYP\\General-Game-Player\\Data\\TicTacToe");
 			DescriptionTable dt = new DescriptionTable(l.getTokenStream());
 
 			gm.setupGame(dt, y);

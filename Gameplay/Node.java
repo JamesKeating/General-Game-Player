@@ -16,7 +16,7 @@ public class Node {
     private int visits;
     private double score;
     private String move;
-    private double propagateValue = Double.POSITIVE_INFINITY;
+
 
     public void setMoveMaker(Player moveMaker) {
         this.moveMaker = moveMaker;

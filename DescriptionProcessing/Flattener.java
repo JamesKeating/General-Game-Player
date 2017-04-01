@@ -11,9 +11,8 @@ import java.util.HashMap;
 
 public class Flattener
 {
-    /** An archive of Rule instantiations, indexed by head name. */
+
     private HashMap<String, ArrayList<Description>> instantiations;
-    /** An archive of the rules in a game description, indexed by head name. */
     private HashMap<String, ArrayList<Description>> templates;
 
 

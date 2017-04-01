@@ -33,32 +33,6 @@ public class GameManager{
     public void setupGame(DescriptionTable dt, ArrayList<String> roles){
         gameManager.initialize(dt.listTable());
 
-
-//        try {
-//            FileOutputStream f = new FileOutputStream(new File("myObjects.txt"));
-//
-//            ObjectOutputStream o = new ObjectOutputStream(f);
-//
-//            // Write objects to file
-//            o.writeObject(gameManager.getPropNet());
-//            o.close();
-//            f.close();
-//
-//            for (int i = 0; i < gamers.size(); i++){
-//                FileInputStream fi = new FileInputStream(new File("myObjects.txt"));
-//                ObjectInputStream oi = new ObjectInputStream(fi);
-//                PropNet propNet = (PropNet) oi.readObject();
-//                gamers.get(i).initialize(propNet);
-//                gamers.get(i).setMyRole(roles.get(i));
-//                oi.close();
-//                fi.close();
-//
-//            }
-//
-//
-//        } catch (Exception e) {
-
-//        }
         for (int i = 0; i < gamers.size(); i++){
             gamers.get(i).initialize(dt.listTable());
             gamers.get(i).setMyRole(roles.get(i));
@@ -73,15 +47,13 @@ public class GameManager{
         for (Player role: gameManager.getRoles()){
 
             for(Gamer gamer : gamers){
-                if (role.toString().equals(gamer.getMyRole())){
+                if (role.toString().equals(gamer.getMyRole()))
                     moves.add(gamer.makeMove());
-                   // System.out.println(moves);
+            }
 
-                }
-            }
-            if (role.toString().equals("RANDOM")){
+            if (role.toString().equals("RANDOM"))
                 moves.add(gameManager.makeMove());
-            }
+
         }
 
         gameManager.setContents(gameManager.getNextState(gameManager.getContents(), moves));
@@ -91,7 +63,6 @@ public class GameManager{
         }
 
         return gameManager;
-
     }
 
     public PropnetPlayer undo(){
@@ -118,7 +89,7 @@ public class GameManager{
                     if (HumanPlayer.class.isInstance(gamer)){
                         role.setHuman(true);
                     }
-                    //System.out.println(role + " - " +role.isHuman());
+
                     moves.put(role, gamer.getLegalMoves(gamer.getContents(), role));
                 }
                 else if (role.toString().equals("RANDOM")){
@@ -126,16 +97,14 @@ public class GameManager{
                 }
             }
         }
-        //System.out.println(moves + "all legal");
+
         return moves;
     }
 
     public HumanPlayer getGamer(Player player){
         for (Gamer gamer: gamers){
             if (gamer.getMyRole().equals(player.toString()))
-
                 return (HumanPlayer) gamer;
-
         }
 
         return null;
