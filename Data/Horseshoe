@@ -131,7 +131,6 @@
   )
 
 
-
   (<= (drawit (2 1 hsV))(distinct 1 2))
   (<= (drawit (3 1 hsV))(distinct 1 2))
   (<= (drawit (4 1 hsV))(distinct 1 2))

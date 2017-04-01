@@ -51,7 +51,7 @@
 
 
 
-(<= (next (playerCard ?x)) (does RANDOM (draw Player ?x)) (true (playerCard N)))
+(<= (next (playerCard ?x)) (does RANDOM (draw Gameplay ?x)) (true (playerCard N)))
 (<= (next (dealerCard ?x)) (does RANDOM (draw Dealer ?x)) (true (dealerCard N)))
 
 (<= (next (dealerCard N)) (not (dealerDraw)) (true (dealerCard N)))
@@ -82,7 +82,7 @@
 )
 
 
-(<= (legal RANDOM (draw Player ?x))(not (playerCard ?x)) (true (playerCard N)))
+(<= (legal RANDOM (draw Gameplay ?x))(not (playerCard ?x)) (true (playerCard N)))
 (<= (legal RANDOM (draw Dealer ?x))(not (dealerCard ?x))(not (playerCard ?x)) (dealerDraw))
 (<= (legal RANDOM noop)(true (playerCard ?x)) (distinct ?x N) (not (dealerDraw)))
 
@@ -104,6 +104,9 @@
 (<= (goal player 100) (win))
 (<= (goal player 0) (lose))
 
+
+(<= (drawit (2 2 yes))(reveal)(win))
+(<= (drawit (2 2 no))(reveal)(lose))
 
 (<= (drawit (2 1 ?x))(true (playerCard ?x)))
 

@@ -1,11 +1,9 @@
 package DescriptionProcessing;
 
 import GDLTokens.Token;
-import SylmbolTable.Description;
-import SylmbolTable.DescriptionTable;
+import DeductiveDatabase.Description;
 
 import java.io.Serializable;
-import java.util.AbstractList;
 import java.util.ArrayList;
 
 /**

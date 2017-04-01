@@ -2,10 +2,8 @@
                 (role xplayer)
                 (role oplayer)
 
-
                 (base control (xplayer oplayer) )
                 (base cell (1 2 3) (1 2 3) (b x o))
-
 
                 (init (cell 1 1 b))
                 (init (cell 1 2 b))
@@ -125,14 +123,38 @@
                     (not(open)))
 
 
-                (<= (drawit (?x ?y btile))
-                    (true (cell ?x ?y b))
-                )
+                (<= (drawit (1 1 c1xtile))(true(cell 1 1 x)))
+                (<= (drawit (1 1 c1otile))(true(cell 1 1 o)))
+                (<= (drawit (1 1 c1btile))(true(cell 1 1 b)))
 
-                (<= (drawit (?x ?y xtile))
-                    (true(cell ?x ?y x))
-                )
+                (<= (drawit (1 2 txtile))(true(cell 1 2 x)))
+                (<= (drawit (1 2 totile))(true(cell 1 2 o)))
+                (<= (drawit (1 2 tbtile))(true(cell 1 2 b)))
 
-                (<= (drawit (?x ?y otile))
-                    (true(cell ?x ?y o))
-                )
+                (<= (drawit (1 3 c2xtile))(true(cell 1 3 x)))
+                (<= (drawit (1 3 c2otile))(true(cell 1 3 o)))
+                (<= (drawit (1 3 c2btile))(true(cell 1 3 b)))
+
+                (<= (drawit (2 1 lxtile))(true(cell 2 1 x)))
+                (<= (drawit (2 1 lotile))(true(cell 2 1 o)))
+                (<= (drawit (2 1 lbtile))(true(cell 2 1 b)))
+
+                (<= (drawit (2 2 xtile))(true(cell 2 2 x)))
+                (<= (drawit (2 2 otile))(true(cell 2 2 o)))
+                (<= (drawit (2 2 btile))(true(cell 2 2 b)))
+
+                (<= (drawit (2 3 rxtile))(true(cell 2 3 x)))
+                (<= (drawit (2 3 rotile))(true(cell 2 3 o)))
+                (<= (drawit (2 3 rbtile))(true(cell 2 3 b)))
+
+                (<= (drawit (3 1 c4xtile))(true(cell 3 1 x)))
+                (<= (drawit (3 1 c4otile))(true(cell 3 1 o)))
+                (<= (drawit (3 1 c4btile))(true(cell 3 1 b)))
+
+                (<= (drawit (3 2 dxtile))(true(cell 3 2 x)))
+                (<= (drawit (3 2 dotile))(true(cell 3 2 o)))
+                (<= (drawit (3 2 dbtile))(true(cell 3 2 b)))
+
+                (<= (drawit (3 3 c3xtile))(true(cell 3 3 x)))
+                (<= (drawit (3 3 c3otile))(true(cell 3 3 o)))
+                (<= (drawit (3 3 c3btile))(true(cell 3 3 b)))

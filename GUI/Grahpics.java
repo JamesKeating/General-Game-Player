@@ -2,13 +2,12 @@ package GUI;
 
 import DescriptionProcessing.Player;
 import GDLParser.LexicalAnalyser;
-import Player.*;
-import SylmbolTable.DescriptionTable;
+import Gameplay.*;
+import DeductiveDatabase.DescriptionTable;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -18,22 +17,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import Player.GameManager;
+import Gameplay.GameManager;
 
-import java.awt.*;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.*;
-import java.util.logging.Logger;
 
 /**
  * Created by siavj on 31/01/2017.
@@ -69,8 +60,8 @@ public class Grahpics extends Application {
 //        GameManager gm = new GameManager(x);
 //        LexicalAnalyser l = new LexicalAnalyser();
 //
-//        l.analyseFile("D:\\FYP\\General-Game-Player\\Data\\ArthursGame");
-////        l.analyseFile("D:\\FYP\\General-Game-Player\\Data\\buttons");
+//        l.analyseFile("D:\\FYP\\General-Game-Gameplay\\Data\\ArthursGame");
+////        l.analyseFile("D:\\FYP\\General-Game-Gameplay\\Data\\buttons");
 //
 //        dt = new DescriptionTable(l.getTokenStream());
 //
@@ -123,7 +114,7 @@ public class Grahpics extends Application {
 
         if (gm.getGameManager().allAI()){
             while (count < p_names.size()) {
-                System.out.println(p_names.get(count));
+                //System.out.println(p_names.get(count));
                 if (!p_names.get(count).toString().equals("RANDOM")){
                     if (!noopCheck(count))
                         break;
@@ -167,6 +158,12 @@ public class Grahpics extends Application {
         GridPane board = new GridPane();
         GridPane options = new GridPane();
 
+        options.setStyle("-fx-background-color: #A9A9A9");
+        //board.setStyle("-fx-background-color: #FFFFFF");
+        board.setVgap(20);
+        board.setStyle("-fx-background-color: #006400");
+
+        board.setPadding(new Insets(10,10,10,10));
         ListView<String> list = new ListView<String>();
 
         drawGrid(board, gm.getGameManager());
@@ -180,7 +177,7 @@ public class Grahpics extends Application {
                         gm.getGamer(p_names.get(j)).setSelectedMove(p_moves.get(j).get(0));
                 }
 
-                System.out.println(gm.getGameManager().getRoles() + " tagq");
+                //System.out.println(gm.getGameManager().getRoles() + " tagq");
                 if (!gm.getGameManager().getRoles().toString().contains("RANDOM"))//TODO: add button for for this
                     movePreview(gm, board);
             }
@@ -270,7 +267,7 @@ public class Grahpics extends Application {
                     drawGrid(board, gm.getGameManager());
                 }
 
-                System.out.println(gm.getGameManager().getContents());
+                //System.out.println(gm.getGameManager().getContents());
                 list.getSelectionModel().select(-1);
                 list.setItems(FXCollections.observableArrayList (p_moves.get(count)));
                 btn.setText(buttonText + p_names.get(count));
@@ -278,6 +275,7 @@ public class Grahpics extends Application {
                 if (gm.getGameManager().isTerminal(gm.getGameManager().getContents())){
                     root.getChildren().remove(list);
                     root.getChildren().remove(options);
+                    gm.getGameManager().getPropNet().renderToFile("PropNetFile2");
                 }
             }
         });

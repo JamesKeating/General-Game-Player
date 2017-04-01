@@ -5,9 +5,7 @@ package DescriptionProcessing.PropNetComponents;
  */
 
 
-import DescriptionProcessing.PropNetComponents.PropNetNode;
-import SylmbolTable.Description;
-import SylmbolTable.Fact;
+import DeductiveDatabase.Fact;
 
 
 public final class Latch extends PropNetNode

@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class Substitution
 {
 
-    private HashMap<String, Token> contents;//idtoken?
+    private HashMap<String, Token> contents;
 
     public Substitution() {
         contents = new HashMap<>();
@@ -58,11 +58,6 @@ public class Substitution
         contents.put(variable, term);
     }
 
-    /**
-     * Creates an identical substitution.
-     *
-     * @return A new, identical substitution.
-     */
     public Substitution copy() {
         Substitution copy = new Substitution();
         copy.contents.putAll(contents);

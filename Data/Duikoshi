@@ -86,7 +86,7 @@
 
   (<= (playable) (legal ?role (mark ?i ?j ?x)))
 
-  (<= (drawit (?x ?y blnk))
+  (<= (drawit (?x ?y btile))
       (true (cell ?x ?y b))
   )
 

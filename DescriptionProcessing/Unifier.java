@@ -3,14 +3,15 @@ package DescriptionProcessing;
 import GDLTokens.ImplicationToken;
 import GDLTokens.Token;
 import GDLTokens.VarToken;
-import SylmbolTable.Description;
-import SylmbolTable.Fact;
+import DeductiveDatabase.Description;
+import DeductiveDatabase.Fact;
 
 import java.util.ArrayList;
 
 /**
  * Created by siavj on 10/01/2017.
  */
+
 public class Unifier
 {
 
@@ -56,7 +57,7 @@ public class Unifier
             }catch (Exception e){
                 return false;
             }
-            //System.out.println(xTerm + " -=-" + yTerm);/
+
             if (!(xTerm instanceof VarToken) && !(yTerm instanceof VarToken)) {
                 if (!xTerm.toString().equals(yTerm.toString())) {
                     return false;
@@ -73,7 +74,6 @@ public class Unifier
                     return false;
             }
 
-            //not sure
             if((xTerm instanceof VarToken) && (yTerm instanceof VarToken)){
                 return false;
             }

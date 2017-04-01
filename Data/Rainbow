@@ -15,7 +15,9 @@
   )
 
   (<= (next (color ?r ?c))
-      (does player (mark ?r ?c)))
+      (does player (mark ?r ?c))
+      (true (color ?r white))
+  )
 
   (<= (next (color ?r ?c))
       (true (color ?r ?c))

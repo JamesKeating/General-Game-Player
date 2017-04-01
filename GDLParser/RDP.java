@@ -25,7 +25,7 @@ public class RDP{
         boolean valid = false;
         for (Production p : grammar.grammarProductions){
             nextPos = pos;
-            //System.out.println(p + "--- " + nt + "#### " + tokenStream.get(nextPos).getValue());
+
             if(nt == p.lhs) {
                 valid = true;
                 for (int symbol : p.rhs) {
@@ -51,7 +51,6 @@ public class RDP{
             }
 
             if (valid) {
-               // System.out.println(p + "=====" + nt);
                 return nextPos; //pos
             }
 
