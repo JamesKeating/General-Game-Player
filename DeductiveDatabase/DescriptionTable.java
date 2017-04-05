@@ -11,13 +11,18 @@ import java.util.Set;
 /**
  * Created by siavj on 16/10/2016.
  */
+
+/**
+ * Stores all of the descriptions from the game definition
+ */
 public class DescriptionTable {
 
     private HashMap<String, HashMap<Integer, ArrayList<Description>>> table = new HashMap<>();
-    private Description tempDescription;
     private ArrayList<Description>  descriptionsList = new ArrayList<>();
-    //private Set<Player> gamePlayers;
 
+    /**
+     * Table of all the descriptions is built by parsing the game definition
+     */
     public DescriptionTable(ArrayList<Token> tokenStream){
         int parCount = 0, start = 0, end = 1;
         RDP rdp = new RDP();
@@ -30,7 +35,7 @@ public class DescriptionTable {
                     parCount -=1;
 
                 if (parCount == 0){
-                    tempDescription = new Description(new ArrayList<>(tokenStream.subList(start, end)));
+                    Description tempDescription = new Description(new ArrayList<>(tokenStream.subList(start, end)));
                     descriptionsList.add(tempDescription);
 
                     table.putIfAbsent(tempDescription.getLeadAtom().toString(), new HashMap<>());
@@ -43,6 +48,10 @@ public class DescriptionTable {
             }
 
         }
+
+        else
+            descriptionsList = null;
+
 
     }
 

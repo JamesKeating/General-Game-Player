@@ -5,12 +5,15 @@ import GDLParser.LexicalAnalyser;
 import Gameplay.*;
 import DeductiveDatabase.DescriptionTable;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -19,12 +22,15 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import Gameplay.GameManager;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 /**
  * Created by siavj on 31/01/2017.
@@ -36,6 +42,9 @@ public class Grahpics extends Application {
     private ArrayList<Player> p_names = new ArrayList<>();
     private DescriptionTable dt = null;
     private boolean first =true;
+    private boolean playing = false;
+    private boolean piVal = false;
+
 
     public static void main(String[] args) {
         launch(args);
@@ -45,7 +54,6 @@ public class Grahpics extends Application {
 
         primaryStage.setTitle("GGP Console");
         primaryStage.setScene(getSelectionScene(primaryStage));
-
         primaryStage.show();
 
     }
@@ -124,7 +132,7 @@ public class Grahpics extends Application {
         }
     }
 
-    public Scene getPlayableScene(GameManager gm){
+    public Scene getPlayableScene(GameManager gm, Stage stage){
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "As a human player you must manually select a move from the list to continue");
 
@@ -154,8 +162,7 @@ public class Grahpics extends Application {
                         gm.getGamer(p_names.get(j)).setSelectedMove(p_moves.get(j).get(0));
                 }
 
-                //System.out.println(gm.getGameManager().getRoles() + " tagq");
-                if (!gm.getGameManager().getRoles().toString().contains("RANDOM"))//TODO: add button for for this
+                if (!gm.getGameManager().getRoles().toString().contains("RANDOM"))
                     movePreview(gm, board);
             }
         });
@@ -202,21 +209,44 @@ public class Grahpics extends Application {
 
         if (p_moves.size() > 0)
             list.setItems(FXCollections.observableArrayList (p_moves.get(count)));
-
+        TextField moveInput = new TextField();
         Button btn = new Button();
         btn.setText("Submit move for: " + p_names.get(count));
 
         btn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+
+
+
+                if (btn.getText().equals("Start New Game")) {
+                    getPlayableScene(gm, stage);
+                    list.getSelectionModel().select(-1);
+                    list.setItems(FXCollections.observableArrayList(p_moves.get(count)));
+                    btn.setText("Submit move for: " + p_names.get(count));
+                    drawGrid(board, gm.getGameManager());
+                    return;
+                }
+
+
                 String buttonText = "Submit move for: ";
 
 
                 if (p_names.get(count).isHuman() && list.getSelectionModel().getSelectedItem() == null) {
 
-                    Optional<ButtonType> result = alert.showAndWait();
-                    if (result.isPresent()) {
-                        return;
+                    for (String move : list.getItems()) {
+                        if (move.equals(moveInput.getText())){
+                            gm.getGamer(p_names.get(count)).setSelectedMove(move);
+
+                        }
+                    }
+
+                    if (gm.getGamer(p_names.get(count)).makeMove() == null ||
+                            !gm.getGamer(p_names.get(count)).makeMove().equals(moveInput.getText())){
+                        Optional<ButtonType> result = alert.showAndWait();
+                        if (result.isPresent()) {
+                            return;
+                        }
                     }
                 }
 
@@ -244,25 +274,32 @@ public class Grahpics extends Application {
                     drawGrid(board, gm.getGameManager());
                 }
 
-                //System.out.println(gm.getGameManager().getContents());
-
-                list.getSelectionModel().select(-1);
-                list.setItems(FXCollections.observableArrayList (p_moves.get(count)));
-                btn.setText(buttonText + p_names.get(count));
 
                 if (gm.getGameManager().isTerminal(gm.getGameManager().getContents())){
-                    root.getChildren().remove(list);
-                    root.getChildren().remove(options);
+//                    System.out.println(gm.getGameManager().getContents());
+                    gm.restartGame();
+                    p_names.clear();
+                    p_moves.clear();
+                    btn.setText("Start New Game");
+                }
 
+
+                else {
+                    list.getSelectionModel().select(-1);
+                    list.setItems(FXCollections.observableArrayList(p_moves.get(count)));
+                    moveInput.clear();
+                    btn.setText(buttonText + p_names.get(count));
                 }
             }
         });
 
-        options.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
+        options.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, null, null)));
         options.setPadding(new Insets(10, 10, 10, 10));
-        options.setAlignment(Pos.BOTTOM_CENTER);
+        options.setAlignment(Pos.BOTTOM_LEFT);
         options.add(btn, 0, 0);
-
+        moveInput.setPromptText("Select move from list or input here: ");
+        moveInput.setPrefWidth(500);
+        options.add(moveInput, 1,0);
         root.setRight(list);
         root.setCenter(board);
         root.setBottom(options);
@@ -276,6 +313,11 @@ public class Grahpics extends Application {
         ChoiceBox cb = new ChoiceBox();
         CheckBox cbHuman = new CheckBox("Human");
         CheckBox cbAI = new CheckBox("AI");
+        Slider difficulty = new Slider();
+        Label load = new Label("Loading game...");
+        PropnetPlayer gm = new PropnetPlayer();
+
+
 
         cb.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
@@ -388,60 +430,118 @@ public class Grahpics extends Application {
         playButton.setOnAction(new EventHandler<ActionEvent>() {
 
             public void handle(final ActionEvent e) {
-
-                if (playButton.getText().equals("Assign Players")){
-                    LexicalAnalyser l = new LexicalAnalyser();
-                    try {
-                        l.analyseFile(textField.getText());
-                        dt = new DescriptionTable(l.getTokenStream());
-                        PropnetPlayer gm = new PropnetPlayer();
-                        gm.initialize(dt.listTable());
-
-                        ObservableList options = FXCollections.observableArrayList();
-                        options.addAll("Default", new Separator());
-                        assign.put("Default", "human");
-                        for (Player player : gm.getRoles()){
-                            if (!player.toString().equals("RANDOM")){
-                                options.add(player.toString());
-                                assign.put(player.toString(), "human");
-                            }
-                        }
-                        cb.setItems(FXCollections.observableArrayList(options));
-                        cb.getSelectionModel().selectFirst();
-
-                        root.add(cb, 6, 4);
-                        root.add(cbHuman, 7, 4);
-                        root.add(cbAI, 8, 4);
-                        playButton.setText("Play Game");
-                    }catch (Exception e1){
-                        System.out.println("file invalid");
-                    }
-                }
-
-                else{
-                    ArrayList<Gamer> gamers = new ArrayList<>();
-
-
-                    assign.remove(assign.get(0));
-                    for (String gamerType : assign.keySet()){
-                        if (assign.get(gamerType).equals("human"))
-                            gamers.add(new HumanPlayer());
-                        else{
-                            gamers.add(new MonteCarloPlayer());
-                        }
-
-                    }
-                    GameManager gameManager = new GameManager(gamers);
-
-                    gameManager.setupGame(dt, new ArrayList<>(assign.keySet()));
-                    stage.setScene(getPlayableScene(gameManager));
-                }
-
-
+                piVal = true;
+                root.add(load,10,3);
 
             }
         });
 
+        Task task = new Task<Void>() {
+            @Override
+            public Void call() throws Exception {
+
+                while(!playing){
+                    if (piVal) {
+                        piVal = false;
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                Alert invalidDescription = new Alert(Alert.AlertType.CONFIRMATION, "The game description you have selected " +
+                                        "cannot be parsed. Please check description is valid.");
+                                if (playButton.getText().equals("Assign Players")) {
+
+                                    LexicalAnalyser l = new LexicalAnalyser();
+                                    try {
+                                        boolean validDescription = false;
+                                        if (l.analyseFile(textField.getText())) {
+                                            dt = new DescriptionTable(l.getTokenStream());
+                                            if (dt.listTable() != null) {
+                                                gm.initialize(dt.listTable());
+                                                validDescription = true;
+                                            }
+                                        }
+
+                                        if (!validDescription) {
+                                            Optional<ButtonType> result = invalidDescription.showAndWait();
+                                            if (result.isPresent()) {
+                                                return;
+                                            }
+                                        }
+
+
+                                        ObservableList options = FXCollections.observableArrayList();
+                                        options.addAll("Default", new Separator());
+                                        assign.put("Default", "human");
+                                        for (Player player : gm.getRoles()) {
+                                            if (!player.toString().equals("RANDOM")) {
+                                                options.add(player.toString());
+                                                assign.put(player.toString(), "human");
+                                            }
+                                        }
+                                        cb.setItems(FXCollections.observableArrayList(options));
+                                        cb.getSelectionModel().selectFirst();
+
+                                        Label difLabel = new Label("Time for AI moves:");
+                                        difLabel.setFont(Font.font("Arial", 18));
+                                        difficulty.setMin(0);
+                                        difficulty.setMax(60);
+                                        difficulty.setValue(5);
+                                        difficulty.setShowTickLabels(true);
+                                        difficulty.setShowTickMarks(true);
+                                        difficulty.setMajorTickUnit(30);
+                                        difficulty.setMinorTickCount(5);
+                                        difficulty.setBlockIncrement(5);
+
+                                        root.add(difLabel, 6, 5);
+                                        root.add(difficulty, 7, 5);
+                                        root.add(cb, 6, 4);
+                                        root.add(cbHuman, 7, 4);
+                                        root.add(cbAI, 8, 4);
+                                        playButton.setText("Play Game");
+
+                                    } catch (Exception e1) {
+                                        System.out.println("file invalid");
+                                    }
+                                }
+                                else {
+                                    ArrayList<Gamer> gamers = new ArrayList<>();
+
+
+                                    assign.remove(assign.get(0));
+                                    for (String gamerType : assign.keySet()) {
+                                        if (assign.get(gamerType).equals("human"))
+                                            gamers.add(new HumanPlayer());
+                                        else {
+                                            gamers.add(new MonteCarloPlayer(difficulty.getValue()));
+                                        }
+
+                                    }
+                                    GameManager gameManager = new GameManager(gamers);
+                                    gameManager.setupGame(gm, new ArrayList<>(assign.keySet()));
+                                    gm.setMyRole("RANDOM");
+                                    stage.setScene(getPlayableScene(gameManager, stage));
+                                    playing = true;
+
+                                }
+
+                                root.getChildren().remove(load);
+                            }
+
+                        });
+
+
+                    }
+                    else
+                        Thread.sleep(500);
+                }
+                return null;
+            }
+        };
+
+        new Thread(task).start();
+        //th.setDaemon(true);
+        //th.start();
 
         root.setAlignment(Pos.BASELINE_LEFT);
         root.setHgap(2);
@@ -450,7 +550,7 @@ public class Grahpics extends Application {
 
 
         root.add(fileButton, 6 ,3);
-        root.add(playButton, 6 ,5);
+        root.add(playButton, 6 ,6);
         root.add(textField, 7, 3);
         return new Scene(root, 800, 800);
     }

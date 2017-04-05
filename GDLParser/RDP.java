@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class RDP{
 
-    private int nextPos;
+
     private GDLGrammar grammar = new GDLGrammar();
     private ArrayList<Token> tokenStream = new ArrayList<>();
 
@@ -51,7 +51,7 @@ public class RDP{
             }
 
             if (valid) {
-                return nextPos; //pos
+                return nextPos;
             }
 
         }

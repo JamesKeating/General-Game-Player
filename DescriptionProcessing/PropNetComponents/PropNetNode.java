@@ -38,18 +38,7 @@ public abstract class PropNetNode implements Serializable
         return outputs;
     }
 
-//TODO: sort out this toDot stuff
-    /**
-     * Returns a configurable representation of the PropNetNode in .dot format.
-     *
-     * @param shape
-     *            The value to use as the <tt>shape</tt> attribute.
-     * @param fillcolor
-     *            The value to use as the <tt>fillcolor</tt> attribute.
-     * @param label
-     *            The value to use as the <tt>label</tt> attribute.
-     * @return A representation of the PropNetNode in .dot format.
-     */
+
     protected String toDot(String shape, String fillcolor, String label)
     {
         StringBuilder sb = new StringBuilder();

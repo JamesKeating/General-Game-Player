@@ -13,6 +13,7 @@ public interface Gamer {
     public void initialize(ArrayList<Description> description);
     public void initialize(PropNet description);
     public void setMyRole(String role);
+    public void restart();
     public String getMyRole();
     public void setContents(HashSet<String> contents);
     public ArrayList<String> getLegalMoves(HashSet<String> state, Player role);

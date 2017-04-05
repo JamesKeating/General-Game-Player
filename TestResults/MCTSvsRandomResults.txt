@@ -1,0 +1,48 @@
+class Gameplay.MonteCarloPlayer played 100 games of Data\TicTacToe vs class Gameplay.PropnetPlayer
+class Gameplay.MonteCarloPlayer  Won: 97 Drew: 3 Lost: 0
+
+class Gameplay.MonteCarloPlayer played 100 games of Data\Horseshoe vs class Gameplay.PropnetPlayer
+class Gameplay.MonteCarloPlayer  Won: 71 Drew: 0 Lost: 29
+
+class Gameplay.MonteCarloPlayer played 100 games of Data\Duikoshi vs class Gameplay.PropnetPlayer
+class Gameplay.MonteCarloPlayer  Won: 83 Drew: 0 Lost: 17
+
+class Gameplay.MonteCarloPlayer played 100 games of Data\TicTacToe vs class Gameplay.PropnetPlayer
+class Gameplay.MonteCarloPlayer  Won: 98 Drew: 1 Lost: 1
+
+class Gameplay.MonteCarloPlayer played 100 games of Data\BlindTicTacToe vs class Gameplay.PropnetPlayer
+class Gameplay.MonteCarloPlayer  Won: 0 Drew: 100 Lost: 0
+
+class Gameplay.MonteCarloPlayer played 100 games of Data\Horseshoe vs class Gameplay.PropnetPlayer
+class Gameplay.MonteCarloPlayer  Won: 85 Drew: 0 Lost: 15
+
+class Gameplay.MonteCarloPlayer played 100 games of Data\TicTacToe vs class Gameplay.PropnetPlayer
+class Gameplay.MonteCarloPlayer  Won: 99 Drew: 1 Lost: 0
+
+class Gameplay.MonteCarloPlayer played 100 games of Data\Horseshoe vs class Gameplay.PropnetPlayer
+class Gameplay.MonteCarloPlayer  Won: 91 Drew: 0 Lost: 9
+
+class Gameplay.MonteCarloPlayer played 100 games of Data\TicTacToe vs class Gameplay.PropnetPlayer
+class Gameplay.MonteCarloPlayer  Won: 100 Drew: 0 Lost: 0
+
+class Gameplay.MonteCarloPlayer played 100 games of Data\Duikoshi vs class Gameplay.PropnetPlayer
+class Gameplay.MonteCarloPlayer  Won: 94 Drew: 0 Lost: 6
+
+class Gameplay.MonteCarloPlayer played 100 games of Data\BlindTicTacToe vs class Gameplay.PropnetPlayer
+class Gameplay.MonteCarloPlayer  Won: 0 Drew: 100 Lost: 0
+
+class Gameplay.MonteCarloPlayer played 100 games of Data\Horseshoe vs class Gameplay.PropnetPlayer
+class Gameplay.MonteCarloPlayer  Won: 90 Drew: 0 Lost: 10
+
+class Gameplay.MonteCarloPlayer played 100 games of Data\Duikoshi vs class Gameplay.PropnetPlayer
+class Gameplay.MonteCarloPlayer  Won: 97 Drew: 0 Lost: 3
+
+class Gameplay.MonteCarloPlayer played 100 games of Data\BlindTicTacToe vs class Gameplay.PropnetPlayer
+class Gameplay.MonteCarloPlayer  Won: 0 Drew: 100 Lost: 0
+
+class Gameplay.MonteCarloPlayer played 100 games of Data\Duikoshi vs class Gameplay.PropnetPlayer
+class Gameplay.MonteCarloPlayer  Won: 98 Drew: 0 Lost: 2
+
+class Gameplay.MonteCarloPlayer played 100 games of Data\BlindTicTacToe vs class Gameplay.PropnetPlayer
+class Gameplay.MonteCarloPlayer  Won: 0 Drew: 100 Lost: 0
+

@@ -11,18 +11,27 @@ import static oracle.jrockit.jfr.events.Bits.doubleValue;
  * Created by siavj on 31/01/2017.
  */
 public class MonteCarloPlayer extends PropnetPlayer {
-
+    private  Player myrole;
     private int count;
-
+    private double timeLimit = 5000;
 
     public MonteCarloPlayer(){
         super();
         count = 1;
     }
 
+    public MonteCarloPlayer(double timeLimit){
+        super();
+        count = 1;
+        setTimeLimit(timeLimit);
+    }
+
+    public void setTimeLimit(double timeLimit){
+        this.timeLimit = timeLimit;
+    }
+
     public String makeMove(){
 
-        Player myrole = null;
         for (Player p : getRoles()){
             if (p.toString().equals(getMyRole())){
                 myrole = p;
@@ -35,9 +44,9 @@ public class MonteCarloPlayer extends PropnetPlayer {
         }
 
 
-        double timeLimit = 20000;
+
         double start = System.currentTimeMillis();
-        double finishBy = start + timeLimit;
+        double finishBy = start + timeLimit*1000;
 
 
         Node root;
@@ -52,7 +61,6 @@ public class MonteCarloPlayer extends PropnetPlayer {
 
             if (!isTerminal(selected.getContents())){
                 expand(selected);
-                expand(selected);
                 estScore = monteCarlo(selected, count);
             }
 
@@ -62,6 +70,9 @@ public class MonteCarloPlayer extends PropnetPlayer {
             backpropagate(selected, estScore);
 
         }
+
+        if (root.getChildren().isEmpty())
+            return super.makeMove();
 
         int first = ThreadLocalRandom.current().nextInt(root.getChildren().size());
         String bestMove = root.getChildren().get(first).getMove();
@@ -75,6 +86,7 @@ public class MonteCarloPlayer extends PropnetPlayer {
 
         return bestMove;
     }
+
 
     public HashMap<Player, Double> monteCarlo(Node selected, int count) {
 
@@ -156,10 +168,10 @@ public class MonteCarloPlayer extends PropnetPlayer {
             scores.add(newscore);
             total += newscore;
 //
-            if (newscore > score) {
-                score = newscore;
-                result = node.getChildren().get(i);
-            }
+//            if (newscore > score) {
+//                score = newscore;
+//                result = node.getChildren().get(i);
+//            }
         }
 //
         Double count = 0.0;
@@ -181,8 +193,10 @@ public class MonteCarloPlayer extends PropnetPlayer {
 
     private boolean expand (Node node) {
 
-
         Player moveMaker = getPlayer(node.getContents());
+        if(moveMaker == null)
+            moveMaker = myrole;
+
         ArrayList<String> moves = getLegalMoves(node.getContents(), moveMaker);
 
             for (int i=0; i < moves.size(); i++) {
@@ -199,14 +213,11 @@ public class MonteCarloPlayer extends PropnetPlayer {
         if (node.getVisits() > 1)
             node.setScore(node.getScore() + score.get(node.getMoveMaker()));
 
-        else {
+        else
             node.setScore(score.get(node.getMoveMaker()));
-        }
 
-        if (node.getParent() != null){
+        if (node.getParent() != null)
             backpropagate(node.getParent(), score);
-        }
-
 
         return true;
     }

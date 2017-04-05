@@ -73,6 +73,7 @@ public class PropNet{
     public Latch getTerminalLatches() {
         return terminalLatches;
     }
+
     public String toString() {
 
         StringBuilder sb = new StringBuilder();

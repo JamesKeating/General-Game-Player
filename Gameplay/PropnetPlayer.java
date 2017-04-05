@@ -57,8 +57,11 @@ public class PropnetPlayer  implements Gamer{
     }
 
     public void restart(){
-
-        initialize(this.propNet);
+        if (contents_list.size() > 0) {
+            setContents(contents_list.get(0));
+            contents_list.clear();
+            contents_list.add(contents);
+        }
     }
 
     private HashSet<String> contents = new HashSet<>();
@@ -90,7 +93,7 @@ public class PropnetPlayer  implements Gamer{
         ArrayList<Latch> latches = new ArrayList<>(propNet.getLatches());
 
         propNetNodes.removeAll(propNet.getBaseLatches().values());
-        propNetNodes.removeAll(propNet.getInputLatches().values());
+        propNetNodes.removeAll(propNet.getInputLatches().values());//remove?
         propNetNodes.remove(propNet.getInitLatches());
 
         while (!propNetNodes.isEmpty()) {
@@ -274,16 +277,20 @@ public class PropnetPlayer  implements Gamer{
     public Player getPlayer(HashSet<String> contents){
 
         ArrayList<String> moves;
-
+        Player temp = null;
         for (Player p : getRoles()){
             moves = getLegalMoves(contents, p);
 
             if (moves.size() > 1 ||(moves.size() == 1 && !moves.get(0).contains("noop"))) {
-                return p;
+                if (temp == null)
+                    temp = p;
+                else
+                    return null;
             }
+
 
         }
 
-        return null;
+        return temp;
     }
 }

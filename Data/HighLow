@@ -12,7 +12,6 @@
     (true (guessed ?x))
 )
 
-
 (<= (win)
     (true (guessed higher))
     (true (playerCard ?x))

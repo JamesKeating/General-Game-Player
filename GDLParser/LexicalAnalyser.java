@@ -15,7 +15,7 @@ public class LexicalAnalyser {
 	private Trie symbolTable = new Trie(keyWords);
 	private ArrayList<Token> tokenStream = new ArrayList<>();
 	
-	public void analyseFile(String directory){
+	public boolean analyseFile(String directory){
 		
 		DFA myDFA =new DFA(); 
 		int lastState = 0;
@@ -46,7 +46,9 @@ public class LexicalAnalyser {
 
 			   if(currState == -1) {
 
-					createToken(lastState);
+					if (!createToken(lastState))
+				   		return false;
+
 					currState = 0;
 			   }
 
@@ -69,9 +71,11 @@ public class LexicalAnalyser {
 			fileInput.close();
 			tokenStream.add(new EofToken());
 		}catch(Exception e){ e.printStackTrace();}
+
+		return true;
 	}
 	
-	public void createToken(int state){
+	public boolean createToken(int state){
 
 		String value = symbolTable.getString();
 		TrieNode node = symbolTable.getNode(true);
@@ -99,7 +103,13 @@ public class LexicalAnalyser {
 			case 6:
 				this.tokenStream.add(new IntToken(value));
 				break;
+
+			default:
+				return false;
+
+
 		}
+		return true;
 	}
 
 	public ArrayList<Token> getTokenStream() {

@@ -2,7 +2,6 @@ package Gameplay;
 
 import DescriptionProcessing.Player;
 
-import DeductiveDatabase.DescriptionTable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -30,12 +29,22 @@ public class GameManager{
 
 
 
-    public void setupGame(DescriptionTable dt, ArrayList<String> roles){
-        gameManager.initialize(dt.listTable());
+    public void setupGame(PropnetPlayer propnetPlayer, ArrayList<String> roles){
+        gameManager = propnetPlayer;
 
         for (int i = 0; i < gamers.size(); i++){
-            gamers.get(i).initialize(dt.listTable());
+            gamers.get(i).initialize(gameManager.getPropNet());
             gamers.get(i).setMyRole(roles.get(i));
+        }
+
+
+    }
+
+    public void restartGame(){
+        gameManager.restart();
+
+        for (int i = 0; i < gamers.size(); i++){
+            gamers.get(i).restart();
         }
 
 
