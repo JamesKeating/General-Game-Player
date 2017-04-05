@@ -1,6 +1,6 @@
 package SylmbolTable;
 
-
+//stores information about tokens for the parser
 public class Trie {
 	
 	private TrieNode rootNode = new TrieNode('~');

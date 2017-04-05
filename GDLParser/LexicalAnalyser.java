@@ -7,14 +7,16 @@ import GDLTokens.*;
 import SylmbolTable.Trie;
 import SylmbolTable.TrieNode;
 
+//tokenizes a game description returns
 public class LexicalAnalyser {
 	
 	private int currState = 0;
 	private String[] keyWords = {"role", "init", "terminal", "legal", "next", "true", "does", "goal",
-									"or", "distinct", "not", "base", "drawit", "data", "RANDOM", "percept", "sees"};
+									"or", "distinct", "not", "base", "drawit", "data", "RANDOM"};
 	private Trie symbolTable = new Trie(keyWords);
 	private ArrayList<Token> tokenStream = new ArrayList<>();
-	
+
+	//tokenizes the file
 	public boolean analyseFile(String directory){
 		
 		DFA myDFA =new DFA(); 
@@ -74,7 +76,8 @@ public class LexicalAnalyser {
 
 		return true;
 	}
-	
+
+	//creates a token if the token read was valid  otherwise returns false
 	public boolean createToken(int state){
 
 		String value = symbolTable.getString();

@@ -35,6 +35,8 @@ import java.util.concurrent.FutureTask;
 /**
  * Created by siavj on 31/01/2017.
  */
+
+//The user interface for the system
 public class Grahpics extends Application {
 
     private int count = 0;
@@ -50,6 +52,8 @@ public class Grahpics extends Application {
         launch(args);
     }
     @Override
+
+    //gets the initial scene
     public void start(Stage primaryStage) throws Exception {
 
         primaryStage.setTitle("GGP Console");
@@ -58,17 +62,16 @@ public class Grahpics extends Application {
 
     }
 
+    //draws the actual game
     public GridPane drawGrid(GridPane gridPane, PropnetPlayer gm){
-//        System.out.println(gm.getContents());
         gridPane.getChildren().clear();
         for (Drawable drawable : gm.getDrawable(gm.getContents())){
             gridPane.add(drawable.getImage(), drawable.gety(), drawable.getx());
         }
-
         return gridPane;
-
     }
 
+    //checks if a player has no move
     public boolean noopCheck(int c){
         boolean op_has_only_noop = true;
         boolean i_have_only_noop = false;
@@ -89,6 +92,7 @@ public class Grahpics extends Application {
         return !op_has_only_noop && i_have_only_noop;
     }
 
+    //updates the game state
     public void update(GameManager gm){
         gm.updateGame();
         count = 0;
@@ -116,26 +120,25 @@ public class Grahpics extends Application {
         }
 
         while(!gm.getGameManager().isTerminal(gm.getGameManager().getContents())){
-            if (noopCheck(count) && p_names.get(count).isHuman()){
+            if (noopCheck(count) && p_names.get(count).isHuman())
                 gm.getGamer(p_names.get(count)).setSelectedMove(p_moves.get(count).get(0));
-            }
 
-            else if (p_names.get(count).isHuman()){
+
+            else if (p_names.get(count).isHuman())
                 break;
-            }
 
             count++;
 
-            if (count == p_names.size() ){
+            if (count == p_names.size() )
                 update(gm);
-            }
+
         }
     }
 
+    //starts second scene (game playing scene)
     public Scene getPlayableScene(GameManager gm, Stage stage){
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "As a human player you must manually select a move from the list to continue");
-
         p_moves.addAll(gm.getAllCurrentLegalMoves().values());
         p_names.addAll(gm.getAllCurrentLegalMoves().keySet());
 
@@ -143,16 +146,13 @@ public class Grahpics extends Application {
         GridPane board = new GridPane();
         GridPane options = new GridPane();
 
-//        options.setStyle("-fx-background-color: #A9A9A9");
         board.setStyle("-fx-background-color: #FFFFFF");
-//        board.setVgap(20);
-//        board.setStyle("-fx-background-color: #006400");
-
         board.setPadding(new Insets(10,10,10,10));
         ListView<String> list = new ListView<String>();
 
         drawGrid(board, gm.getGameManager());
 
+        //listener to check if a move is selected (previews the move if its a human player)
         list.getSelectionModel().selectedIndexProperty().addListener((ChangeListener<Number>) (observable, oldValue, newValue) -> {
             if (p_names.get(count).isHuman() && newValue.intValue() >= 0){
                 gm.getGamer(p_names.get(count)).setSelectedMove(list.getItems().get(newValue.intValue()));
@@ -167,7 +167,7 @@ public class Grahpics extends Application {
             }
         });
 
-
+        //control flow of the game is altered if only AI are playing
         if (!gm.getGameManager().allAI()){
             while(count < p_names.size()){
 
@@ -176,7 +176,6 @@ public class Grahpics extends Application {
 
                 if (noopCheck(count) && p_names.get(count).isHuman())
                     gm.getGamer(p_names.get(count)).setSelectedMove(p_moves.get(count).get(0));
-
 
                 if (count == p_names.size() -1) {
                     update(gm);
@@ -190,9 +189,9 @@ public class Grahpics extends Application {
             }
         }
 
+        //control flow for a game with human players
         else {
             while (count < p_names.size()) {
-
 
                 if (!noopCheck(count) && !p_names.get(count).toString().equals("RANDOM"))
                     break;
@@ -209,6 +208,7 @@ public class Grahpics extends Application {
 
         if (p_moves.size() > 0)
             list.setItems(FXCollections.observableArrayList (p_moves.get(count)));
+
         TextField moveInput = new TextField();
         Button btn = new Button();
         btn.setText("Submit move for: " + p_names.get(count));
@@ -217,8 +217,7 @@ public class Grahpics extends Application {
             @Override
             public void handle(ActionEvent event) {
 
-
-
+                //starts a new game
                 if (btn.getText().equals("Start New Game")) {
                     getPlayableScene(gm, stage);
                     list.getSelectionModel().select(-1);
@@ -228,10 +227,9 @@ public class Grahpics extends Application {
                     return;
                 }
 
-
                 String buttonText = "Submit move for: ";
 
-
+                //checks if a human player has submited a move
                 if (p_names.get(count).isHuman() && list.getSelectionModel().getSelectedItem() == null) {
 
                     for (String move : list.getItems()) {
@@ -250,8 +248,6 @@ public class Grahpics extends Application {
                     }
                 }
 
-
-
                 boolean last = true;
                 while (count < p_names.size() -1) {
                     count++;
@@ -268,22 +264,21 @@ public class Grahpics extends Application {
                     }
                 }
 
-
+                //if all players moves are made updates the game
                 if (count == p_names.size() -1 && last) {
                     update(gm);
                     drawGrid(board, gm.getGameManager());
                 }
 
-
+                //end of game
                 if (gm.getGameManager().isTerminal(gm.getGameManager().getContents())){
-//                    System.out.println(gm.getGameManager().getContents());
                     gm.restartGame();
                     p_names.clear();
                     p_moves.clear();
                     btn.setText("Start New Game");
                 }
 
-
+                //not end of game set up for next turn
                 else {
                     list.getSelectionModel().select(-1);
                     list.setItems(FXCollections.observableArrayList(p_moves.get(count)));
@@ -306,6 +301,7 @@ public class Grahpics extends Application {
         return new Scene(root, 800, 800);
     }
 
+    //ititial scene for setting up game
     public Scene getSelectionScene(Stage stage){
         GridPane root = new GridPane();
         TextField textField = new TextField();
@@ -318,7 +314,7 @@ public class Grahpics extends Application {
         PropnetPlayer gm = new PropnetPlayer();
 
 
-
+        //listeners for setting players to human or ai
         cb.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -331,6 +327,7 @@ public class Grahpics extends Application {
             }
         });
 
+        //listeners for setting players to human or ai
         cbHuman.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -358,6 +355,7 @@ public class Grahpics extends Application {
             }
         });
 
+        //listeners for setting players to human or ai
         cbAI.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -386,7 +384,7 @@ public class Grahpics extends Application {
         });
 
 
-
+        //style for buttons
         cb.setStyle("-fx-font-size: 18px;");
         textField.setStyle("-fx-font-size: 18px; ");
 
@@ -427,15 +425,15 @@ public class Grahpics extends Application {
             }
         });
 
+        //trigger new task thread and set loading icon
         playButton.setOnAction(new EventHandler<ActionEvent>() {
-
             public void handle(final ActionEvent e) {
                 piVal = true;
                 root.add(load,10,3);
-
             }
         });
 
+        //set up the game and removes loading icon once complete
         Task task = new Task<Void>() {
             @Override
             public Void call() throws Exception {
@@ -530,7 +528,6 @@ public class Grahpics extends Application {
 
                         });
 
-
                     }
                     else
                         Thread.sleep(500);
@@ -540,8 +537,6 @@ public class Grahpics extends Application {
         };
 
         new Thread(task).start();
-        //th.setDaemon(true);
-        //th.start();
 
         root.setAlignment(Pos.BASELINE_LEFT);
         root.setHgap(2);

@@ -10,6 +10,11 @@ import java.util.TreeMap;
 /**
  * Created by siavj on 31/01/2017.
  */
+
+
+/**
+ * Manages game flow logic
+ */
 public class GameManager{
 
     public PropnetPlayer getGameManager() {
@@ -27,8 +32,6 @@ public class GameManager{
 
     }
 
-
-
     public void setupGame(PropnetPlayer propnetPlayer, ArrayList<String> roles){
         gameManager = propnetPlayer;
 
@@ -36,8 +39,6 @@ public class GameManager{
             gamers.get(i).initialize(gameManager.getPropNet());
             gamers.get(i).setMyRole(roles.get(i));
         }
-
-
     }
 
     public void restartGame(){
@@ -115,7 +116,6 @@ public class GameManager{
             if (gamer.getMyRole().equals(player.toString()))
                 return (HumanPlayer) gamer;
         }
-
         return null;
     }
 

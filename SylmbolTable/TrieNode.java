@@ -2,6 +2,7 @@ package SylmbolTable;
 
 import java.util.ArrayList;
 
+//node of the trie
 public class TrieNode {
 	
 	private int nodeID;

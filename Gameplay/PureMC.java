@@ -9,14 +9,18 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Created by siavj on 31/01/2017.
  */
+
+/**
+ * A simpler version of the Monte Carlo Player
+ * this was the first iteration of the Monte Carlo Player class
+ */
+
 public class PureMC extends PropnetPlayer {
 
-    int count = 0;
     public String makeMove() {
         double timeLimit = 5000;
         double start = System.currentTimeMillis();
         double finishBy = start + timeLimit;
-
 
         Player myRole = null;
         ArrayList<String> moves;
@@ -35,19 +39,14 @@ public class PureMC extends PropnetPlayer {
 
             int[] moveTotalPoints = new int[moves.size()];
             int[] moveTotalAttempts = new int[moves.size()];
-
             for(int i = 0; true; i = (i+1) % moves.size()) {
-
                 if (System.currentTimeMillis() > finishBy)
                     break;
-
 
                 int theScore = drillDown(myRole, moves.get(i));
                 moveTotalPoints[i] += theScore;
                 moveTotalAttempts[i] += 1;
             }
-
-//            System.out.println(System.currentTimeMillis() - start+ ":" + count );
 
             double[] moveExpectedPoints = new double[moves.size()];
             for (int i = 0; i < moves.size(); i++) {
@@ -66,15 +65,13 @@ public class PureMC extends PropnetPlayer {
             move = moves.get(bestMove);
         }
 
-        double stop = System.currentTimeMillis();
         return move;
     }
 
-    private int[] depth = new int[1];
     private int drillDown(Player myRole, String myMove) {
         HashSet<String> contents = getContents();
         try {
-            contents = recursiveDrill(randomNextState(contents, myMove), depth);
+            contents = recursiveDrill(randomNextState(contents, myMove));
             return getGoal(contents, myRole);
         } catch (Exception e) {
             e.printStackTrace();
@@ -82,14 +79,12 @@ public class PureMC extends PropnetPlayer {
         }
     }
 
-    private HashSet<String> recursiveDrill(HashSet<String> rndContents, int[]theDepth){
-        int nDepth = 0;
+    private HashSet<String> recursiveDrill(HashSet<String> rndContents){
+
         while(!isTerminal(rndContents)) {
-            nDepth++;
             rndContents = randomNextState(rndContents);
         }
-        if(theDepth != null)
-            theDepth[0] = nDepth;
+
         return rndContents;
     }
 
@@ -115,14 +110,9 @@ public class PureMC extends PropnetPlayer {
         ArrayList<String> temp;
         ArrayList<String> moves = new ArrayList<>();
         for (Player player : getRoles()){
-
             temp = getLegalMoves(contents, player);
             moves.add(temp.get(ThreadLocalRandom.current().nextInt(temp.size())));
-
         }
-
         return getNextState(contents, moves);
     }
-
-
 }

@@ -16,6 +16,8 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Created by siavj on 04/04/2017.
  */
+
+//test the propnets performace its build time number of nodes ect..
 public class PropNetPerformanceTest {
 
     public void runTest(String gameDirectory, String outputDirectory){

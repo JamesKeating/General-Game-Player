@@ -18,28 +18,30 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Created by siavj on 12/01/2017.
  */
+
+/**
+ * Most basic type of player
+ * Makes moves entirely randomly
+ * Implements all essential functions for a player
+ * All other players are extensions of this class and implement more sophisticated move selection
+ */
+
 public class PropnetPlayer  implements Gamer{
 
-    public PropNet getPropNet() {
-        return propNet;
-    }
-
     private PropNet propNet;
-
+    private String myRole;
     private ArrayList<Latch> ordering;
-
     private ArrayList<Player> roles;
 
     public String getMyRole() {
         return myRole;
     }
-
     public void setMyRole(String myRole) {
         this.myRole = myRole;
     }
-
-    private String myRole;
-
+    public PropNet getPropNet() {
+        return propNet;
+    }
     public HashSet<String> getContents() {
         return contents;
     }
@@ -79,13 +81,13 @@ public class PropnetPlayer  implements Gamer{
 
         PropNetBuilder builder= new PropNetBuilder();
         propNet = builder.create(description);
-
         roles = propNet.getRoles();
         ordering = getOrdering();
         setContents(getInitialState());
 
     }
 
+    //computes a topological orderingof the graph
     public ArrayList<Latch> getOrdering() {
 
         ArrayList<Latch> order = new ArrayList<>();
@@ -162,11 +164,9 @@ public class PropnetPlayer  implements Gamer{
         return propNet.getTerminalLatches().getValue();
     }
 
-
     public ArrayList<Player> getRoles() {
         return roles;
     }
-
 
     public HashSet<String> getInitialState() {
         HashSet<String> contents = new HashSet<>();
@@ -287,10 +287,7 @@ public class PropnetPlayer  implements Gamer{
                 else
                     return null;
             }
-
-
         }
-
         return temp;
     }
 }

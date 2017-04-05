@@ -7,6 +7,7 @@ import DeductiveDatabase.Description;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+//all players implement this class
 public interface Gamer {
 
     public String makeMove();

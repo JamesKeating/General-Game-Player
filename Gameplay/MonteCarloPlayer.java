@@ -10,9 +10,15 @@ import static oracle.jrockit.jfr.events.Bits.doubleValue;
 /**
  * Created by siavj on 31/01/2017.
  */
+
+/**
+ * Extends the functionallity of the basic player with more sophisticated move selections
+ * Moves are selected using a variant of the monte carlo seacrch known as UCT
+ */
 public class MonteCarloPlayer extends PropnetPlayer {
-    private  Player myrole;
+
     private int count;
+    private Player myrole;
     private double timeLimit = 5000;
 
     public MonteCarloPlayer(){
@@ -39,35 +45,30 @@ public class MonteCarloPlayer extends PropnetPlayer {
             }
         }
 
-        if (getLegalMoves(getContents(), myrole).size() == 1){
+        if (getLegalMoves(getContents(), myrole).size() == 1)
             return getLegalMoves(getContents(), myrole).get(0);
-        }
-
-
 
         double start = System.currentTimeMillis();
         double finishBy = start + timeLimit*1000;
-
 
         Node root;
         Node selected;
         HashMap<Player, Double> estScore;
 
-
         root = new Node(new HashSet<>(getContents()), myrole);
         while(System.currentTimeMillis() < finishBy){
 
-            selected = selection(root);
+            selected = selection(root);                     //Stage 1: selection
 
             if (!isTerminal(selected.getContents())){
-                expand(selected);
-                estScore = monteCarlo(selected, count);
+                expand(selected);                           //Stage 2: expansion
+                estScore = monteCarlo(selected, count);     //Stage 3: simulation
             }
 
             else
                 estScore = drillDown(selected.getContents());
 
-            backpropagate(selected, estScore);
+            backpropagate(selected, estScore);              //Stage 4: back propagation
 
         }
 
@@ -87,21 +88,15 @@ public class MonteCarloPlayer extends PropnetPlayer {
         return bestMove;
     }
 
-
-    public HashMap<Player, Double> monteCarlo(Node selected, int count) {
-
+    private HashMap<Player, Double> monteCarlo(Node selected, int count) {
         return drillDown(selected.getContents());
-
     }
 
-
     private HashMap<Player, Double> drillDown(HashSet<String> rndContents){
-
 
         while(!isTerminal(rndContents)) {
             rndContents = randomNextState(rndContents);
         }
-
 
         HashMap<Player, Double> rewards = new HashMap<>();
         for (Player p: getRoles()){
@@ -124,7 +119,6 @@ public class MonteCarloPlayer extends PropnetPlayer {
                 moves.add(move);
             }
             else {
-                //could put null here for random
                 temp = getLegalMoves(contents, player);
                 moves.add(temp.get(ThreadLocalRandom.current().nextInt(0, temp.size())));
             }
@@ -158,7 +152,7 @@ public class MonteCarloPlayer extends PropnetPlayer {
 
         }
 
-        double score = Double.NEGATIVE_INFINITY, newscore, total = 0.0;
+        double newscore, total = 0.0;
         ArrayList<Double> scores = new ArrayList<>();
         Node result = node;
 
@@ -167,15 +161,12 @@ public class MonteCarloPlayer extends PropnetPlayer {
             newscore = selectfn(node.getChildren().get(i));
             scores.add(newscore);
             total += newscore;
-//
-//            if (newscore > score) {
-//                score = newscore;
-//                result = node.getChildren().get(i);
-//            }
+
         }
-//
+
         Double count = 0.0;
         Double randomNum = ThreadLocalRandom.current().nextDouble(0, total + 1);
+
         for (int i = 0; i < node.getChildren().size(); i++){
             count += scores.get(i);
             if (count >= randomNum){
@@ -192,9 +183,8 @@ public class MonteCarloPlayer extends PropnetPlayer {
     }
 
     private boolean expand (Node node) {
-
         Player moveMaker = getPlayer(node.getContents());
-        if(moveMaker == null)
+        if (moveMaker == null)
             moveMaker = myrole;
 
         ArrayList<String> moves = getLegalMoves(node.getContents(), moveMaker);
@@ -221,6 +211,4 @@ public class MonteCarloPlayer extends PropnetPlayer {
 
         return true;
     }
-
-
 }

@@ -8,6 +8,8 @@ import java.io.File;
 /**
  * Created by siavj on 04/02/2017.
  */
+
+//stores images and coordinates used to display games
 public class Drawable {
 
     private ImageView imageView;

@@ -8,6 +8,8 @@ import java.util.HashSet;
 /**
  * Created by siavj on 11/02/2017.
  */
+
+//nodes of the game tree
 public class Node {
 
     private HashSet<String> contents;

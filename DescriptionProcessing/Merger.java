@@ -11,29 +11,28 @@ import java.util.ArrayList;
 /**
  * Created by siavj on 10/01/2017.
  */
-
-public class Merger
-{
+//helps to check substitutions are made correctly
+public class Merger {
 
     public Substitution merge(Fact x, Description y) {
-        Substitution theta = new Substitution();
+        Substitution substitution = new Substitution();
         boolean isGood;
 
         if(y.getDescription().get(1) instanceof ImplicationToken){
-            isGood = mergeAtom(x.getFact(), y.getFacts().get(0).getFact(), theta);
+            isGood = mergeAtom(x.getFact(), y.getFacts().get(0).getFact(), substitution);
         }
 
         else
-            isGood = mergeAtom(x.getFact(), y.getDescription(), theta);
+            isGood = mergeAtom(x.getFact(), y.getDescription(), substitution);
 
         if(isGood){
-            return theta;
+            return substitution;
         }
         else
             return null;
     }
 
-    private boolean mergeAtom(ArrayList<Token> x, ArrayList<Token> y, Substitution theta) {
+    private boolean mergeAtom(ArrayList<Token> x, ArrayList<Token> y, Substitution substitution) {
 
         if(x.equals(y))
             return true;
@@ -47,7 +46,6 @@ public class Merger
             try {
                 xTerm = x.get(i);
                 yTerm = y.get(i);
-
 
                 if (x.get(1).getID().equals("true"))
                     xTerm = x.get(i + 2);
@@ -65,12 +63,12 @@ public class Merger
             }
 
             else if (xTerm instanceof VarToken) {
-                if (!mergeVariable( xTerm, yTerm, theta))
+                if (!mergeVariable( xTerm, yTerm, substitution))
                     return false;
             }
 
             else{
-                if (!mergeVariable( yTerm, xTerm, theta))
+                if (!mergeVariable( yTerm, xTerm, substitution))
                     return false;
             }
 

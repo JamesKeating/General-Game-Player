@@ -11,6 +11,9 @@ import java.util.ArrayList;
 /**
  * Created by siavj on 04/04/2017.
  */
+
+//runs tests to get the build time of the network and the players win rate vs a random ai
+//can be easily modified for other games, runtimes, player, types ect.
 public class PreformanceTestSuite {
 
     public static void main(String[] args) {

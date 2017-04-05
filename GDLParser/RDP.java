@@ -4,10 +4,8 @@ import GDLTokens.Token;
 
 import java.util.ArrayList;
 
-
-
+//parses a stream of tokens to check they are syntactically valid based on the grammar provided
 public class RDP{
-
 
     private GDLGrammar grammar = new GDLGrammar();
     private ArrayList<Token> tokenStream = new ArrayList<>();

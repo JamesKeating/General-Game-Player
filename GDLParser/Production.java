@@ -5,6 +5,8 @@ import java.util.ArrayList;
 /**
  * Created by siavj on 15/10/2016.
  */
+
+//an element of a grammar
 public class Production {
 
     int lhs;

@@ -1,4 +1,6 @@
 package GDLParser;
+
+//A state machine used to determine the validity and type of tokens
 public class DFA {
 	
 	public int state0(char c){

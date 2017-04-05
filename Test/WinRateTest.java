@@ -19,6 +19,8 @@ import java.util.List;
 /**
  * Created by siavj on 03/04/2017.
  */
+
+//plays different AI against each other to compare their win rates
 public class WinRateTest {
 
 
