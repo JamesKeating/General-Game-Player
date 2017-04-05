@@ -12,19 +12,19 @@ import java.util.ArrayList;
  * Created by siavj on 10/01/2017.
  */
 
-public class Unifier
+public class Merger
 {
 
-    public Substitution unify(Fact x, Description y) {
+    public Substitution merge(Fact x, Description y) {
         Substitution theta = new Substitution();
         boolean isGood;
 
         if(y.getDescription().get(1) instanceof ImplicationToken){
-            isGood = unifyTerm(x.getFact(), y.getFacts().get(0).getFact(), theta);
+            isGood = mergeAtom(x.getFact(), y.getFacts().get(0).getFact(), theta);
         }
 
         else
-            isGood = unifyTerm(x.getFact(), y.getDescription(), theta);
+            isGood = mergeAtom(x.getFact(), y.getDescription(), theta);
 
         if(isGood){
             return theta;
@@ -33,7 +33,7 @@ public class Unifier
             return null;
     }
 
-    private boolean unifyTerm(ArrayList<Token> x, ArrayList<Token> y, Substitution theta) {
+    private boolean mergeAtom(ArrayList<Token> x, ArrayList<Token> y, Substitution theta) {
 
         if(x.equals(y))
             return true;
@@ -65,12 +65,12 @@ public class Unifier
             }
 
             else if (xTerm instanceof VarToken) {
-                if (!unifyVariable( xTerm, yTerm, theta))
+                if (!mergeVariable( xTerm, yTerm, theta))
                     return false;
             }
 
             else{
-                if (!unifyVariable( yTerm, xTerm, theta))
+                if (!mergeVariable( yTerm, xTerm, theta))
                     return false;
             }
 
@@ -82,25 +82,25 @@ public class Unifier
         return true;
     }
 
-    private boolean unifyVariable(Token var, Token token, Substitution theta) {
+    private boolean mergeVariable(Token var, Token token, Substitution substitution) {
 
         ArrayList<Token> z = new ArrayList<>();
         ArrayList<Token> w = new ArrayList<>();
         ArrayList<Token> v = new ArrayList<>();
-        z.add(theta.get(var.getID()));
+        z.add(substitution.get(var.getID()));
         w.add(token);
 
-        if (theta.contains(var.getID())) {
-            return unifyTerm(z, w, theta);
+        if (substitution.contains(var.getID())) {
+            return mergeAtom(z, w, substitution);
         }
 
-        else if ((token instanceof VarToken) && theta.contains(token.getID())){
-            v.add(theta.get(token.getID()));
-            return unifyTerm(z, v, theta);
+        else if ((token instanceof VarToken) && substitution.contains(token.getID())){
+            v.add(substitution.get(token.getID()));
+            return mergeAtom(z, v, substitution);
         }
 
         else {
-            theta.put(var.getID(), token);
+            substitution.put(var.getID(), token);
             return true;
         }
     }

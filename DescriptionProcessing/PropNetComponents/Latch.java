@@ -4,13 +4,11 @@ package DescriptionProcessing.PropNetComponents;
  * Created by siavj on 09/01/2017.
  */
 
-
 import DeductiveDatabase.Fact;
 
+//represents a Proposition in the network
+public final class Latch extends PropNetNode {
 
-public final class Latch extends PropNetNode
-{
-    //TODO: is fact right should represent a prop
     private Fact label;
     private boolean value = false;
 

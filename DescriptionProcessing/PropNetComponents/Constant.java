@@ -4,9 +4,7 @@ package DescriptionProcessing.PropNetComponents;
  * Created by siavj on 09/01/2017.
  */
 
-
-public final class Constant extends PropNetNode
-{
+public final class Constant extends PropNetNode {
 
     private boolean value;
 

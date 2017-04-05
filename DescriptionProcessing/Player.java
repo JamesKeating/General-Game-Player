@@ -9,7 +9,9 @@ import java.util.ArrayList;
 /**
  * Created by siavj on 09/01/2017.
  */
-public class Player implements Serializable {
+
+//represents each role in the game
+public class Player {
 
     private String name;
     private boolean isHuman = false;

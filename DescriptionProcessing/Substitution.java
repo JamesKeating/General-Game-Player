@@ -9,8 +9,8 @@ import java.util.HashMap;
  * Created by siavj on 10/01/2017.
  */
 
-public class Substitution
-{
+//keeps track of values which have been substituted for the substituter
+public class Substitution {
 
     private HashMap<String, Token> contents;
 
@@ -18,11 +18,11 @@ public class Substitution
         contents = new HashMap<>();
     }
 
-    public Substitution compose(Substitution thetaPrime) {
+    public Substitution build(Substitution substitionPrime) {
         Substitution result = new Substitution();
 
         result.contents.putAll(contents);
-        result.contents.putAll(thetaPrime.contents);
+        result.contents.putAll(substitionPrime.contents);
 
         return result;
     }

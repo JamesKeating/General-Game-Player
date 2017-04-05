@@ -4,8 +4,8 @@ package DescriptionProcessing.PropNetComponents;
  * Created by siavj on 09/01/2017.
  */
 
-public final class OrGate extends PropNetNode
-{
+//represents a logical Or-Gate
+public final class OrGate extends PropNetNode {
 
     public boolean getValue() {
         for ( PropNetNode PropNetNode : getNodeInputs() ) {

@@ -12,16 +12,14 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-
-public abstract class PropNetNode implements Serializable
-{
+//represents the nodes in th network all components extend this class
+public abstract class PropNetNode{
 
     public abstract boolean getValue();
     public abstract String toString();
 
     private HashSet<PropNetNode> inputs;
     private HashSet<PropNetNode> outputs;
-
 
     public PropNetNode() {
         this.inputs = new HashSet<>();
@@ -36,20 +34,6 @@ public abstract class PropNetNode implements Serializable
     public HashSet<PropNetNode> getNodeOutputs()
     {
         return outputs;
-    }
-
-
-    protected String toDot(String shape, String fillcolor, String label)
-    {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("\"@" + Integer.toHexString(hashCode()) + "\"[shape=" + shape + ", style= filled, fillcolor=" + fillcolor + ", label=\"" + label + "\"]; ");
-        for ( PropNetNode propNetNode : getNodeOutputs() )
-        {
-            sb.append("\"@" + Integer.toHexString(hashCode()) + "\"->" + "\"@" + Integer.toHexString(propNetNode.hashCode()) + "\"; ");
-        }
-
-        return sb.toString();
     }
 
     public PropNetNode getSingleOutput() {
@@ -70,5 +54,14 @@ public abstract class PropNetNode implements Serializable
         outputs.add(output);
     }
 
+    String toDot(String shape, String fillcolor, String label) {
+        StringBuilder sb = new StringBuilder();
 
+        sb.append("\"@").append(Integer.toHexString(hashCode())).append("\"[shape=").append(shape).append(", style= filled, fillcolor=").append(fillcolor).append(", label=\"").append(label).append("\"]; ");
+        for ( PropNetNode propNetNode : getNodeOutputs() ) {
+            sb.append("\"@").append(Integer.toHexString(hashCode())).append("\"->").append("\"@").append(Integer.toHexString(propNetNode.hashCode())).append("\"; ");
+        }
+
+        return sb.toString();
+    }
 }

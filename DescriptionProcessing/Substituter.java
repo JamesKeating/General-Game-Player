@@ -9,64 +9,64 @@ import java.util.ArrayList;
 /**
  * Created by siavj on 10/01/2017.
  */
-public class Substituter
-{
 
-    public Substituter() {
+/**
+ * Helps the flattener remove variables from a description
+ * substitutes values for each variable with values that have not already been substituted
+ */
+public class Substituter {
+
+    public Substituter() {}
+
+    public Fact substitute(Fact fact, Substitution substitution) {
+        return substituteFact(fact, substitution);
     }
 
-    public Fact substitute(Fact fact, Substitution theta) {
-        return substituteFact(fact, theta);
+    public Description substitute(Description description, Substitution substitution) {
+        return substituteDescription(description, substitution);
     }
 
-
-    public Description substitute(Description description, Substitution theta) {
-        return substituteDescription(description, theta);
-    }
-
-    private Fact substituteFact(Fact function, Substitution theta) {
+    private Fact substituteFact(Fact function, Substitution substitution) {
         if (function.isGround())
             return function;
-
 
         else {
             ArrayList<Token> body = new ArrayList<>();
 
             for (int i = 0; i < function.getFact().size(); i++) {
-                body.add(substituteTerm(function.getFact().get(i), theta));
+                body.add(substituteTerm(function.getFact().get(i), substitution));
             }
 
             return new Fact(body);
         }
     }
 
-    private Token substituteTerm(Token term, Substitution theta) {
+    private Token substituteTerm(Token term, Substitution substitution) {
         if (term instanceof VarToken)
-            return substituteVariable( (VarToken) term, theta);
+            return substituteVariable( (VarToken) term, substitution);
 
         return term;
     }
 
-    private Token substituteVariable(VarToken variable, Substitution theta) {
+    private Token substituteVariable(VarToken variable, Substitution substitution) {
 
-        if (!theta.contains(variable.getID()))
+        if (!substitution.contains(variable.getID()))
             return variable;
 
         else {
+            Token result = substitution.get(variable.getID());
+            Token betterResult;
 
-            Token result = theta.get(variable.getID());
-            Token betterResult = null;
-
-            while (!(betterResult = substituteTerm(result, theta)).equals(result)) {
+            while (!(betterResult = substituteTerm(result, substitution)).equals(result)) {
                 result = betterResult;
             }
 
-            theta.put(variable.getID(), result);
+            substitution.put(variable.getID(), result);
             return result;
         }
     }
 
-    private Description substituteDescription(Description rule, Substitution theta) {
+    private Description substituteDescription(Description rule, Substitution substitution) {
         ArrayList<Fact> body = new ArrayList<>();
         ArrayList<Token> result = new ArrayList<>();
 
@@ -81,7 +81,7 @@ public class Substituter
         else {
 
             for (Fact literal : rule.getFacts()) {
-                body.add(substituteFact(literal, theta));
+                body.add(substituteFact(literal, substitution));
             }
 
             for (Fact fact : body) {

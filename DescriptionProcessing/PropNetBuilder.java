@@ -12,16 +12,15 @@ import DeductiveDatabase.Fact;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public final class PropNetBuilder
-{
-
+/**
+ * Takes a flattened game discription and builds an equivalent propnet
+ */
+public final class PropNetBuilder {
 
     private ConcurrentHashMap<String, Latch> propositions;
     private HashSet<PropNetNode> propNetNodes;
 
-    public PropNetBuilder() {
-    }
-
+    public PropNetBuilder() {}
 
     public PropNet create(ArrayList<Description> gameDescription) {
         try {
@@ -35,6 +34,7 @@ public final class PropNetBuilder
 
     }
 
+    //converts the description to a network
     private PropNet convert(ArrayList<Player> players, ArrayList<Description> description) {
 
         propositions = new ConcurrentHashMap<>();
@@ -42,18 +42,18 @@ public final class PropNetBuilder
         for ( Description rule : description ) {
 
             if ( rule.getArity() > 1 )
-                convertRule(rule);
+                mapRule(rule);
 
             else
-                convertStatic(rule.getFacts().get(0));
+                mapConstant(rule.getFacts().get(0));
 
         }
-        fixDisjunctions();
+        joinInputs();
         fixNegation();
         return new PropNet(players, propNetNodes);
     }
 
-
+    //fixes structure of negated rules
     private void fixNegation() {
 
         Iterator<Latch> iterator = propositions.values().iterator();
@@ -72,8 +72,8 @@ public final class PropNetBuilder
         }
     }
 
-
-    private Latch convertConjunct(Fact fact) {
+    //maps a proposition to an equivelent network node
+    private Latch mapProp(Fact fact) {
 
         ArrayList<Token> anon = new ArrayList<>();
         anon.add(new IdToken("anon"));
@@ -125,7 +125,7 @@ public final class PropNetBuilder
             }
 
             inv = new Fact(inverse) ;
-            Latch input = convertConjunct(inv);
+            Latch input = mapProp(inv);
             NotGate no = new NotGate();
             Latch output = new Latch(new Fact(anon));
 
@@ -145,7 +145,8 @@ public final class PropNetBuilder
         }
     }
 
-    private Latch convertHead(Fact sentence) {
+    //maps the proposition which is proved if a rule is true
+    private Latch mapHead(Fact sentence) {
         if ( sentence.getLeadAtom().getID().equals("next") ) {
             ArrayList<Token> tru = new ArrayList<>();
             for (Token token : sentence.getFact()){
@@ -181,26 +182,27 @@ public final class PropNetBuilder
         }
     }
 
-    private void convertRule(Description rule) {
-        Latch head = convertHead(rule.getFacts().get(0));
+    //maps a rule to equivilent network nodes
+    private void mapRule(Description rule) {
+        Latch head = mapHead(rule.getFacts().get(0));
         AndGate and = new AndGate();
 
         link(and, head);
-
 
         propNetNodes.add(head);
         propNetNodes.add(and);
 
         for ( int i = 1; i < rule.getFacts().size(); i++ ) {
             Fact literal = rule.getFacts().get(i);
-            Latch conjunct = convertConjunct(literal);
+            Latch prop = mapProp(literal);
 
-            link(conjunct, and);
+            link(prop, and);
 
         }
     }
 
-    private void convertStatic(Fact sentence) {
+
+    private void mapConstant(Fact sentence) {
 
         if ( sentence.getLeadAtom().getID().equals("init") ) {
 
@@ -238,57 +240,49 @@ public final class PropNetBuilder
         propNetNodes.add(proposition);
     }
 
-    private void fixDisjunctions() {
+    //nodes with multiple inputs have their inputs joined and fed into a single or gate
+    private void joinInputs() {
 
-        ArrayList<Latch> fixList = new ArrayList<>();
-
-
+        ArrayList<Latch> joinable  = new ArrayList<>();
         for ( Latch latch : propositions.values() ) {
             if ( latch.getNodeInputs().size() > 1 )
-                fixList.add(latch);
+                joinable .add(latch);
         }
 
-        for ( Latch fixItem : fixList ) {
+        for ( Latch joinThis : joinable  ) {
             OrGate or = new OrGate();
             int i = 0;
 
-            for ( PropNetNode input : fixItem.getNodeInputs() ) {
+            for ( PropNetNode input : joinThis.getNodeInputs() ) {
                 i++;
-
-                Latch disjunct = null;
+                Latch disjoint;
                 ArrayList<Token> anon = new ArrayList<>();
 
-                if ( fixItem.getLabel().getFact().size() == 1 ) {
-
-                    anon.add(new IdToken(fixItem.getLabel().toString() + "-" + i));
-                    disjunct = new Latch(new Fact(anon));
-
+                if ( joinThis.getLabel().getFact().size() == 1 ) {
+                    anon.add(new IdToken(joinThis.getLabel().toString() + "-" + i));
+                    disjoint = new Latch(new Fact(anon));
                 }
+
                 else {
 
-                    for (Token token : fixItem.getLabel().getFact()){
-
-                        if (token.getID().equals(fixItem.getLabel().getLeadAtom().getID()))
-                            anon.add(new IdToken(fixItem.getLabel().getLeadAtom().toString() +"-" + i));
+                    for (Token token : joinThis.getLabel().getFact()){
+                        if (token.getID().equals(joinThis.getLabel().getLeadAtom().getID()))
+                            anon.add(new IdToken(joinThis.getLabel().getLeadAtom().toString() +"-" + i));
 
                         else
                             anon.add(token.copy());
                     }
-                    disjunct = new Latch(new Fact(anon));
+                    disjoint = new Latch(new Fact(anon));
                 }
 
                 input.getNodeOutputs().clear();
-
-                link(input, disjunct);
-                link(disjunct, or);
-
-                propNetNodes.add(disjunct);
+                link(input, disjoint);
+                link(disjoint, or);
+                propNetNodes.add(disjoint);
             }
 
-            fixItem.getNodeInputs().clear();
-            link(or, fixItem);
-
-
+            joinThis.getNodeInputs().clear();
+            link(or, joinThis);
             propNetNodes.add(or);
         }
     }
@@ -296,13 +290,11 @@ public final class PropNetBuilder
 
     private Latch getProposition(Fact sentence) {
 
-        if ( !propositions.containsKey(sentence.toString()) ) {
+        if ( !propositions.containsKey(sentence.toString()) )
             propositions.put(sentence.toString(), new Latch(sentence));
-        }
 
         return propositions.get(sentence.toString());
     }
-
 
     private void link(PropNetNode source, PropNetNode target) {
         source.addOutput(target);

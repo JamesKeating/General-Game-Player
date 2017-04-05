@@ -3,38 +3,31 @@ package DescriptionProcessing;
 import GDLTokens.KeyWordToken;
 import GDLTokens.Token;
 import DeductiveDatabase.Description;
-import DeductiveDatabase.DescriptionTable;
 import DeductiveDatabase.Fact;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Flattener
-{
+/**
+ *  This class takes a description for a game containing variables as an input
+ *  it then creates an equivalent ground description (no variables)
+ */
+public class Flattener {
 
     private HashMap<String, ArrayList<Description>> instantiations;
     private HashMap<String, ArrayList<Description>> templates;
 
-
-    /**
-     * Construct a BasicPropNetFlattener for a given game.
-     *
-     * @param description A game description.
-     */
     private ArrayList<Description> descriptionList;
-    private DescriptionTable descriptionTable;
 
     public Flattener(ArrayList<Description> description) {
         this.descriptionList = description;
     }
 
+    //flattens the description
     public ArrayList<Description> flatten() {
         templates = findTemplates(descriptionList);
         instantiations = initializeInstantiations(descriptionList);
 
         ArrayList<Description> flatDescription = new ArrayList<>();
-
-
         flatDescription.addAll(getInstantiations("init"));
 
         for ( String key : templates.keySet() ) {
@@ -45,34 +38,34 @@ public class Flattener
         return flatDescription;
     }
 
+    //makes a description to represent the doing of every possible legal move
     private Description equivalentDoesRule(Description legalRule){
+
         ArrayList<Token> body = new ArrayList<>();
         for (Token token : legalRule.getDescription()){
-            if (token.getID().equals("legal")){
+            if (token.getID().equals("legal"))
                 body.add(new KeyWordToken("does"));
-            }
+
             else
                 body.add(token.copy());
         }
         return new Description(body);
     }
 
-
+    //gets all the possible instantiations of each description containing variables
     private ArrayList<Description> getInstantiations(String constant) {
 
         if ( !instantiations.containsKey(constant) ) {
             instantiations.put(constant, new ArrayList<>());
 
             if ( constant.equals("does") ) {
-
                 for ( Description rule : getInstantiations("legal") ) {
                     instantiations.get(constant).add(equivalentDoesRule(rule));
                 }
             }
+
             else {
-
                 for ( Description template : templates.get(constant) ) {
-
                     ArrayList<Description> results = new ArrayList<>();
                     instantiate(template, 1, new Substitution(), results);
                     instantiations.get(constant).addAll(results);
@@ -82,7 +75,7 @@ public class Flattener
         return instantiations.get(constant);
     }
 
-
+    //gets the domains of all the variables specified in the base propositions
     private HashMap<String, ArrayList<Description>> initializeInstantiations(ArrayList<Description> descriptionList) {
 
         ArrayList<Description> trues = new ArrayList<>();
@@ -90,7 +83,7 @@ public class Flattener
 
             if ( description.getLeadAtom().toString().equals("base") ) {
                 ArrayList<Description> results = new ArrayList<>();
-                expandTrue(description, 1, new ArrayList<>(), results);
+                expand(description, 1, new ArrayList<>(), results);
                 trues.addAll(results);
             }
 
@@ -100,32 +93,54 @@ public class Flattener
 
         return instantiations;
     }
+/**
+ * Recursive method that uses the base propositions rule to build a set instantiations.
+ * returns a list of every possible combination of values from the base proposition
+ *
+ * @param baseProp
+ * the base proposition being used.
+ * @param index
+ * The index of the rule being considered.
+ * @param currentInstantiations
+ * the list of instatiations used so far
+ * @param results
+ * The results built up so far
+ */
+    private void expand(Description baseProp, int index, ArrayList<Token> currentInstantiations, ArrayList<Description> results) {
 
-
-    private void expandTrue(Description base, int index, ArrayList<Token> workingSet, ArrayList<Description> results) {
-
-        if ( base.getArity() == index ) {
-            ArrayList<Token> body = new ArrayList<>(workingSet);
-            results.add(new Description(base, workingSet));
+        if ( baseProp.getArity() == index ) {
+            results.add(new Description(baseProp, currentInstantiations));
         }
 
         else {
-            for ( Token term : ( base.getFacts().get(index).getFact())){
+            for ( Token term : ( baseProp.getFacts().get(index).getFact())){
                 if(term.getValue() != -1 && term.getValue() != -2) {
-                    workingSet.add(term);
-                    expandTrue(base, index + 1, workingSet, results);
-                    workingSet.remove(workingSet.size() - 1);
+                    currentInstantiations.add(term);
+                    expand(baseProp, index + 1, currentInstantiations, results);
+                    currentInstantiations.remove(currentInstantiations.size() - 1);
                 }
             }
         }
     }
 
-    private void instantiate(Description template, int index, Substitution theta, ArrayList<Description> results) {
+/**
+ * A helper recursive method for generating every possible instantiation of a rule.
+ * every combination of variable values in the rule are tried so long as they dont conflict
+ * @param rule
+ * The rule to instantiate.
+ * @param index
+ * The atom in the rule being worked on
+ * @param substitution
+ * The substitutions built up so far.
+ * @param results
+ * The list of results built up so far.
+ */
+    private void instantiate(Description rule, int index, Substitution substitution, ArrayList<Description> results) {
         Substituter sub = new Substituter();
-        Unifier uni = new Unifier();
+        Merger merger = new Merger();
 
-        if ( template.getFacts().size() == index ) {
-            Description d = sub.substitute(template, theta);
+        if ( rule.getFacts().size() == index ) {
+            Description d = sub.substitute(rule, substitution);
             boolean old = false;
             for (Description desc: results){
                 if (desc.toString().equals(d.toString()))
@@ -137,18 +152,18 @@ public class Flattener
 
         }
         else {
-            String check = template.getFacts().get(index).getLeadAtom().getID();
+            String check = rule.getFacts().get(index).getLeadAtom().getID();
 
             if (!check.equals("distinct") && !check.equals("not") && !check.equals("data")){
-                Fact sentence =  sub.substitute(new Fact(template.getFacts().get(index)), theta);
+                Fact sentence =  sub.substitute(new Fact(rule.getFacts().get(index)), substitution);
 
                 for ( Description instantiation : getInstantiations(sentence.getLeadAtom().getID()) ) {
 
-                    Substitution thetaPrime = uni.unify(sentence, instantiation);
-                    if ( thetaPrime!=null ) {
-                        Substitution thetaCopy = theta.copy();
-                        thetaCopy = thetaCopy.compose(thetaPrime);
-                        instantiate(template, index + 1, thetaCopy, results);
+                    Substitution substitutionPrime = merger.merge(sentence, instantiation);
+                    if ( substitutionPrime!=null ) {
+                        Substitution substitutionCopy = substitution.copy();
+                        substitutionCopy = substitutionCopy.build(substitutionPrime);
+                        instantiate(rule, index + 1, substitutionCopy, results);
                     }
                 }
             }
@@ -157,26 +172,26 @@ public class Flattener
 
                 if (check.equals("not")) {
 
-                    KeyWordToken t = (KeyWordToken) template.getFacts().get(index).getLeadAtom();
+                    KeyWordToken t = (KeyWordToken) rule.getFacts().get(index).getLeadAtom();
                     t.setId("true");
-                    Fact sentence =  sub.substitute(new Fact(template.getFacts().get(index)), theta);
+                    Fact sentence =  sub.substitute(new Fact(rule.getFacts().get(index)), substitution);
 
                     for ( Description instantiation : getInstantiations(sentence.getLeadAtom().getID()) ) {
                         t.setId("not");
-                        Substitution thetaPrime = uni.unify(sentence, instantiation);
-                        if (thetaPrime != null) {
-                            Substitution thetaCopy = theta.copy();
-                            thetaCopy = thetaCopy.compose(thetaPrime);
+                        Substitution substitutionPrime = merger.merge(sentence, instantiation);
+                        if (substitutionPrime != null) {
+                            Substitution substitutionCopy = substitution.copy();
+                            substitutionCopy = substitutionCopy.build(substitutionPrime);
                             check = "";
-                            instantiate(template, index + 1, thetaCopy, results);
+                            instantiate(rule, index + 1, substitutionCopy, results);
                         }
                     }
                     if (check.equals("not"))
-                        instantiate(template, index + 1, theta, results);
+                        instantiate(rule, index + 1, substitution, results);
                 }
 
                 else
-                    instantiate(template, index + 1, theta, results);
+                    instantiate(rule, index + 1, substitution, results);
 
                 }
         }
@@ -184,19 +199,18 @@ public class Flattener
 
     private HashMap<String, ArrayList<Description>> findTemplates(ArrayList<Description> descriptionList){
 
-        HashMap<String, ArrayList<Description>> templates = new HashMap<>();
+        HashMap<String, ArrayList<Description>> rules = new HashMap<>();
         for ( Description description : descriptionList ) {
-
 
             if ( !description.getLeadAtom().getID().equals("base") ) {
 
-                if ( !templates.containsKey(description.getLeadAtom().getID()) ){//string?
-                    templates.put(description.getLeadAtom().getID(), new ArrayList<>());
+                if ( !rules.containsKey(description.getLeadAtom().getID()) ){
+                    rules.put(description.getLeadAtom().getID(), new ArrayList<>());
                 }
-                templates.get(description.getLeadAtom().getID()).add(description);
+                rules.get(description.getLeadAtom().getID()).add(description);
             }
         }
 
-        return templates;
+        return rules;
     }
 }

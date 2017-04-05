@@ -14,7 +14,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-
+/**
+* Representation of a game state as a graph of proposition and logic gates
+*/
 public class PropNet{
 
     private HashSet<PropNetNode> propNetNodes;
@@ -49,9 +51,7 @@ public class PropNet{
     public ArrayList<Player> getRoles() {
         return roles;
     }
-    public HashMap<String, Latch> getBaseLatches() {
-        return baseLatches;
-    }
+    public HashMap<String, Latch> getBaseLatches() {return baseLatches;}
     public HashSet<PropNetNode> getPropNetNodes() {
         return propNetNodes;
     }
@@ -87,7 +87,8 @@ public class PropNet{
         return sb.toString();
     }
 
-    public void renderToFile(String filename) {
+    //writes in to dot file which can be used to view a graph using 3rd party software
+    public void toDotFile(String filename) {
         try {
             File f = new File(filename);
             FileOutputStream fos = new FileOutputStream(f);
@@ -110,11 +111,10 @@ public class PropNet{
 
             PropNetNode propNetNode = latch.getNodeInputs().iterator().next();
 
-            if (propNetNode instanceof Transition) {
+            if (propNetNode instanceof Transition)
                 baseLatches.put(latch.getLabel().toString(), latch);
-            }
-        }
 
+        }
         return baseLatches;
     }
 
@@ -235,6 +235,4 @@ public class PropNet{
     public int getSize() {
         return propNetNodes.size();
     }
-
-
 }
