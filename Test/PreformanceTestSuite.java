@@ -17,11 +17,8 @@ import java.util.ArrayList;
 public class PreformanceTestSuite {
 
     public static void main(String[] args) {
-        String winRateOutputFile = "TestResults\\MCTSvsRandomResults.txt";
+        String winRateOutputFile = "TestResults\\MCTSvsRandomResults2.txt";
         String propnetOutputFile = "TestResults\\PropNetPerformaceResults.txt";
-
-        Gamer mcts = new MonteCarloPlayer();
-        Gamer rand = new PropnetPlayer();
 
         String[] tictactoe = {"Data\\TicTacToe", "oplayer", "xplayer"};
         String[] horseShoe = {"Data\\Horseshoe", "hsBlue", "hsRed"};
@@ -33,7 +30,7 @@ public class PreformanceTestSuite {
         String[] lightPuzzle = {"Data\\LightPuzzle", "player"};
         String[] highLow = {"Data\\HighLow", "player"};
 
-        String[][] winRateGames = { tictactoe, horseShoe, duikoshi, blindTictactoe};
+        String[][] winRateGames = { blindTictactoe};
         String[][] propNetRateGames = {tictactoe, horseShoe, duikoshi, blindTictactoe,
                 threePuzzle, eightPuzzle, eotCatCit, lightPuzzle, highLow};
 
@@ -57,7 +54,7 @@ public class PreformanceTestSuite {
 //            pTest.runTest(game[0], propnetOutputFile);
 //        }
 
-        double timelimit = 20000;
+        double timelimit = 5;
         System.out.println(timelimit);
 
 

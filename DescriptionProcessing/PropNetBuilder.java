@@ -31,7 +31,6 @@ public final class PropNetBuilder {
             return null;
         }
 
-
     }
 
     //converts the description to a network

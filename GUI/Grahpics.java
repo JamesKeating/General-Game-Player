@@ -308,7 +308,7 @@ public class Grahpics extends Application {
         HashMap<String, String> assign = new HashMap<>();
         ChoiceBox cb = new ChoiceBox();
         CheckBox cbHuman = new CheckBox("Human");
-        CheckBox cbAI = new CheckBox("AI");
+        CheckBox cbAI = new CheckBox("MCTS AI");
         Slider difficulty = new Slider();
         Label load = new Label("Loading game...");
         PropnetPlayer gm = new PropnetPlayer();

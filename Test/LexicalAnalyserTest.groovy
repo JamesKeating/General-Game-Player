@@ -1,40 +1,45 @@
 package Test
 
+import GDLParser.LexicalAnalyser
 import org.junit.Before
 import org.junit.BeforeClass
 
+import static org.junit.Assert.assertArrayEquals
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
 class LexicalAnalyserTest extends GroovyTestCase {
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        // Code executed before the first test method
-    }
+
+    private LexicalAnalyser lexicalAnalyser;
 
     @Before
     public void setUp() throws Exception {
-        // Code executed before each test
+        lexicalAnalyser = new LexicalAnalyser();
     }
 
     @Test
     public void testAnalyseFile() {
 
+        assertEquals("false as file dosn't exist", false, lexicalAnalyser.analyseFile("invalid directory"))
+        assertEquals("true as file is valid", true, lexicalAnalyser.analyseFile("Data\\TicTacToe"))
+        assertEquals("false as file has invalid token", false, lexicalAnalyser.analyseFile("Test\\ParserTestBadToken"))
     }
 
     @Test
     public void testCreateToken() {
 
+        for(int i =1; i <= 5; i++)
+            lexicalAnalyser.createToken(i)
+
+        assertEquals("state 1 = lpar", "(", lexicalAnalyser.tokenStream.get(0).getID())
+        assertEquals("state 2 = rpar", ")", lexicalAnalyser.tokenStream.get(1).getID())
+        assertEquals("state 3 = ;", ";", lexicalAnalyser.tokenStream.get(2).getID())
+        assertEquals("state 4 = <=", -3, lexicalAnalyser.tokenStream.get(3).getValue())
+        assertEquals("state 5 = atom", -3, lexicalAnalyser.tokenStream.get(4).getValue())
+
     }
 
-//    @Test
-//    public void multiplicationOfZeroIntegersShouldReturnZero() {
-//        MyClass tester = new MyClass(); // MyClass is tested
-//
-//        // assert statements
-//        assertEquals("10 x 0 must be 0", 0, tester.multiply(10, 0));
-//        assertEquals("0 x 10 must be 0", 0, tester.multiply(0, 10));
-//        assertEquals("0 x 0 must be 0", 0, tester.multiply(0, 0));
+
 }

@@ -1,0 +1,5 @@
+( base test(a b))
+( init (test a))
+(<= (flatten)
+    (true (test ?x))
+)

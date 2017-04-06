@@ -72,7 +72,9 @@ public class LexicalAnalyser {
 
 			fileInput.close();
 			tokenStream.add(new EofToken());
-		}catch(Exception e){ e.printStackTrace();}
+		}catch(Exception e){
+			return false;
+		}
 
 		return true;
 	}
